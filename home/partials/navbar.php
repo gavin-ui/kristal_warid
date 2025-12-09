@@ -1,127 +1,159 @@
-<nav class="navbar navbar-expand-lg sticky-top frost-nav shadow-sm">
-  <style>
-    /* ============================
-       NAVBAR PREMIUM ICE THEME ❄
-       ============================ */
+<nav class="navbar navbar-expand-lg sticky-top frost-nav">
+<style>
+/* ===============================
+   🔷 PREMIUM ICE NAVBAR DESIGN
+   =============================== */
 
-    .frost-nav {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 2px solid rgba(0, 136, 255, 0.18);
-        transition: all .3s ease-in-out;
-    }
+.frost-nav {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 2px solid rgba(0, 132, 255, 0.20);
+    transition: all .35s ease-in-out;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+}
 
-    .frost-nav.scrolled {
-        background: #ffffff;
-        border-bottom: 3px solid #007bff;
-    }
+/* Navbar saat scroll */
+.frost-nav.scrolled {
+    background: rgba(255,255,255,0.95);
+    border-bottom: 3px solid #007bff;
+    box-shadow: 0 6px 22px rgba(0,140,255,0.18);
+}
 
-    .nav-title {
-        font-size: 21px;
-        font-weight: 700;
-        letter-spacing: .6px;
-        color: #007bff !important;
-    }
+/* Brand Title */
+.nav-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0079ff !important;
+    letter-spacing: .6px;
+}
 
-    .nav-link {
-        color: #007bff !important;
-        font-weight: 600;
-        padding: 10px 14px;
-        transition: .25s;
-        position: relative;
-    }
+/* Logo */
+.navbar-brand img {
+    background: white;
+    padding: 6px;
+    border-radius: 50%;
+    transition: .4s;
+    border: 2px solid #007bff;
+}
 
-    .nav-link:hover {
-        color: #0056d6 !important;
-        text-shadow: 0px 0px 10px rgba(0,123,255,0.4);
-        transform: scale(1.05);
-    }
+.navbar-brand img:hover {
+    transform: scale(1.12) rotate(-4deg);
+    box-shadow: 0 0 18px rgba(0,162,255,.45);
+}
 
-    .nav-link.cool-link::after {
-        content: "";
-        position: absolute;
-        bottom: 2px;
-        left: 50%;
-        width: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #00d4ff, #007bff);
-        border-radius: 10px;
-        transform: translateX(-50%);
-        transition: .3s;
-    }
+/* Nav Links */
+.nav-link {
+    font-weight: 600;
+    color: #0066d9 !important;
+    padding: 10px 14px;
+    transition: .3s ease;
+    position: relative;
+}
 
-    .nav-link.cool-link:hover::after {
-        width: 65%;
-    }
+/* Hover underline effect (ICE GLOW MOVING) */
+.nav-link.cool-link::after {
+    content: "";
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg,#00d0ff,#0062ff,#00c8ff);
+    border-radius: 10px;
+    transition: .35s;
+    animation: iceFlow 2s linear infinite;
+    opacity: .7;
+}
 
-    .navbar-brand img {
-        background: white;
-        padding: 4px;
-        border-radius: 50%;
-        transition: .3s;
-    }
+.nav-link.cool-link:hover::after {
+    width: 68%;
+}
 
-    .navbar-brand img:hover {
-        transform: scale(1.1) rotate(-3deg);
-        box-shadow: 0 0 12px rgba(0,174,255,0.4);
-    }
+/* Link hover text glow */
+.nav-link:hover {
+    color: #004bcd !important;
+    text-shadow: 0 0 10px rgba(0,140,255,.36);
+    transform: translateY(-2px);
+}
 
-    .btn-warning {
-        background: #ffb300 !important;
-        border: none;
-        transition: .3s;
-    }
+/* Keyframe glowing underline */
+@keyframes iceFlow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
 
-    .btn-warning:hover {
-        background: #ff9900 !important;
-        transform: scale(1.06);
-        box-shadow: 0 0 12px rgba(255,166,0,0.5);
-    }
+/* Login Button */
+.btn-warning {
+    background: linear-gradient(90deg,#ffcc00,#ffb300);
+    border: none;
+    color: #003366;
+    font-weight: 700;
+    transition: .35s;
+}
 
-    @media(max-width: 768px) {
-        .nav-link {
-            text-align: center;
-            padding: 12px;
-        }
-    }
-  </style>
+.btn-warning:hover {
+    background: linear-gradient(90deg,#ffae00,#ff9c00);
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0px 0px 20px rgba(255,174,0,.4);
+}
 
-  <div class="container">
+/* Custom hamburger styling */
+.navbar-toggler {
+    border: none !important;
+}
 
-    <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
-        <img src="../home/assets/logo.png" width="42" class="me-2 rounded-circle border border-2 border-primary">
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 100 80' fill='%23007bff' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100' height='12'/%3E%3Crect y='30' width='100' height='12'/%3E%3Crect y='60' width='100' height='12'/%3E%3C/svg%3E");
+}
+
+/* Responsive */
+@media(max-width: 768px) {
+    .nav-link { text-align: center; }
+}
+</style>
+
+<div class="container">
+
+    <a class="navbar-brand d-flex align-items-center" href="../home/index.php">
+        <img src="../home/assets/logo.png" width="44" class="me-2">
         <span class="nav-title">Es Kristal Warid</span>
     </a>
 
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse justify-content-end mt-2 mt-lg-0" id="navbarNav">
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav">
+
         <li class="nav-item">
             <a class="nav-link cool-link" href="../home/index.php">Beranda</a>
         </li>
+
         <li class="nav-item">
-            <a class="nav-link cool-link" href="#about">Tentang</a>
+            <a class="nav-link cool-link" href="tentang_order.php">Tentang & Order</a>
         </li>
+
         <li class="nav-item">
-            <a class="nav-link cool-link" href="#layanan">Layanan</a>
+            <a class="nav-link cool-link" href="feedback.php">Kritik & Saran</a>
         </li>
-        <li class="nav-item ms-lg-2">
-            <a class="btn btn-warning fw-bold rounded-pill px-3 shadow-sm" href="../login/login.php">Login Admin</a>
+
+        <li class="nav-item ms-lg-3">
+            <a class="btn btn-warning px-3 rounded-pill shadow-sm" href="../login/login.php">Login Admin</a>
         </li>
+
       </ul>
     </div>
 
-  </div>
+</div>
 </nav>
 
 <script>
 window.addEventListener("scroll", () => {
     const nav = document.querySelector(".frost-nav");
-    if (window.scrollY > 20) nav.classList.add("scrolled");
-    else nav.classList.remove("scrolled");
+    window.scrollY > 20 ? nav.classList.add("scrolled") : nav.classList.remove("scrolled");
 });
 </script>
+  

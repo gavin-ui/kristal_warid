@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'login
                 $_SESSION['nama_admin'] = $row['nama_admin'];
                 $_SESSION['role'] = $row['role'];
 
-                header("Location: dashboard.php");
+                header("Location: ../admin/index.php");
                 exit;
             } else {
                 $error = "Password salah.";

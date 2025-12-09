@@ -197,8 +197,8 @@ body.dark {
     <i>👤</i> <span class="menu-text">Tambah Karyawan</span>
 </div>
 
-<div class="menu-item" onclick="location.href='../admin/feedback.php'">
-    <i>⭐</i> <span class="menu-text">Feedback</span>
+<div class="menu-item" onclick="location.href='../admin/produksi_mesin_input.php'">
+    <i>⭐</i> <span class="menu-text">Produksi Mesin A & B</span>
 </div>
 
 <div class="menu-item" onclick="location.href='../admin/logout.php'">

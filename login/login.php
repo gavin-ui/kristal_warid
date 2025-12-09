@@ -1,11 +1,10 @@
 <?php
-// login.php FINAL — Login + Lupa Password via OTP WhatsApp + Reset Password
 session_start();
 include '../koneksi.php';
 
 // === KONFIGURASI ===
-$OTP_TTL = 10 * 60; // 10 menit
-$OTP_MIN_INTERVAL = 60; // jeda minimal 1 menit antar OTP
+$OTP_TTL = 10 * 60;
+$OTP_MIN_INTERVAL = 60;
 $FONNTE_TOKEN = "NbMNneKGkPUn8bxjBFY6";
 // ====================
 
@@ -37,7 +36,11 @@ function send_otp_wa($nomor, $otp, $token) {
     return $response ? true : false;
 }
 
-// ============== LOGIN ===============
+
+
+// =======================================
+//                 LOGIN
+// =======================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'login') {
 
     $username = trim($_POST['username'] ?? '');
@@ -75,7 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'login
     }
 }
 
-// =========== MINTA OTP RESET PASSWORD ==========
+
+
+// =======================================
+//             MINTA OTP RESET
+// =======================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_otp') {
 
     $no_wa = trim($_POST['no_wa'] ?? '');
@@ -94,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
             if (!empty($_SESSION['otp_last_sent_time']) && ($now - $_SESSION['otp_last_sent_time']) < $OTP_MIN_INTERVAL) {
                 $error = "Tunggu 1 menit untuk meminta OTP lagi.";
             } else {
+
                 $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
                 $_SESSION['reset_no_wa'] = $no_wa;
@@ -104,7 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
                 $sent = send_otp_wa($no_wa, $otp, $FONNTE_TOKEN);
 
                 if ($sent) {
-                    $info = "OTP telah dikirim ke WhatsApp <b>$no_wa</b>";
+                    header("Location: login.php?action=verify");
+                    exit;
                 } else {
                     $error = "Gagal mengirim OTP.";
                 }
@@ -118,17 +127,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
     }
 }
 
-// =========== RESET PASSWORD =============
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'reset_password') {
+
+
+// =======================================
+//               CEK OTP
+// =======================================
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'verify_otp') {
 
     $otp = trim($_POST['otp'] ?? '');
-    $newpw = trim($_POST['new_password'] ?? '');
-    $confirm = trim($_POST['confirm_password'] ?? '');
 
-    if ($otp === '' || $newpw === '' || $confirm === '') {
-        $error = "Semua field wajib diisi.";
-    } elseif ($newpw !== $confirm) {
-        $error = "Konfirmasi password tidak sama.";
+    if ($otp === '') {
+        $error = "Masukkan OTP.";
     } elseif (empty($_SESSION['reset_otp']) || empty($_SESSION['reset_no_wa'])) {
         $error = "Tidak ada permintaan reset aktif.";
     } elseif (time() > ($_SESSION['reset_expires'] ?? 0)) {
@@ -137,31 +146,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'reset
         $error = "OTP salah.";
     } else {
 
-        $no_wa = $_SESSION['reset_no_wa'];
-        $hash = password_hash($newpw, PASSWORD_DEFAULT);
+        $_SESSION['otp_verified'] = true;
 
-        $upd = $conn->prepare("UPDATE admin SET password = ? WHERE no_wa = ?");
-        $upd->bind_param("ss", $hash, $no_wa);
+        header("Location: login.php?action=newpass");
+        exit;
+    }
+}
 
-        if ($upd->execute()) {
-            $success = "Password berhasil diganti. Silakan login.";
-            unset($_SESSION['reset_no_wa'], $_SESSION['reset_otp'], $_SESSION['reset_expires']);
+
+
+// =======================================
+//          RESET PASSWORD FINAL
+// =======================================
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'set_new_password') {
+
+    if (empty($_SESSION['otp_verified'])) {
+        $error = "Akses tidak sah.";
+    } else {
+        $newpw = trim($_POST['new_password'] ?? '');
+        $confirm = trim($_POST['confirm_password'] ?? '');
+
+        if ($newpw === '' || $confirm === '') {
+            $error = "Semua field wajib diisi.";
+        } elseif ($newpw !== $confirm) {
+            $error = "Konfirmasi password tidak sama.";
         } else {
-            $error = "Gagal mengganti password.";
-        }
 
-        $upd->close();
+            $no_wa = $_SESSION['reset_no_wa'];
+            $hash = password_hash($newpw, PASSWORD_DEFAULT);
+
+            $upd = $conn->prepare("UPDATE admin SET password = ? WHERE no_wa = ?");
+            $upd->bind_param("ss", $hash, $no_wa);
+
+            if ($upd->execute()) {
+                $success = "Password berhasil diganti. Silakan login.";
+
+                unset($_SESSION['reset_no_wa'], $_SESSION['reset_otp'], $_SESSION['reset_expires'], $_SESSION['otp_verified']);
+            } else {
+                $error = "Gagal mengganti password.";
+            }
+
+            $upd->close();
+        }
     }
 }
 
 $action = $_GET['action'] ?? 'login';
 ?>
+
 <!doctype html>
 <html lang="id">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Login Admin — Es Kristal Warid</title>
+<title>Login — Es Kristal Warid</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
@@ -187,13 +225,22 @@ body {
 </head>
 <body>
 
+<!-- Tombol kembali dengan icon keluar (dibesarkan) -->
+<a href="../home/index.php"
+   style="position:absolute; top:20px; left:20px; 
+          text-decoration:none; display:flex; align-items:center;">
+    <svg width="60" height="60" viewBox="0 0 24 24" fill="#333">
+        <path d="M10 17v-3H3v-4h7V7l5 5-5 5zm-7-15h11v2H5v14h9v2H3V2z"/>
+    </svg>
+</a>
+
 <div class="card-glass">
 
 <?php if ($action === 'forgot'): ?>
+
     <h3 class="text-center mb-3" style="color:#00AEEF;">Lupa Password</h3>
 
     <?php if ($error): ?><div class="alert alert-danger py-2"><?=$error?></div><?php endif; ?>
-    <?php if ($info): ?><div class="alert alert-info py-2"><?=$info?></div><?php endif; ?>
 
     <form method="post">
         <input type="hidden" name="action" value="send_otp">
@@ -210,24 +257,45 @@ body {
         Kembali ke <a href="login.php" style="color:#00AEEF;">Login</a>
     </p>
 
+
+
 <?php elseif ($action === 'verify'): ?>
-    <h3 class="text-center mb-3" style="color:#00AEEF;">Reset Password</h3>
+
+    <h3 class="text-center mb-3" style="color:#00AEEF;">Verifikasi OTP</h3>
+
+    <?php if ($error): ?><div class="alert alert-danger py-2"><?=$error?></div><?php endif; ?>
+
+    <form method="post">
+        <input type="hidden" name="action" value="verify_otp">
+
+        <div class="mb-3">
+            <label class="form-label">Nomor WhatsApp</label>
+            <input type="text" class="form-control" value="<?=htmlspecialchars($_SESSION['reset_no_wa'] ?? '')?>" disabled>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Masukkan Kode OTP</label>
+            <input type="text" name="otp" maxlength="6" pattern="\d{6}" class="form-control" required>
+        </div>
+
+        <div class="d-grid"><button class="btn btn-primary">Verifikasi</button></div>
+    </form>
+
+    <p class="mt-3 text-center small-muted">
+        <a href="login.php" style="color:#00AEEF;">Kembali ke Login</a>
+    </p>
+
+
+
+<?php elseif ($action === 'newpass'): ?>
+
+    <h3 class="text-center mb-3" style="color:#00AEEF;">Password Baru</h3>
 
     <?php if ($error): ?><div class="alert alert-danger py-2"><?=$error?></div><?php endif; ?>
     <?php if ($success): ?><div class="alert alert-success py-2"><?=$success?></div><?php endif; ?>
 
     <form method="post">
-        <input type="hidden" name="action" value="reset_password">
-
-        <div class="mb-3">
-            <label class="form-label">Nomor WhatsApp</label>
-            <input type="text" class="form-control" value="<?=htmlspecialchars($_SESSION['reset_no_wa']??'')?>" disabled>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Kode OTP</label>
-            <input type="text" name="otp" maxlength="6" pattern="\d{6}" class="form-control" required>
-        </div>
+        <input type="hidden" name="action" value="set_new_password">
 
         <div class="mb-3">
             <label class="form-label">Password Baru</label>
@@ -246,7 +314,10 @@ body {
         <a href="login.php" style="color:#00AEEF;">Kembali ke Login</a>
     </p>
 
+
+
 <?php else: ?>
+
     <h3 class="text-center mb-3" style="color:#00AEEF;">Admin Es Kristal Warid</h3>
 
     <?php if ($error): ?><div class="alert alert-danger py-2"><?=$error?></div><?php endif; ?>
@@ -256,19 +327,20 @@ body {
 
         <div class="mb-3">
             <label class="form-label">Username</label>
-            <input type="text" name="username" class="form-control" required autofocus>
+            <input type="text" name="username" class="form-control" required autocomplete="off">
         </div>
 
         <div class="mb-3 position-relative">
             <label class="form-label">Password</label>
-            <input type="password" name="password" id="password" class="form-control" required>
+            <input type="password" name="password" id="password" class="form-control" required autocomplete="off">
         </div>
 
         <div class="d-grid"><button class="btn btn-primary">Login</button></div>
     </form>
 
     <div class="mt-3 text-center">
-        <small class="small-muted">Belum punya akun? 
+        <small class="small-muted">
+            Belum punya akun?  
             <a href="register.php" style="color:#00AEEF;">Daftar</a>
         </small>
     </div>

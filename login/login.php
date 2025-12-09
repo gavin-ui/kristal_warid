@@ -5,7 +5,7 @@ include '../koneksi.php';
 // === KONFIGURASI ===
 $OTP_TTL = 10 * 60;
 $OTP_MIN_INTERVAL = 60;
-$FONNTE_TOKEN = "NbMNneKGkPUn8bxjBFY6";
+$FONNTE_TOKEN = "LtRSv7gYViSznbJ8GnU1";
 // ====================
 
 $error = "";

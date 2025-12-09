@@ -1,5 +1,10 @@
 <?php include "partials/sidebar.php"; ?>
 <?php include "../koneksi.php"; ?>
+<link rel="stylesheet" href="tambah_karyawan.css">
+
+<!-- ====== WRAPPER YANG WAJIB ADA ====== -->
+<div class="main-content">
+    <div class="page-content">
 
 <?php
 // FOLDER AUTO
@@ -27,6 +32,9 @@ function buatQRCode($text, $file) {
 }
 
 $message = "";
+$showPreview = false;
+$previewData = [];
+
 
 // ========== PROSES SUBMIT ==========
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -41,8 +49,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     buatQRCode($nomor, $qrPath);
 
+    // --- UPLOAD FOTO ---
     $foto = null;
 
+    if (!empty($_FILES['foto_karyawan']['name'])) {
+
+        $ext = pathinfo($_FILES['foto_karyawan']['name'], PATHINFO_EXTENSION);
+        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+
+        if (!in_array(strtolower($ext), $allowed)) {
+            $message = "<div class='alert alert-danger'>Format foto tidak valid! Hanya JPG, PNG, WEBP.</div>";
+        } else {
+
+            $fotoName = $nomor . "." . $ext;
+            $fotoPath = $fotoDir . $fotoName;
+
+            if (move_uploaded_file($_FILES['foto_karyawan']['tmp_name'], $fotoPath)) {
+                $foto = $fotoName;
+            } else {
+                $message = "<div class='alert alert-danger'>Foto gagal diupload!</div>";
+            }
+        }
+    }
+
+    // INSERT DATABASE
     $stmt = $conn->prepare("INSERT INTO karyawan 
         (nomor_karyawan, nama_karyawan, alamat, divisi, barcode, foto_karyawan)
         VALUES (?, ?, ?, ?, ?, ?)");
@@ -50,9 +80,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($stmt->execute()) {
         $message = "<div class='alert alert-success'>
-            Karyawan berhasil ditambahkan! Nomor: <b>$nomor</b><br>
-            <a href='$qrPath' download>Download QR</a>
+            Karyawan berhasil ditambahkan! Nomor: <b>$nomor</b>
         </div>";
+
+        // Kirim data ke modal preview
+        $showPreview = true;
+        $previewData = [
+            "nama" => $nama,
+            "alamat" => $alamat,
+            "divisi" => $divisi,
+            "nomor" => $nomor,
+            "foto" => $foto,
+            "qr" => $qrFile
+        ];
+
     } else {
         $message = "<div class='alert alert-danger'>Gagal menambah karyawan</div>";
     }
@@ -61,139 +102,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<style>
-
-/* ==========================
-   BACKGROUND & TEXT COLOR
-========================== */
-body {
-    background: var(--body-bg) !important;
-    color: black !important;
-    transition: .3s ease;
-}
-
-/* Mode gelap → teks kuning */
-body.dark {
-    color: #ffcc00 !important;
-}
-
-/* Semua tulisan ikut berubah */
-body.dark h2,
-body.dark label,
-body.dark p,
-body.dark span,
-body.dark a,
-body.dark div,
-body.dark input,
-body.dark select,
-body.dark textarea {
-    color: #ffcc00 !important;
-}
-
-/* Placeholder ikut kuning */
-body.dark ::placeholder {
-    color: #ffd766 !important;
-}
-
-/* ==========================
-   DASHBOARD LAYOUT
-========================== */
-.dashboard {
-    margin-left: 260px;
-    padding: 40px 50px;
-    transition: .3s;
-}
-body.collapsed .dashboard { margin-left: 90px; }
-
-/* ==========================
-   FORM CARD
-========================== */
-.form-card {
-    background: var(--card-bg);
-    padding: 40px;
-    border-radius: 22px;
-    max-width: 750px;
-    margin: 40px auto;
-    box-shadow: 0 10px 30px rgba(0,0,0,.12);
-    transition: .3s ease;
-}
-
-/* ==========================
-   TITLE
-========================== */
-.form-card h2 {
-    font-weight: 700;
-    margin-bottom: 20px;
-    color: var(--title-color);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-body.dark .form-card h2 {
-    color: #ffcc00 !important;
-}
-
-.form-card h2::before {
-    content: "➕";
-    font-size: 26px;
-    color: var(--title-color);
-}
-
-body.dark .form-card h2::before {
-    color: #ffcc00 !important;
-}
-
-/* ==========================
-   INPUT, SELECT, TEXTAREA
-========================== */
-.form-group {
-    margin-bottom: 18px;
-}
-
-.form-control,
-.form-select {
-    border-radius: 12px !important;
-    padding: 12px !important;
-    width: 100%;
-    border: 1px solid #cfcfcf !important;
-    color: black;
-}
-
-body.dark .form-control,
-body.dark .form-select,
-body.dark textarea {
-    background: #0f1a33;
-    color: #ffcc00 !important;
-    border: 1px solid #4da3ff !important;
-}
-
-/* ==========================
-   BUTTON
-========================== */
-button {
-    background: #00AEEF;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-weight: bold;
-    transition: .25s;
-}
-button:hover {
-    background: #008FC7;
-}
-
-</style>
-
-<div class="dashboard">
-
+<div class="container-fluid">
+    
     <div class="form-card">
         <h2>Tambah Karyawan</h2>
 
         <?= $message ?>
 
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
 
             <div class="form-group">
                 <label>Nama Karyawan</label>
@@ -219,11 +135,112 @@ button:hover {
                 </select>
             </div>
 
+            <!-- INPUT FOTO -->
+            <div class="form-group">
+                <label>Foto Karyawan</label>
+
+                <div class="foto-wrapper">
+                    
+                    <label class="foto-upload">
+                        📷 Klik untuk memilih foto
+                        <input type="file" class="form-control" name="foto_karyawan" accept="image/*"onchange="previewImage(event)">
+
+                    </label>
+
+                    <img id="previewFoto">
+
+                </div>
+            </div>
+
             <button type="submit">Simpan</button>
 
         </form>
     </div>
 
 </div>
+
+
+<!-- ============================= MODAL PREVIEW ============================== -->
+
+<div id="modalPreview" class="modalCustom">
+
+    <div class="modalContentCustom">
+
+        <span class="closeModal" onclick="closeModal()">X</span>
+
+        <h2>Preview Kartu Nama</h2>
+
+        <div id="cardPreviewContainer">
+
+            <div class="foto">
+                <img src="../uploads/karyawan/<?= $previewData['foto'] ?? '' ?>" id="fotoCard">
+            </div>
+
+            <div class="detail">
+                <h3><?= $previewData['nama'] ?? '' ?></h3>
+                <p><b>Nomor:</b> <?= $previewData['nomor'] ?? '' ?></p>
+                <p><b>Alamat:</b> <?= $previewData['alamat'] ?? '' ?></p>
+                <p><b>Divisi:</b> <?= $previewData['divisi'] ?? '' ?></p>
+            </div>
+
+            <img class="qr-mini" src="../uploads/qrcode/<?= $previewData['qr'] ?? '' ?>" id="qrCard">
+        </div>
+
+        <button class="download-btn" onclick="downloadCard()">Download JPG</button>
+
+    </div>
+
+</div>
+
+<script>
+function previewFoto(event) {
+    const img = document.getElementById('previewFoto');
+    img.src = URL.createObjectURL(event.target.files[0]);
+    img.style.display = 'block';
+}
+
+// TAMPILKAN MODAL JIKA SUBMIT BERHASIL
+<?php if ($showPreview): ?>
+document.getElementById('modalPreview').style.display = 'block';
+<?php endif; ?>
+
+function closeModal() {
+    document.getElementById('modalPreview').style.display = 'none';
+}
+
+// DOWNLOAD KARTU NAMA DALAM FORMAT JPG
+function downloadCard() {
+    html2canvas(document.querySelector("#cardPreviewContainer"), {
+        scale: 3
+    }).then(canvas => {
+        let link = document.createElement("a");
+        link.download = "kartu_karyawan.jpg";
+        link.href = canvas.toDataURL("image/jpeg");
+        link.click();
+    });
+}
+</script>
+
+<script>
+function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function() {
+        const preview = document.getElementById('previewFoto');
+        preview.src = reader.result;
+
+        // Tambahkan kelas untuk animasi
+        preview.classList.add("show");
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+</script>
+
+
+<!-- CDN html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+        </div> <!-- dashboard -->
+    </div> <!-- page-content -->
+</div> <!-- main-content -->
 
 <?php include "partials/footer.php"; ?>

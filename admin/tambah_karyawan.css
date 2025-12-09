@@ -1,0 +1,470 @@
+/* ========================== FORM TAMBAH KARYAWAN ========================== */
+
+.form-card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 14px;
+    border: 1px solid #e2e2e2;
+    width: 500px;
+    margin: auto;
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+}
+
+.form-card h2 {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.form-control,
+.form-select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button[type="submit"] {
+    background: #007BFF;
+    color: white;
+    width: 100%;
+    padding: 12px;
+    font-size: 17px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+button[type="submit"]:hover {
+    background: #005FCC;
+}
+
+/* ========================== FOTO INPUT ========================== */
+
+.foto-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.foto-upload {
+    padding: 14px;
+    border: 1px solid #bfbfbf;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+    transition: .2s;
+    font-weight: 600;
+}
+
+.foto-upload:hover {
+    background: #f0f0f0;
+}
+
+#previewFoto {
+    width: 150px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    display: none;
+}
+
+
+/* ======================== KARTU IDENTITAS 16:9 =========================== */
+
+#cardPreviewContainer {
+    width: 600px;
+    height: 337px; /* 16:9 */
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    padding: 18px;
+    display: flex;
+    gap: 20px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+/* FOTO ORIENTASI 9:16 */
+#cardPreviewContainer .foto {
+    width: 36%;
+    height: 100%;
+    background: #f4f4f4;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+}
+
+#cardPreviewContainer .foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* DETAIL KARYAWAN */
+#cardPreviewContainer .detail {
+    width: 64%;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+#cardPreviewContainer .detail h3 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+#cardPreviewContainer .detail p {
+    margin: 3px 0;
+    font-size: 17px;
+    color: #333;
+}
+
+/* QR mini */
+.qr-mini {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    width: 90px;
+    height: 90px;
+    background: white;
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+
+/* ========================= MODAL ============================== */
+
+.modalCustom {
+    display: none;
+    position: fixed;
+    z-index: 999999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.65);
+    backdrop-filter: blur(2px);
+    padding-top: 60px;
+}
+
+.modalContentCustom {
+    background: #fff;
+    width: 740px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0px 6px 20px rgba(0,0,0,0.2);
+}
+
+.closeModal {
+    background: red;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    float: right;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.download-btn {
+    margin-top: 20px;
+    background: #00AEEF;
+    color: white;
+    padding: 13px 22px;
+    border-radius: 10px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+.download-btn:hover { background: #008FC7; }
+
+/* ========================== FOTO INPUT ========================== */
+.foto-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.foto-upload {
+    padding: 12px;
+    border: 1px solid #cfcfcf;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+    transition: .2s;
+}
+
+.foto-upload:hover {
+    background: #f3f3f3;
+}
+
+#previewFoto {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #dadada;
+    display: none;
+}
+
+/* ======================== KARTU NAMA =========================== */
+
+#cardPreviewContainer {
+    width: 600px;
+    aspect-ratio: 16/9;
+    background: white;
+    border-radius: 18px;
+    border: 1px solid #ddd;
+    display: flex;
+    overflow: hidden;
+    padding: 18px;
+    gap: 20px;
+    position: relative;
+    margin: auto;
+}
+
+#cardPreviewContainer .foto {
+    width: 35%;
+    height: 100%;
+    background: #f7f7f7;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#cardPreviewContainer .foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#cardPreviewContainer .detail {
+    width: 65%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 10px;
+}
+
+#cardPreviewContainer .detail h3 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+#cardPreviewContainer .detail p {
+    margin: 4px 0;
+    font-size: 16px;
+}
+
+.qr-mini {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    width: 90px;
+    height: 90px;
+}
+
+/* ========================= MODAL ============================== */
+
+.modalCustom {
+    display: none;
+    position: fixed;
+    z-index: 999999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.6);
+    padding-top: 60px;
+}
+
+.modalContentCustom {
+    background: #fff;
+    width: 700px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 14px;
+}
+
+.closeModal {
+    background: red;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    float: right;
+    cursor: pointer;
+}
+
+.download-btn {
+    margin-top: 20px;
+    background: #00AEEF;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+.download-btn:hover { background: #008FC7; }
+
+body.dark .form-card {
+    background: #0f1a33 !important;
+    border: 1px solid #4da3ff !important;
+    color: #ffcc00 !important;
+}
+
+body.dark .form-card label,
+body.dark .form-card h2,
+body.dark .form-card p {
+    color: #ffcc00 !important;
+}
+
+/* Background utama ikut dark mode */
+body.dark .main-content,
+body.dark .page-content,
+body.dark .container-fluid {
+    background-color: #0a1226 !important;
+}
+
+/* Hilangkan background putih yang mengganggu */
+body.dark .page-content {
+    background: transparent !important;
+}
+
+/* ================= FIX BACKGROUND PUTIH NGEYEL =============== */
+
+body.dark,
+body.dark .wrapper,
+body.dark .layout-wrapper,
+body.dark .layout-page,
+body.dark .content-wrapper,
+body.dark .content,
+body.dark .app-content {
+    background-color: #0a1226 !important;
+}
+
+.page-content,
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 120px); /* biar ga nabrak footer */
+    flex-direction: column;
+}
+
+/* ======================= DARK MODE FORM ========================= */
+
+body.dark .form-card {
+    background: #0f1a33 !important;
+    border: 1px solid #4da3ff !important;
+    color: #ffcc00 !important;
+}
+
+/* Text: label, judul, tulisan */
+body.dark .form-card label,
+body.dark .form-card h2,
+body.dark .form-card p {
+    color: #ffcc00 !important;
+}
+
+/* Input & textarea */
+body.dark .form-card .form-control {
+    background: #0d162b !important;
+    color: white !important;
+    border: 1px solid #4da3ff !important;
+}
+
+body.dark .form-card .form-control::placeholder {
+    color: #a7b4d8 !important;
+}
+
+/* Select */
+body.dark .form-card .form-select {
+    background: #0d162b !important;
+    color: white !important;
+    border: 1px solid #4da3ff !important;
+}
+
+/* Foto upload box */
+body.dark .foto-upload {
+    background: #0d162b !important;
+    border: 1px solid #4da3ff !important;
+    color: #ffcc00 !important;
+}
+
+body.dark .foto-upload:hover {
+    background: #132040 !important;
+}
+
+/* Preview foto border */
+body.dark #previewFoto {
+    border: 1px solid #4da3ff !important;
+}
+
+/* Tombol */
+body.dark button[type="submit"] {
+    background: #1e5fff !important;
+    color: white !important;
+}
+
+body.dark button[type="submit"]:hover {
+    background: #174bcc !important;
+}
+
+/* AREA UPLOAD DEFAULT */
+.foto-upload {
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+/* HOVER EFEK */
+.foto-upload:hover {
+    transform: scale(1.02);
+    opacity: 1;
+    box-shadow: 0 0 12px rgba(77, 163, 255, 0.5);
+}
+
+/* PREVIEW FOTO ANIMASI */
+#previewFoto {
+    display: none;
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-top: 10px;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.4s ease;
+}
+
+/* Saat foto muncul */
+#previewFoto.show {
+    display: block;
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* DARK MODE UPLOAD */
+body.dark .foto-upload {
+    background: #0d162b !important;
+    border: 1px solid #4da3ff !important;
+}

@@ -141,7 +141,7 @@
         </li>
 
         <li class="nav-item ms-lg-3">
-            <a class="btn btn-warning px-3 rounded-pill shadow-sm" href="../login/login.php">Login Admin</a>
+            <a class="btn btn-warning px-3 rounded-pill shadow-sm" href="../login/login.php">Login</a>
         </li>
 
       </ul>

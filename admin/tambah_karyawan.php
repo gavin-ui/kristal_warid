@@ -171,20 +171,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2>Preview Kartu Nama</h2>
 
         <div id="cardPreviewContainer">
+            <div id="karyawanCard" class="kartu">
 
-            <div class="foto">
-                <img src="../uploads/karyawan/<?= $previewData['foto'] ?? '' ?>" id="fotoCard">
+                <div class="kartu-header">
+                    KARTU KARYAWAN
+                </div>
+
+                <div class="kartu-body">
+
+                    <div class="foto-container">
+                        <img src="../uploads/karyawan/<?= $previewData['foto'] ?? '' ?>" id="fotoCard">
+                    </div>
+
+                    <div class="info-container">
+                        <h3 class="nama"><?= $previewData['nama'] ?? '' ?></h3>
+                        <p><b>Nomor</b> <?= $previewData['nomor'] ?? '' ?></p>
+                        <p><b>Divisi</b> <?= $previewData['divisi'] ?? '' ?></p>
+                    </div>
+
+                    <div class="qr-container">
+                        <img src="../uploads/qrcode/<?= $previewData['qr'] ?? '' ?>" id="qrCard">
+                    </div>
+
+                </div>
+
             </div>
-
-            <div class="detail">
-                <h3><?= $previewData['nama'] ?? '' ?></h3>
-                <p><b>Nomor:</b> <?= $previewData['nomor'] ?? '' ?></p>
-                <p><b>Alamat:</b> <?= $previewData['alamat'] ?? '' ?></p>
-                <p><b>Divisi:</b> <?= $previewData['divisi'] ?? '' ?></p>
-            </div>
-
-            <img class="qr-mini" src="../uploads/qrcode/<?= $previewData['qr'] ?? '' ?>" id="qrCard">
         </div>
+
 
         <button class="download-btn" onclick="downloadCard()">Download JPG</button>
 
@@ -197,6 +210,18 @@ function previewFoto(event) {
     const img = document.getElementById('previewFoto');
     img.src = URL.createObjectURL(event.target.files[0]);
     img.style.display = 'block';
+}
+
+function downloadCard() {
+    html2canvas(document.getElementById("karyawanCard"), {
+        backgroundColor: null, 
+        scale: 3
+    }).then(canvas => {
+        let link = document.createElement("a");
+        link.download = "kartu_karyawan.jpg";
+        link.href = canvas.toDataURL("image/jpeg", 1.0);
+        link.click();
+    });
 }
 
 // TAMPILKAN MODAL JIKA SUBMIT BERHASIL

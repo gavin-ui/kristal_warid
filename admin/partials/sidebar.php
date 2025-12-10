@@ -74,7 +74,7 @@ body.dark {
 .toggle-btn:hover { transform: scale(1.05); }
 
 /* =============================
-   DARK MODE SWITCH — FIXED
+   DARK MODE SWITCH
 ============================= */
 .dark-mode-box {
     margin-bottom: 25px;
@@ -111,7 +111,7 @@ body.dark {
     box-shadow: 0px 4px 10px rgba(0,0,0,0.45);
 }
 
-/* ICON DI TENGAH BALL */
+/* ICON IN BALL */
 .switch-ball .sun,
 .switch-ball .moon {
     position: absolute;
@@ -125,7 +125,6 @@ body.dark {
 .dark-toggle.active .switch-ball .sun { opacity: 0; }
 .dark-toggle.active .switch-ball .moon { opacity: 1; }
 
-/* BALL bergerak */
 .dark-toggle.active .switch-ball {
     transform: translateX(38px);
 }
@@ -157,6 +156,7 @@ body.dark {
     transition: .25s;
     font-size: 16px;
     margin-top: 8px;
+    color: var(--text-color);
 }
 
 .menu-item:hover {
@@ -167,7 +167,6 @@ body.dark {
 .sidebar.collapsed .menu-text { display: none; }
 
 </style>
-
 
 <!-- =============================
      SIDEBAR CONTENT
@@ -197,6 +196,17 @@ body.dark {
     <i>👤</i> <span class="menu-text">Tambah Karyawan</span>
 </div>
 
+<div class="menu-item" onclick="location.href='../admin/data_karyawan.php'">
+    <i>📋</i> <span class="menu-text">Data Karyawan</span>
+</div>
+
+<!-- =============================
+     MENU SCAN ABSEN *BARU*
+============================= -->
+<div class="menu-item" onclick="location.href='../admin/absen.php'">
+    <i>📡</i> <span class="menu-text">Scan Absen</span>
+</div>
+
 <div class="menu-item" onclick="location.href='../admin/produksi_mesin_input.php'">
     <i>⭐</i> <span class="menu-text">Produksi Mesin A & B</span>
 </div>
@@ -207,22 +217,17 @@ body.dark {
 
 </div>
 
-
 <script>
-// =============================
 // SIDEBAR COLLAPSE
-// =============================
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
     document.body.classList.toggle("collapsed");
 }
 
-// =============================
-// DARK MODE SYSTEM
-// =============================
+// DARK MODE
 const darkSwitch = document.getElementById("darkSwitch");
 
-if(localStorage.getItem("theme") === "dark"){
+if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
     darkSwitch.classList.add("active");
 }
@@ -231,10 +236,8 @@ darkSwitch.addEventListener("click", () => {
     darkSwitch.classList.toggle("active");
     document.body.classList.toggle("dark");
 
-    if(document.body.classList.contains("dark")){
-        localStorage.setItem("theme", "dark");
-    } else {
-        localStorage.setItem("theme", "light");
-    }
+    localStorage.setItem("theme", 
+        document.body.classList.contains("dark") ? "dark" : "light"
+    );
 });
 </script>

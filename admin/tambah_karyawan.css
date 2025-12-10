@@ -468,3 +468,91 @@ body.dark .foto-upload {
     background: #0d162b !important;
     border: 1px solid #4da3ff !important;
 }
+
+#cardPreviewContainer {
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+    background: transparent;
+}
+
+/* Ukuran kartu final */
+.kartu {
+    width: 320px;
+    height: 200px;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #1f4e8c;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.kartu-header {
+    background: #1f4e8c;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 6px;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+/* Body dalam grid */
+.kartu-body {
+    display: grid;
+    grid-template-columns: 95px auto 75px;
+    gap: 8px;
+    padding: 10px;
+}
+
+/* Foto */
+.foto-container {
+    width: 95px;
+    height: 125px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #ddd;
+}
+
+#fotoCard {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Tulisan */
+.info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.info-container .nama {
+    margin: 0;
+    font-size: 16px;
+    color: #1f4e8c;
+    font-weight: bold;
+}
+
+.info-container p {
+    margin: 2px 0;
+    font-size: 12px;
+}
+
+/* QR */
+.qr-container {
+    width: 75px;
+    height: 75px;
+    padding: 4px;
+    background: #fff;
+    border-radius: 8px;
+}
+
+#qrCard {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+

@@ -2,8 +2,7 @@
 
 <style>
 html, body {
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
 }
 
 /* =============================
@@ -33,7 +32,7 @@ body.dark {
 }
 
 /* =============================
-   SIDEBAR STYLE
+   SIDEBAR
 ============================= */
 .sidebar {
     width: 260px;
@@ -44,12 +43,21 @@ body.dark {
     left: 0;
     padding: 20px;
     transition: .3s ease;
-    overflow: hidden;
     color: var(--text-color);
     box-shadow: 0 0 18px rgba(0,0,0,0.25);
     display: flex;
     flex-direction: column;
     z-index: 999;
+    overflow-y: auto;            /* <-- SCROLL BAR */
+    overflow-x: hidden;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.4);
+    border-radius: 6px;
 }
 
 .sidebar.collapsed {
@@ -77,7 +85,7 @@ body.dark {
    DARK MODE SWITCH
 ============================= */
 .dark-mode-box {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     display: flex;
     justify-content: center;
 }
@@ -93,15 +101,12 @@ body.dark {
     overflow: hidden;
 }
 
-/* BALL */
 .switch-ball {
-    width: 28px;
-    height: 28px;
+    width: 28px; height: 28px;
     background: white;
     border-radius: 50%;
     position: absolute;
-    top: 2px;
-    left: 2px;
+    top: 2px; left: 2px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -111,23 +116,12 @@ body.dark {
     box-shadow: 0px 4px 10px rgba(0,0,0,0.45);
 }
 
-/* ICON IN BALL */
-.switch-ball .sun,
-.switch-ball .moon {
-    position: absolute;
-    font-size: 16px;
-    transition: .25s ease;
-}
-
 .switch-ball .sun { opacity: 1; }
 .switch-ball .moon { opacity: 0; }
 
-.dark-toggle.active .switch-ball .sun { opacity: 0; }
-.dark-toggle.active .switch-ball .moon { opacity: 1; }
-
-.dark-toggle.active .switch-ball {
-    transform: translateX(38px);
-}
+.dark-toggle.active .sun { opacity: 0; }
+.dark-toggle.active .moon { opacity: 1; }
+.dark-toggle.active .switch-ball { transform: translateX(38px); }
 
 /* =============================
    LOGO
@@ -139,8 +133,7 @@ body.dark {
     margin-bottom: 10px;
     transition: .25s;
 }
-
-.sidebar.collapsed .logo img { width: 50px; }
+.sidebar.collapsed .logo img { width: 48px; }
 .sidebar.collapsed .logo h4 { display: none; }
 
 /* =============================
@@ -156,7 +149,6 @@ body.dark {
     transition: .25s;
     font-size: 16px;
     margin-top: 8px;
-    color: var(--text-color);
 }
 
 .menu-item:hover {
@@ -166,7 +158,24 @@ body.dark {
 
 .sidebar.collapsed .menu-text { display: none; }
 
+/* =============================
+   SUBMENU
+============================= */
+.submenu {
+    margin-left: 18px;
+    display: none;
+    transition: .3s ease;
+}
+
+.submenu.show {
+    display: block;
+}
+
+.sidebar.collapsed .submenu { display: none !important; }
+
 </style>
+
+
 
 <!-- =============================
      SIDEBAR CONTENT
@@ -188,6 +197,7 @@ body.dark {
     <h4>Admin</h4>
 </div>
 
+<!-- Menu Utama -->
 <div class="menu-item" onclick="location.href='../admin/index.php'">
     <i>🏠</i> <span class="menu-text">Dashboard</span>
 </div>
@@ -211,23 +221,53 @@ body.dark {
     <i>⭐</i> <span class="menu-text">Produksi Mesin A & B</span>
 </div>
 
+<div class="menu-item" onclick="location.href='../admin/crm.php'">
+    <i>🚀</i> <span class="menu-text">CRM</span>
+</div>
+
+
+<!-- =============================
+     MENU UTAMA — PENGGUNAAN PLASTIK
+============================= -->
+<div class="menu-item" onclick="togglePlastikMenu()">
+    <i>🧊</i> 
+    <span class="menu-text">Penggunaan Plastik</span>
+</div>
+
+<!-- SUBMENU -->
+<div id="plastikSubMenu" class="submenu">
+    <div class="menu-item" onclick="location.href='../admin/penggunaan_plastik_data_awal.php'"><i>📥</i> <span class="menu-text">Data Awal</span></div>
+    <div class="menu-item" onclick="location.href='../admin/penggunaan_plastik_produksi.php'"><i>🏭</i> <span class="menu-text">Produksi</span></div>
+    <div class="menu-item" onclick="location.href='../admin/penggunaan_plastik_retur.php'"><i>↩️</i> <span class="menu-text">Retur Armada</span></div>
+    <div class="menu-item" onclick="location.href='../admin/penggunaan_plastik_distribusi.php'"><i>🚚</i> <span class="menu-text">Distribusi Barkel</span></div>
+    <div class="menu-item" onclick="location.href='../admin/penggunaan_plastik_stok.php'"><i>📦</i> <span class="menu-text">Stok (Export)</span></div>
+    <div class="menu-item" onclick="location.href='../admin/penggunaan_plastik.php'"><i>👌</i> <span class="menu-text">Edit</span></div>
+</div>
+
+
 <div class="menu-item" onclick="location.href='../admin/logout.php'">
     <i>🚪</i> <span class="menu-text">Logout</span>
 </div>
 
 </div>
 
+
+
 <script>
+// =============================
 // SIDEBAR COLLAPSE
+// =============================
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
     document.body.classList.toggle("collapsed");
 }
 
-// DARK MODE
-const darkSwitch = document.getElementById("darkSwitch");
 
-if (localStorage.getItem("theme") === "dark") {
+// =============================
+// DARK MODE SYSTEM
+// =============================
+const darkSwitch = document.getElementById("darkSwitch");
+if(localStorage.getItem("theme") === "dark"){
     document.body.classList.add("dark");
     darkSwitch.classList.add("active");
 }
@@ -236,8 +276,18 @@ darkSwitch.addEventListener("click", () => {
     darkSwitch.classList.toggle("active");
     document.body.classList.toggle("dark");
 
-    localStorage.setItem("theme", 
+    localStorage.setItem("theme",
         document.body.classList.contains("dark") ? "dark" : "light"
     );
 });
+
+
+// =============================
+// SUBMENU PENGGUNAAN PLASTIK
+// =============================
+function togglePlastikMenu() {
+    const sub = document.getElementById("plastikSubMenu");
+    sub.classList.toggle("show");
+}
+
 </script>

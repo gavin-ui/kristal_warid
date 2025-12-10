@@ -88,7 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              selfie_masuk,status_kehadiran,alasan,latitude,longitude,waktu_masuk) 
             VALUES (?,?,?,?,?,?,?,?,?,NOW())");
 
-        $q->bind_param("isssssssss",
+        /* FIX: 9 parameter */
+        $q->bind_param("issssssss",
             $id,$nama,$nomor,$divisi,$fileName,$status,$alasan,$lat,$lon
         );
         $q->execute();
@@ -228,11 +229,17 @@ button{
 <!-- SCAN QR AREA -->
 <div id="reader"></div>
 
-<div id="afterScan" style="display:none;">
+<button id="switchCam" style="margin-top:10px;background:#333;color:white;padding:8px;border-radius:6px;">
+    Ganti Kamera
+</button>
 
-    <p><b>Nama:</b> <span id="det_nama"></span><br>
+<div id="afterScan" style="display:none;margin-top:20px;">
+
+    <p>
+       <b>Nama:</b> <span id="det_nama"></span><br>
        <b>Nomor:</b> <span id="det_nomor"></span><br>
-       <b>Divisi:</b> <span id="det_divisi"></span></p>
+       <b>Divisi:</b> <span id="det_divisi"></span>
+    </p>
 
     <form method="POST" id="absenForm">
 
@@ -283,55 +290,79 @@ button{
 
 <script>
 /* ---------------------------------------------------------
-   SCAN QR MANUAL (PALING STABIL)
+   QR CAMERA SWITCH
 --------------------------------------------------------- */
+let currentFacing = "environment";
 let qr = new Html5Qrcode("reader");
 
-qr.start(
-    { facingMode:"environment" },
-    { fps:10, qrbox:250 },
-    function(decoded){
-        qr.stop();
+function startQR(){
+    qr.start(
+        { facingMode: currentFacing },
+        { fps:10, qrbox:250 },
+        onScanSuccess
+    );
+}
 
-        let lines = decoded.split("\n");
-        document.getElementById("nama").value  = lines[0].replace("Nama: ","");
-        document.getElementById("id").value    = lines[1].replace("ID: ","");
-        document.getElementById("divisi").value= lines[2].replace("Divisi: ","");
-        document.getElementById("nomor").value = lines[3].replace("Nomor: ","");
+document.getElementById("switchCam").onclick = () => {
+    currentFacing = (currentFacing === "user") ? "environment" : "user";
+    qr.stop().then(startQR);
+};
 
-        document.getElementById("det_nama").innerText = nama.value;
-        document.getElementById("det_nomor").innerText = nomor.value;
-        document.getElementById("det_divisi").innerText = divisi.value;
-
-        document.getElementById("afterScan").style.display="block";
-
-        startCamera();
-        getLocation();
-    }
-);
+startQR();
 
 /* ---------------------------------------------------------
-   CAMERA SELFIE (AUTO CAPTURE)
+   SCAN SUCCESS (NEW PARSER)
+--------------------------------------------------------- */
+function onScanSuccess(decoded){
+
+    qr.stop();
+
+    let lines = decoded.split("\n");
+    let data = {};
+
+    lines.forEach(v=>{
+        let p = v.split(": ");
+        data[p[0]] = p[1];
+    });
+
+    document.getElementById("nama").value  = data["Nama"];
+    document.getElementById("id").value    = data["ID"];
+    document.getElementById("divisi").value= data["Divisi"];
+    document.getElementById("nomor").value = data["Nomor"] ?? "";
+
+    document.getElementById("det_nama").innerText  = data["Nama"];
+    document.getElementById("det_nomor").innerText = data["Nomor"] ?? "";
+    document.getElementById("det_divisi").innerText= data["Divisi"];
+
+    document.getElementById("afterScan").style.display="block";
+
+    startCamera();
+    getLocation();
+}
+
+/* ---------------------------------------------------------
+   CAMERA SELFIE FRONT
 --------------------------------------------------------- */
 let video = document.getElementById("camera");
 let canvas = document.getElementById("canvas");
 let preview = document.getElementById("previewSelfie");
-let interval;
 
 function startCamera() {
-    navigator.mediaDevices.getUserMedia({video:true})
+    navigator.mediaDevices.getUserMedia({
+        video:{facingMode:"user"}
+    })
     .then(s => {
         video.srcObject = s;
-        interval = setInterval(()=>{
+        setInterval(()=>{
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             let c = canvas.getContext("2d");
             c.drawImage(video,0,0);
 
-            let data = canvas.toDataURL("image/jpeg",0.85);
+            let data = canvas.toDataURL("image/jpeg",0.9);
             preview.src = data;
             document.getElementById("selfie_data").value = data;
-        }, 1000);
+        }, 900);
     });
 }
 
@@ -348,23 +379,22 @@ function getLocation(){
 /* ---------------------------------------------------------
    ALASAN IZIN
 --------------------------------------------------------- */
-document.getElementById("status").onchange = ()=>{
-    document.getElementById("alasanBox").style.display =
-        (status.value == "IZIN") ? "block" : "none";
+status.onchange = ()=>{
+    alasanBox.style.display = (status.value==="IZIN")?"block":"none";
 };
 
 /* ---------------------------------------------------------
    SUBMIT ABSEN
 --------------------------------------------------------- */
-document.getElementById("kirimBtn").onclick = ()=>{
+kirimBtn.onclick = ()=>{
     if(status.value=="IZIN"){
         let al = document.querySelector("textarea").value.trim();
-        if(!al){ alert("Alasan wajib diisi jika Izin"); return; }
+        if(!al){ alert("Alasan wajib diisi jika izin"); return; }
     }
 
     if(!confirm("Kirim absensi?")) return;
 
-    document.getElementById("absenForm").submit();
+    absenForm.submit();
 };
 </script>
 

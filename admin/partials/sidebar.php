@@ -185,10 +185,7 @@ body.dark {
 
 <div class="dark-mode-box">
     <div id="darkSwitch" class="dark-toggle">
-        <div class="switch-ball">
-            <span class="sun">☀️</span>
-            <span class="moon">🌙</span>
-        </div>
+        <div class="switch-ball"></div>
     </div>
 </div>
 

@@ -45,7 +45,7 @@ if (isset($_GET["delete"])) {
     header("Location: crm.php?success=delete");
     exit;
 }
-
+include "partials/header.php";
 include "partials/sidebar.php";
 ?>
 

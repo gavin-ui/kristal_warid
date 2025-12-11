@@ -29,6 +29,7 @@ if(isset($_POST["submit"])){
 }
 
 ?>
+<?php include "partials/header.php"; ?>
 <?php include "partials/sidebar.php"; ?>
 
 <style>

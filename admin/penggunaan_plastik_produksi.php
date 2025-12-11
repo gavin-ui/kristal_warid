@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_produksi'])) {
 
 /* --- setelah semua proses, include sidebar dan tampilkan form --- */
 ?>
-
+<?php include "partials/header.php"; ?>
 <?php include "partials/sidebar.php"; ?>
 
 <style>

@@ -1,4 +1,5 @@
 <?php
+include "partials/header.php";
 include "partials/sidebar.php";
 include "../koneksi.php";
 

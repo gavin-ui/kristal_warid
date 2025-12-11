@@ -217,7 +217,7 @@ button{
 </style>
 </head>
 <body>
-
+<?php include "partials/header.php"; ?>
 <?php include "partials/sidebar.php"; ?>
 
 <div class="page-wrapper">

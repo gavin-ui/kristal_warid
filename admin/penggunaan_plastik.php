@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_full_edit'])) 
 /* ambil data untuk dropdown */
 $rows = mysqli_query($conn, "SELECT id_plastik, tanggal_input FROM penggunaan_plastik ORDER BY id_plastik DESC LIMIT 300");
 ?>
-
+<?php include "partials/header.php"; ?>
 <?php include "partials/sidebar.php"; ?>
 
 <style>

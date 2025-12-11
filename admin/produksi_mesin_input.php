@@ -33,7 +33,7 @@ if(isset($_GET["delete"])){
     header("Location: produksi_mesin_input.php?success=delete");
     exit;
 }
-
+include "partials/header.php";
 include "partials/sidebar.php";
 ?>
 

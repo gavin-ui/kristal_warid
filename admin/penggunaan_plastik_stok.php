@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_stok'])) {
     exit;
 }
 ?>
-
+<?php include "partials/header.php"; ?>
 <?php include "partials/sidebar.php"; ?>
 
 <style>

@@ -9,17 +9,18 @@ if (isset($_POST['update_karyawan'])) {
 
     $id     = $_POST['id_karyawan'];
     $nama   = $_POST['nama_karyawan'];
+    $nomor  = $_POST['nomor_karyawan']; // FIX DITAMBAHKAN
     $alamat = $_POST['alamat'];
     $divisi = $_POST['divisi'];
 
-    // buat QR baru
-    $qrText = "Nama: $nama\nID: $id\nDivisi: $divisi\nAlamat: $alamat";
+    /* ===== QR BARU WAJIB ADA NOMOR ===== */
+    $qrText = "Nama: $nama\nNomor: $nomor\nID: $id\nDivisi: $divisi";
     $qrFile = "QR_" . $id . "_" . time() . ".png";
     $qrPath = __DIR__ . "/../uploads/qrcode/" . $qrFile;
 
     QRcode::png($qrText, $qrPath, QR_ECLEVEL_H, 4, 2);
 
-    // FOTO
+    /* ===== FOTO ===== */
     $fotoName = $_POST['old_foto'];
 
     if (!empty($_FILES['foto_karyawan']['name'])) {
@@ -33,12 +34,14 @@ if (isset($_POST['update_karyawan'])) {
         }
     }
 
-    // UPDATE DATABASE
+    /* ===== UPDATE DATABASE ===== */
     $stmt = $conn->prepare("UPDATE karyawan SET 
-        nama_karyawan=?, alamat=?, divisi=?, foto_karyawan=?, barcode=?, qrcode_file=? 
+        nama_karyawan=?, nomor_karyawan=?, alamat=?, divisi=?, foto_karyawan=?, barcode=?, qrcode_file=? 
         WHERE id_karyawan=?");
 
-    $stmt->bind_param("ssssssi", $nama, $alamat, $divisi, $fotoName, $qrFile, $qrFile, $id);
+    $stmt->bind_param("sssssssi", 
+        $nama, $nomor, $alamat, $divisi, $fotoName, $qrFile, $qrFile, $id
+    );
     $stmt->execute();
     $stmt->close();
 
@@ -189,7 +192,6 @@ td.aksi {
     z-index: 1000;
 }
 
-/* Isian modal */
 .modal-content {
     width: 380px;
     background: var(--card-bg);
@@ -203,7 +205,6 @@ td.aksi {
     text-align:center;
 }
 
-/* detail img */
 .detail-foto {
     width:110px;
     height:135px;
@@ -271,6 +272,7 @@ while ($d = mysqli_fetch_assoc($data)) {
             onclick="openEditModal(
                 '<?= $d['id_karyawan'] ?>',
                 '<?= addslashes($d['nama_karyawan']) ?>',
+                '<?= addslashes($d['nomor_karyawan']) ?>',
                 '<?= addslashes($d['alamat']) ?>',
                 '<?= addslashes($d['divisi']) ?>',
                 '<?= $d['foto_karyawan'] ?>'
@@ -288,7 +290,6 @@ while ($d = mysqli_fetch_assoc($data)) {
 
 <?php include "partials/footer.php"; ?>
 
-<!-- SweetAlert -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
@@ -311,10 +312,11 @@ function confirmDelete(id) {
 /* ===================
    MODAL EDIT
 =================== */
-function openEditModal(id, nama, alamat, divisi, foto) {
+function openEditModal(id, nama, nomor, alamat, divisi, foto) {
     document.getElementById("modalEdit").style.display = "flex";
     document.getElementById("edit_id").value = id;
     document.getElementById("edit_nama").value = nama;
+    document.getElementById("edit_nomor").value = nomor;   // FIX
     document.getElementById("edit_alamat").value = alamat;
     document.getElementById("edit_divisi").value = divisi;
     document.getElementById("old_foto").value = foto;
@@ -361,6 +363,9 @@ function closeDetail() {
 
             <label>Nama</label>
             <input type="text" name="nama_karyawan" id="edit_nama" required>
+
+            <label>Nomor Karyawan</label> <!-- FIX -->
+            <input type="text" name="nomor_karyawan" id="edit_nomor" required>
 
             <label>Alamat</label>
             <textarea name="alamat" id="edit_alamat" required></textarea>

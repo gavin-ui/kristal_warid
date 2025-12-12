@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lon      = $_POST['longitude'];
     $selfie64 = $_POST['selfie_data'];
 
-    if (!$id || !$selfie64) {
+    if (!$id) {
         echo "<script>alert('Data tidak lengkap'); location.href='absen.php';</script>";
         exit;
     }
@@ -66,29 +66,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $db = $res->fetch_assoc();
 
-    if ($db['nomor_karyawan'] !== $nomor) {
+    if (trim($db['nomor_karyawan']) !== trim($nomor)) {
         echo "<script>alert('Nomor karyawan tidak cocok'); location.href='absen.php';</script>";
+        exit;
+    }
+
+    /* Cek apakah sudah izin hari ini — tidak boleh absen lagi */
+$today = date("Y-m-d");
+$cekIzin = $conn->prepare("SELECT id_absen FROM absensi 
+    WHERE id_karyawan=? AND status_kehadiran='IZIN' AND DATE(waktu_masuk)=?");
+$cekIzin->bind_param("is", $id, $today);
+$cekIzin->execute();
+$resIzin = $cekIzin->get_result();
+
+if ($resIzin->num_rows > 0) {
+    echo "<script>alert('Anda sudah mengajukan IZIN hari ini dan tidak dapat absen lagi.'); location.href='absen.php';</script>";
+    exit;
+}
+
+    /* ======================================================================
+       IZIN (langsung insert tanpa selfie/pulang)
+    ====================================================================== */
+    if ($status === "IZIN") {
+
+        if (!$alasan || trim($alasan) == "") {
+            echo "<script>alert('Alasan wajib diisi'); location.href='absen.php';</script>";
+            exit;
+        }
+
+        $q = $conn->prepare("INSERT INTO absensi 
+            (id_karyawan, nama_karyawan, nomor_karyawan, divisi, status_kehadiran, alasan, waktu_masuk)
+            VALUES (?,?,?,?,?,?,NOW())");
+
+        $q->bind_param("isssss",
+            $id, $nama, $nomor, $divisi, $status, $alasan
+        );
+        $q->execute();
+
+        echo "<script>alert('Izin berhasil dicatat!'); location.href='absen.php';</script>";
+        exit;
+    }
+
+    /* ====================================================================== */
+
+    /* Selfie wajib untuk HADIR */
+    if (!$selfie64) {
+        echo "<script>alert('Selfie tidak terdeteksi'); location.href='absen.php';</script>";
         exit;
     }
 
     /* SIMPAN SELFIE */
     $selfieRaw = explode(",", $selfie64)[1];
     $binary = base64_decode($selfieRaw);
-
     $fileName = "selfie_" . $id . "_" . time() . ".jpg";
     file_put_contents("../uploads/selfie/" . $fileName, $binary);
 
+    /* ABSEN HADIR MASUK / PULANG */
     $mode = cekMode($conn, $id);
     $today = date("Y-m-d");
 
-    /* ABSEN MASUK */
     if ($mode == "MASUK" || $mode == "RESET") {
         $q = $conn->prepare("INSERT INTO absensi 
             (id_karyawan,nama_karyawan,nomor_karyawan,divisi,
              selfie_masuk,status_kehadiran,alasan,latitude,longitude,waktu_masuk) 
             VALUES (?,?,?,?,?,?,?,?,?,NOW())");
 
-        /* FIX: 9 parameter */
         $q->bind_param("issssssss",
             $id,$nama,$nomor,$divisi,$fileName,$status,$alasan,$lat,$lon
         );
@@ -98,7 +140,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    /* ABSEN PULANG */
     if ($mode == "PULANG") {
 
         $x = $conn->prepare("SELECT id_absen FROM absensi WHERE id_karyawan=? AND DATE(waktu_masuk)=? LIMIT 1");
@@ -117,12 +158,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    /* DONE */
     echo "<script>alert('Anda sudah absen lengkap hari ini'); location.href='absen.php';</script>";
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -130,7 +169,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <title>Absen Karyawan</title>
 
 <style>
-body {
+/* (SEMUA STYLE TIDAK DIUBAH) */
+body{
     margin:0;
     font-family:Inter,Arial;
     background:var(--body-bg);
@@ -188,10 +228,7 @@ video{
     object-fit:cover;
 }
 
-label{
-    font-weight:600;
-    margin-top:8px;
-}
+label{ font-weight:600; margin-top:8px; }
 
 select, textarea{
     width:100%;
@@ -217,6 +254,7 @@ button{
 </style>
 </head>
 <body>
+
 <?php include "partials/header.php"; ?>
 <?php include "partials/sidebar.php"; ?>
 
@@ -226,19 +264,19 @@ button{
 
 <h2>Scan QR Untuk Absen</h2>
 
-<!-- SCAN QR AREA -->
 <div id="reader"></div>
 
-<button id="switchCam" style="margin-top:10px;background:#333;color:white;padding:8px;border-radius:6px;">
+<button id="switchCam"
+    style="margin-top:10px;background:#333;color:white;padding:8px;border-radius:6px;">
     Ganti Kamera
 </button>
 
 <div id="afterScan" style="display:none;margin-top:20px;">
 
     <p>
-       <b>Nama:</b> <span id="det_nama"></span><br>
-       <b>Nomor:</b> <span id="det_nomor"></span><br>
-       <b>Divisi:</b> <span id="det_divisi"></span>
+        <b>Nama:</b> <span id="det_nama"></span><br>
+        <b>Nomor:</b> <span id="det_nomor"></span><br>
+        <b>Divisi:</b> <span id="det_divisi"></span>
     </p>
 
     <form method="POST" id="absenForm">
@@ -253,11 +291,13 @@ button{
             <div>
                 <label>Preview</label>
                 <img id="previewSelfie">
+
                 <label>Status</label>
                 <select name="status_kehadiran" id="status">
                     <option value="HADIR">Hadir</option>
                     <option value="IZIN">Izin</option>
                 </select>
+
                 <div id="alasanBox" style="display:none;">
                     <label>Alasan</label>
                     <textarea name="alasan"></textarea>
@@ -281,113 +321,173 @@ button{
 </div>
 
 </div>
-
 </div>
 
 <?php include "partials/footer.php"; ?>
-
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
-/* ---------------------------------------------------------
-   QR CAMERA SWITCH
---------------------------------------------------------- */
-let currentFacing = "environment";
-let qr = new Html5Qrcode("reader");
+/* =========================================================
+   QR CAMERA - AUTO SELECT
+========================================================= */
 
-function startQR(){
-    qr.start(
-        { facingMode: currentFacing },
-        { fps:10, qrbox:250 },
-        onScanSuccess
-    );
+let qr = new Html5Qrcode("reader");
+let currentFacing = "user";
+
+function startQR() {
+
+    Html5Qrcode.getCameras().then(cameras => {
+
+        if (cameras.length === 0) {
+            alert("Tidak ada kamera ditemukan!");
+            return;
+        }
+
+        let camId = cameras[0].id;
+        cameras.forEach(c => {
+            if (c.label.toLowerCase().includes("back")) {
+                camId = c.id;
+                currentFacing = "environment";
+            }
+        });
+
+        qr.start(camId, { fps:10, qrbox:250 }, onScanSuccess);
+    });
 }
 
 document.getElementById("switchCam").onclick = () => {
-    currentFacing = (currentFacing === "user") ? "environment" : "user";
-    qr.stop().then(startQR);
+
+    Html5Qrcode.getCameras().then(cameras => {
+
+        if (cameras.length <= 1) {
+            alert("Tidak ada kamera lain.");
+            return;
+        }
+
+        let camId = cameras[0].id;
+        currentFacing = (currentFacing==="user") ? "environment" : "user";
+
+        cameras.forEach(c => {
+            if (currentFacing==="environment" && c.label.toLowerCase().includes("back")) camId = c.id;
+            if (currentFacing==="user" && c.label.toLowerCase().includes("front")) camId = c.id;
+        });
+
+        qr.stop().then(() => {
+            qr.start(camId, { fps:10, qrbox:250 }, onScanSuccess);
+        });
+
+    });
 };
 
 startQR();
 
-/* ---------------------------------------------------------
-   SCAN SUCCESS (NEW PARSER)
---------------------------------------------------------- */
-function onScanSuccess(decoded){
+/* =========================================================
+   RESET STATUS SETELAH SCAN QR
+========================================================= */
+let statusSelect = document.getElementById("status");
+let alasanBox = document.getElementById("alasanBox");
 
-    qr.stop();
+function resetStatus() {
+    statusSelect.value = "HADIR";
+    alasanBox.style.display = "none";
+}
 
-    let lines = decoded.split("\n");
+/* =========================================================
+   QR SUCCESS
+========================================================= */
+function onScanSuccess(decodedText) {
+
+    qr.stop().then(()=>qr.clear());
+
     let data = {};
-
-    lines.forEach(v=>{
-        let p = v.split(": ");
-        data[p[0]] = p[1];
+    decodedText.split("\n").forEach(v => {
+        let p = v.split(":");
+        if (p.length >= 2) {
+            let key = p[0].trim();
+            let val = p.slice(1).join(":").trim();
+            data[key] = val;
+        }
     });
 
-    document.getElementById("nama").value  = data["Nama"];
-    document.getElementById("id").value    = data["ID"];
-    document.getElementById("divisi").value= data["Divisi"];
-    document.getElementById("nomor").value = data["Nomor"] ?? "";
+    nama.value  = data["Nama"];
+    nomor.value = data["Nomor"];
+    id.value    = data["ID"];
+    divisi.value= data["Divisi"];
 
-    document.getElementById("det_nama").innerText  = data["Nama"];
-    document.getElementById("det_nomor").innerText = data["Nomor"] ?? "";
-    document.getElementById("det_divisi").innerText= data["Divisi"];
+    det_nama.innerText  = data["Nama"];
+    det_nomor.innerText = data["Nomor"];
+    det_divisi.innerText= data["Divisi"];
 
-    document.getElementById("afterScan").style.display="block";
+    resetStatus(); // FIX DI SINI
+
+    afterScan.style.display="block";
 
     startCamera();
     getLocation();
 }
 
-/* ---------------------------------------------------------
-   CAMERA SELFIE FRONT
---------------------------------------------------------- */
+/* =========================================================
+   CAMERA SELFIE
+========================================================= */
 let video = document.getElementById("camera");
 let canvas = document.getElementById("canvas");
 let preview = document.getElementById("previewSelfie");
 
 function startCamera() {
-    navigator.mediaDevices.getUserMedia({
-        video:{facingMode:"user"}
+
+    navigator.mediaDevices.getUserMedia({ video:{facingMode:"user"} })
+    .then(stream => {
+        video.srcObject = stream;
+        startSelfieCapture();
     })
-    .then(s => {
-        video.srcObject = s;
-        setInterval(()=>{
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            let c = canvas.getContext("2d");
-            c.drawImage(video,0,0);
-
-            let data = canvas.toDataURL("image/jpeg",0.9);
-            preview.src = data;
-            document.getElementById("selfie_data").value = data;
-        }, 900);
+    .catch(err => {
+        alert("Gagal membuka kamera: " + err.message);
     });
 }
 
-/* ---------------------------------------------------------
+function startSelfieCapture() {
+    setInterval(()=>{
+        if (!video.srcObject) return;
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        let c = canvas.getContext("2d");
+        c.drawImage(video,0,0);
+
+        let data = canvas.toDataURL("image/jpeg",0.9);
+        preview.src = data;
+        selfie_data.value = data;
+
+    }, 900);
+}
+
+/* =========================================================
    LOCATION
---------------------------------------------------------- */
+========================================================= */
 function getLocation(){
-    navigator.geolocation.getCurrentPosition(p=>{
-        lat.value = p.coords.latitude;
-        lon.value = p.coords.longitude;
+    navigator.geolocation.getCurrentPosition(pos=>{
+        lat.value = pos.coords.latitude;
+        lon.value = pos.coords.longitude;
     });
 }
 
-/* ---------------------------------------------------------
-   ALASAN IZIN
---------------------------------------------------------- */
-status.onchange = ()=>{
-    alasanBox.style.display = (status.value==="IZIN")?"block":"none";
+/* =========================================================
+   IZIN ALASAN FIELD
+========================================================= */
+statusSelect.onchange = ()=>{
+    if (statusSelect.value === "IZIN") {
+        alasanBox.style.display = "block";
+    } else {
+        alasanBox.style.display = "none";
+    }
 };
 
-/* ---------------------------------------------------------
-   SUBMIT ABSEN
---------------------------------------------------------- */
+/* =========================================================
+   SUBMIT
+========================================================= */
 kirimBtn.onclick = ()=>{
-    if(status.value=="IZIN"){
+
+    if(statusSelect.value === "IZIN"){
         let al = document.querySelector("textarea").value.trim();
         if(!al){ alert("Alasan wajib diisi jika izin"); return; }
     }

@@ -1,34 +1,34 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 include '../koneksi.php';
 
-// === KONFIGURASI ===
+// ==== KONFIGURASI ====
 $OTP_TTL = 10 * 60;
 $OTP_MIN_INTERVAL = 60;
 $FONNTE_TOKEN = "LtRSv7gYViSznbJ8GnU1";
-// ====================
+// ======================
 
 $error = "";
-$info  = "";
 $success = "";
 
-// ===== Fungsi Kirim OTP via Fonnte =====
+// ========= FONNTE OTP =========
 function send_otp_wa($nomor, $otp, $token) {
     $message = "Kode OTP reset password Anda adalah: *$otp*\nBerlaku 10 menit.\n\nEs Kristal Warid";
 
     $curl = curl_init();
-    curl_setopt_array($curl, array(
+    curl_setopt_array($curl, [
         CURLOPT_URL => "https://api.fonnte.com/send",
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => array(
+        CURLOPT_POSTFIELDS => [
             "target" => $nomor,
             "message" => $message
-        ),
-        CURLOPT_HTTPHEADER => array(
-            "Authorization: $token"
-        ),
-    ));
+        ],
+        CURLOPT_HTTPHEADER => ["Authorization: $token"],
+    ]);
 
     $response = curl_exec($curl);
     curl_close($curl);
@@ -36,164 +36,198 @@ function send_otp_wa($nomor, $otp, $token) {
     return $response ? true : false;
 }
 
-
-
-// =======================================
-//                 LOGIN
-// =======================================
+// ===============================================
+// =============== LOGIN PROCESS =================
+// ===============================================
+// =============== LOGIN PROCESS =================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'login') {
 
-    $username = trim($_POST['username'] ?? '');
-    $password = trim($_POST['password'] ?? '');
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
 
-    if ($username === '' || $password === '') {
+    if ($username === "" || $password === "") {
         $error = "Isi username dan password.";
     } else {
-        $stmt = $conn->prepare("SELECT id_admin, username, password, nama_admin, role 
-                                FROM admin WHERE username = ?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $res = $stmt->get_result();
 
-        if ($res && $res->num_rows === 1) {
-            $row = $res->fetch_assoc();
-            if (password_verify($password, $row['password'])) {
+        // ==== 1. LOGIN ADMIN UTAMA (HARDCODE) ====
+        if ($username === "admin") {
+
+            $adminPassword = "admin123";
+
+            if ($password === $adminPassword) {
                 $_SESSION['admin_login'] = true;
-                $_SESSION['id_admin'] = $row['id_admin'];
-                $_SESSION['username'] = $row['username'];
-                $_SESSION['nama_admin'] = $row['nama_admin'];
-                $_SESSION['role'] = $row['role'];
+                $_SESSION['username'] = "admin";
+                $_SESSION['nama_admin'] = "Administrator";
+                $_SESSION['role'] = "admin";
 
                 header("Location: ../admin/index.php");
                 exit;
             } else {
-                $error = "Password salah.";
-                $_SESSION['last_failed_username'] = $username;
+                $error = "Password admin salah.";
             }
-        } else {
-            $error = "Username tidak ditemukan.";
         }
 
-        $stmt->close();
+        // ==== 2. LOGIN MENGGUNAKAN DATABASE ====
+        else {
+
+            $stmt = $conn->prepare("SELECT id_admin, username, password, nama_admin, role 
+                                    FROM admin WHERE username = ?");
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $res = $stmt->get_result();
+
+            if ($res->num_rows === 1) {
+
+                $row = $res->fetch_assoc();
+
+                if (password_verify($password, $row['password'])) {
+
+                    // === LOGIN SEBAGAI ADMIN ===
+                    if ($row['role'] === 'admin') {
+
+                        $_SESSION['admin_login'] = true;
+                        $_SESSION['id_admin'] = $row['id_admin'];
+                        $_SESSION['username'] = $row['username'];
+                        $_SESSION['nama_admin'] = $row['nama_admin'];
+                        $_SESSION['role'] = "admin";
+
+                        header("Location: ../admin/index.php");
+                        exit;
+                    }
+
+                    // === LOGIN SEBAGAI KAPTEN ===
+                    elseif ($row['role'] === 'kapten') {
+
+                        $_SESSION['admin_login'] = true;
+                        $_SESSION['id_admin'] = $row['id_admin'];
+                        $_SESSION['username'] = $row['username'];
+                        $_SESSION['nama_admin'] = $row['nama_admin'];
+                        $_SESSION['role'] = "kapten";
+
+                        header("Location: ../kapten/index.php");
+                        exit;
+                    }
+
+                    // === ROLE TIDAK VALID ===
+                    else {
+                        $error = "Role tidak dikenal.";
+                    }
+
+                } else {
+                    $error = "Password salah.";
+                }
+
+            } else {
+                $error = "Username tidak ditemukan.";
+            }
+
+            $stmt->close();
+        }
     }
 }
 
 
-
-// =======================================
-//             MINTA OTP RESET
-// =======================================
+// ===============================================
+// ================ OTP REQUEST ==================
+// ===============================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_otp') {
 
-    $no_wa = trim($_POST['no_wa'] ?? '');
+    $no_wa = trim($_POST['no_wa']);
 
-    if ($no_wa === '') {
-        $error = "Masukkan nomor WhatsApp.";
-    } else {
-        $stmt = $conn->prepare("SELECT id_admin FROM admin WHERE no_wa = ?");
-        $stmt->bind_param("s", $no_wa);
-        $stmt->execute();
-        $res = $stmt->get_result();
+    $stmt = $conn->prepare("SELECT id_admin FROM admin WHERE no_wa = ?");
+    $stmt->bind_param("s", $no_wa);
+    $stmt->execute();
+    $res = $stmt->get_result();
 
-        if ($res && $res->num_rows === 1) {
+    if ($res->num_rows === 1) {
 
-            $now = time();
-            if (!empty($_SESSION['otp_last_sent_time']) && ($now - $_SESSION['otp_last_sent_time']) < $OTP_MIN_INTERVAL) {
-                $error = "Tunggu 1 menit untuk meminta OTP lagi.";
-            } else {
+        // Limit 60 detik
+        if (!empty($_SESSION['otp_last_sent_time']) &&
+            (time() - $_SESSION['otp_last_sent_time']) < $OTP_MIN_INTERVAL) {
 
-                $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-
-                $_SESSION['reset_no_wa'] = $no_wa;
-                $_SESSION['reset_otp'] = $otp;
-                $_SESSION['reset_expires'] = time() + $OTP_TTL;
-                $_SESSION['otp_last_sent_time'] = time();
-
-                $sent = send_otp_wa($no_wa, $otp, $FONNTE_TOKEN);
-
-                if ($sent) {
-                    header("Location: login.php?action=verify");
-                    exit;
-                } else {
-                    $error = "Gagal mengirim OTP.";
-                }
-            }
-
+            $error = "Tunggu 1 menit untuk meminta OTP lagi.";
         } else {
-            $error = "Nomor WA tidak terdaftar.";
+
+            $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+            $_SESSION['reset_no_wa'] = $no_wa;
+            $_SESSION['reset_otp'] = $otp;
+            $_SESSION['reset_expires'] = time() + $OTP_TTL;
+            $_SESSION['otp_last_sent_time'] = time();
+
+            if (send_otp_wa($no_wa, $otp, $FONNTE_TOKEN)) {
+                header("Location: login.php?action=verify");
+                exit;
+            } else {
+                $error = "Gagal mengirim OTP.";
+            }
         }
 
-        $stmt->close();
+    } else {
+        $error = "Nomor WA tidak terdaftar.";
     }
+
+    $stmt->close();
 }
 
-
-
-// =======================================
-//               CEK OTP
-// =======================================
+// ===============================================
+// ================ VERIFIKASI OTP ===============
+// ===============================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'verify_otp') {
 
-    $otp = trim($_POST['otp'] ?? '');
+    $otp = trim($_POST['otp']);
 
-    if ($otp === '') {
+    if ($otp === "") {
         $error = "Masukkan OTP.";
-    } elseif (empty($_SESSION['reset_otp']) || empty($_SESSION['reset_no_wa'])) {
+    } elseif (!isset($_SESSION['reset_otp'])) {
         $error = "Tidak ada permintaan reset aktif.";
-    } elseif (time() > ($_SESSION['reset_expires'] ?? 0)) {
+    } elseif (time() > $_SESSION['reset_expires']) {
         $error = "OTP telah kadaluarsa.";
-    } elseif (!hash_equals($_SESSION['reset_otp'], $otp)) {
+    } elseif ($otp !== $_SESSION['reset_otp']) {
         $error = "OTP salah.";
     } else {
 
         $_SESSION['otp_verified'] = true;
-
         header("Location: login.php?action=newpass");
         exit;
     }
 }
 
-
-
-// =======================================
-//          RESET PASSWORD FINAL
-// =======================================
+// ===============================================
+// ============== SET PASSWORD BARU ==============
+// ===============================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'set_new_password') {
 
-    if (empty($_SESSION['otp_verified'])) {
-        $error = "Akses tidak sah.";
+    $new = trim($_POST['new_password']);
+    $confirm = trim($_POST['confirm_password']);
+
+    if ($new === "" || $confirm === "") {
+        $error = "Semua field wajib diisi.";
+    } elseif ($new !== $confirm) {
+        $error = "Konfirmasi tidak sama.";
     } else {
-        $newpw = trim($_POST['new_password'] ?? '');
-        $confirm = trim($_POST['confirm_password'] ?? '');
 
-        if ($newpw === '' || $confirm === '') {
-            $error = "Semua field wajib diisi.";
-        } elseif ($newpw !== $confirm) {
-            $error = "Konfirmasi password tidak sama.";
+        $hash = password_hash($new, PASSWORD_DEFAULT);
+        $no_wa = $_SESSION['reset_no_wa'];
+
+        $stmt = $conn->prepare("UPDATE admin SET password = ? WHERE no_wa = ?");
+        $stmt->bind_param("ss", $hash, $no_wa);
+
+        if ($stmt->execute()) {
+            $success = "Password berhasil diganti. Silakan login.";
+
+            unset($_SESSION['reset_no_wa'], $_SESSION['reset_otp'], $_SESSION['reset_expires'], $_SESSION['otp_verified']);
         } else {
-
-            $no_wa = $_SESSION['reset_no_wa'];
-            $hash = password_hash($newpw, PASSWORD_DEFAULT);
-
-            $upd = $conn->prepare("UPDATE admin SET password = ? WHERE no_wa = ?");
-            $upd->bind_param("ss", $hash, $no_wa);
-
-            if ($upd->execute()) {
-                $success = "Password berhasil diganti. Silakan login.";
-
-                unset($_SESSION['reset_no_wa'], $_SESSION['reset_otp'], $_SESSION['reset_expires'], $_SESSION['otp_verified']);
-            } else {
-                $error = "Gagal mengganti password.";
-            }
-
-            $upd->close();
+            $error = "Gagal mengganti password.";
         }
+
+        $stmt->close();
     }
 }
 
+// Tentukan halaman
 $action = $_GET['action'] ?? 'login';
 ?>
-
 <!doctype html>
 <html lang="id">
 <head>
@@ -203,33 +237,79 @@ $action = $_GET['action'] ?? 'login';
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-/* TIDAK DIUBAH SAMA SEKALI */
+/* FULL BACKGROUND */
 body {
-    height: 100vh; margin: 0; display:flex; justify-content:center; align-items:center;
+    height: 100vh; 
+    margin: 0; 
+    display:flex; 
+    justify-content:center; 
+    align-items:center;
     background: radial-gradient(circle at center,
         rgba(255,255,255,0.85) 0%,
         rgba(255,255,255,0.65) 35%,
         rgba(0, 174, 239, 0.9) 100%);
     background-color:#00AEEF;
+    font-family: Arial, sans-serif;
 }
+
+/* GLASS CARD */
 .card-glass {
-    width:400px; padding:30px; border-radius:20px;
-    background:rgba(255,255,255,0.35); backdrop-filter:blur(10px);
-    box-shadow:0 8px 25px rgba(0,0,0,0.15); animation:fadeIn 0.8s ease;
+    width: 420px; 
+    padding:35px; 
+    border-radius:20px;
+    background:rgba(255,255,255,0.35); 
+    backdrop-filter:blur(10px);
+    box-shadow:0 8px 25px rgba(0,0,0,0.15); 
+    animation:fadeIn 0.6s ease;
 }
-@keyframes fadeIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
-.btn-primary { background:#00AEEF; border:none; }
-.btn-primary:hover { background:#008FC7; }
-.small-muted { color:rgba(0,0,0,0.6); }
+
+@keyframes fadeIn {
+    from { opacity:0; transform:translateY(20px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+
+/* BUTTON */
+.btn-primary {
+    background:#00AEEF;
+    border:none;
+    font-weight:bold;
+}
+.btn-primary:hover {
+    background:#008FC7;
+}
+
+/* SMALL TEXT */
+.small-muted {
+    color:rgba(0,0,0,0.6);
+}
+
+/* LABELS */
+.form-label {
+    font-weight:600;
+    color:#004b66;
+}
+
+/* INPUT */
+.form-control {
+    border-radius:10px;
+}
+
+/* BACK BUTTON */
+.back-btn {
+    position:absolute; 
+    top:20px; 
+    left:20px; 
+    text-decoration:none;
+    display:flex; 
+    align-items:center; 
+}
 </style>
 </head>
 <body>
 
-<!-- Tombol kembali dengan icon keluar (dibesarkan) -->
-<a href="../home/index.php"
-   style="position:absolute; top:20px; left:20px; 
-          text-decoration:none; display:flex; align-items:center;">
-    <svg width="60" height="60" viewBox="0 0 24 24" fill="#333">
+<!-- BACK BUTTON -->
+<a href="../home/index.php" class="back-btn">
+    <svg width="55" height="55" viewBox="0 0 24 24" fill="#004b66">
         <path d="M10 17v-3H3v-4h7V7l5 5-5 5zm-7-15h11v2H5v14h9v2H3V2z"/>
     </svg>
 </a>
@@ -238,7 +318,7 @@ body {
 
 <?php if ($action === 'forgot'): ?>
 
-    <h3 class="text-center mb-3" style="color:#00AEEF;">Lupa Password</h3>
+    <h3 class="text-center mb-4" style="color:#00AEEF;">Lupa Password</h3>
 
     <?php if ($error): ?><div class="alert alert-danger py-2"><?=$error?></div><?php endif; ?>
 
@@ -250,7 +330,7 @@ body {
             <input type="text" name="no_wa" class="form-control" placeholder="08xxxx" required>
         </div>
 
-        <div class="d-grid"><button class="btn btn-primary">Kirim OTP</button></div>
+        <div class="d-grid"><button class="btn btn-primary py-2">Kirim OTP</button></div>
     </form>
 
     <p class="mt-3 text-center small-muted">
@@ -259,9 +339,11 @@ body {
 
 
 
+
+
 <?php elseif ($action === 'verify'): ?>
 
-    <h3 class="text-center mb-3" style="color:#00AEEF;">Verifikasi OTP</h3>
+    <h3 class="text-center mb-4" style="color:#00AEEF;">Verifikasi OTP</h3>
 
     <?php if ($error): ?><div class="alert alert-danger py-2"><?=$error?></div><?php endif; ?>
 
@@ -270,15 +352,15 @@ body {
 
         <div class="mb-3">
             <label class="form-label">Nomor WhatsApp</label>
-            <input type="text" class="form-control" value="<?=htmlspecialchars($_SESSION['reset_no_wa'] ?? '')?>" disabled>
+            <input type="text" class="form-control" value="<?= htmlspecialchars($_SESSION['reset_no_wa'] ?? '') ?>" disabled>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Masukkan Kode OTP</label>
+            <label class="form-label">Kode OTP</label>
             <input type="text" name="otp" maxlength="6" pattern="\d{6}" class="form-control" required>
         </div>
 
-        <div class="d-grid"><button class="btn btn-primary">Verifikasi</button></div>
+        <div class="d-grid"><button class="btn btn-primary py-2">Verifikasi</button></div>
     </form>
 
     <p class="mt-3 text-center small-muted">
@@ -287,9 +369,12 @@ body {
 
 
 
+
+
+
 <?php elseif ($action === 'newpass'): ?>
 
-    <h3 class="text-center mb-3" style="color:#00AEEF;">Password Baru</h3>
+    <h3 class="text-center mb-4" style="color:#00AEEF;">Password Baru</h3>
 
     <?php if ($error): ?><div class="alert alert-danger py-2"><?=$error?></div><?php endif; ?>
     <?php if ($success): ?><div class="alert alert-success py-2"><?=$success?></div><?php endif; ?>
@@ -307,7 +392,7 @@ body {
             <input type="password" name="confirm_password" class="form-control" required>
         </div>
 
-        <div class="d-grid"><button class="btn btn-primary">Ganti Password</button></div>
+        <div class="d-grid"><button class="btn btn-primary py-2">Ganti Password</button></div>
     </form>
 
     <p class="mt-3 text-center small-muted">
@@ -316,9 +401,11 @@ body {
 
 
 
+
+
 <?php else: ?>
 
-    <h3 class="text-center mb-3" style="color:#00AEEF;">Admin Es Kristal Warid</h3>
+    <h3 class="text-center mb-4" style="color:#00AEEF;">Admin Es Kristal Warid</h3>
 
     <?php if ($error): ?><div class="alert alert-danger py-2"><?=$error?></div><?php endif; ?>
 
@@ -332,10 +419,10 @@ body {
 
         <div class="mb-3 position-relative">
             <label class="form-label">Password</label>
-            <input type="password" name="password" id="password" class="form-control" required autocomplete="off">
+            <input type="password" name="password" class="form-control" required autocomplete="off">
         </div>
 
-        <div class="d-grid"><button class="btn btn-primary">Login</button></div>
+        <div class="d-grid"><button class="btn btn-primary py-2">Login</button></div>
     </form>
 
     <div class="mt-3 text-center">
@@ -354,5 +441,7 @@ body {
 <?php endif; ?>
 
 </div>
+
 </body>
 </html>
+

@@ -199,6 +199,10 @@ body.dark {
     <i>🏠</i> <span class="menu-text">Dashboard</span>
 </div>
 
+<div class="menu-item" onclick="location.href='../admin/register.php'">
+    <i>👤</i> <span class="menu-text">Register</span>
+</div>
+
 <div class="menu-item" onclick="location.href='../admin/tambah_karyawan.php'">
     <i>👤</i> <span class="menu-text">Tambah Karyawan</span>
 </div>

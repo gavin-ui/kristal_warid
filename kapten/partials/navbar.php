@@ -1,11 +1,11 @@
-<nav class="navbar navbar-expand-lg navbar-custom fixed-top shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-premium fixed-top">
     <div class="container">
 
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="index.php">
             Kapten — Es Kristal Warid
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -21,7 +21,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link text-warning" href="../logout.php">Logout</a>
+                    <a class="nav-link text-warning" href="../admin/logout.php">Logout</a>
                 </li>
 
             </ul>

@@ -1,102 +1,140 @@
 <?php 
 include "../koneksi.php";
 
+// =====================
 // FILTER MESIN
-$filterMesin = isset($_GET["mesin"]) ? $_GET["mesin"] : "all";
+// =====================
+$filterMesin = $_GET['mesin'] ?? 'all';
 
+// =====================
 // INSERT DATA
-if(isset($_POST["submit"])) {
-
-    $mesin      = $_POST["mesin"];
-    $jam_mulai  = $_POST["jam_mulai"];
-    $menit      = $_POST["menit"];
-    $defroz     = $_POST["defroz"];
-    $pack       = $_POST["pack"];
-    $qty        = $_POST["qty"];
-    $kristal    = $_POST["kristal"];
-    $serut      = $_POST["serut"];
-    $ket        = $_POST["keterangan"];
-
-    mysqli_query($conn,"
-        INSERT INTO produksi_mesin (mesin, jam_mulai, menit, defroz, pack, qty, kristal, serut, keterangan)
-        VALUES ('$mesin','$jam_mulai','$menit','$defroz','$pack','$qty','$kristal','$serut','$ket')
+// =====================
+if (isset($_POST['submit'])) {
+    $stmt = $conn->prepare("
+        INSERT INTO produksi_mesin 
+        (mesin, jam_mulai, menit, defroz, pack, qty, kristal, serut, keterangan)
+        VALUES (?,?,?,?,?,?,?,?,?)
     ");
-    
+    $stmt->bind_param(
+        "ssiiiiiss",
+        $_POST['mesin'],
+        $_POST['jam_mulai'],
+        $_POST['menit'],
+        $_POST['defroz'],
+        $_POST['pack'],
+        $_POST['qty'],
+        $_POST['kristal'],
+        $_POST['serut'],
+        $_POST['keterangan']
+    );
+    $stmt->execute();
     header("Location: produksi_mesin_input.php?success=1");
     exit;
 }
 
+// =====================
 // DELETE DATA
-if(isset($_GET["delete"])){
-    $id = $_GET["delete"];
-    mysqli_query($conn,"DELETE FROM produksi_mesin WHERE id_produksi='$id'");
+// =====================
+if (isset($_GET['delete'])) {
+    $stmt = $conn->prepare("DELETE FROM produksi_mesin WHERE id_produksi=?");
+    $stmt->bind_param("i", $_GET['delete']);
+    $stmt->execute();
     header("Location: produksi_mesin_input.php?success=delete");
     exit;
 }
+
 include "partials/header.php";
 include "partials/sidebar.php";
 ?>
 
 <style>
-.page-container { margin-left:290px; padding:35px; background:var(--body-bg); min-height:100vh; transition:.3s; }
-body.collapsed .page-container { margin-left:110px; }
+/* ================= LAYOUT ================= */
+.page-container{margin-left:290px;padding:35px;background:var(--body-bg);min-height:100vh;transition:.3s}
+body.collapsed .page-container{margin-left:110px}
+.form-card{background:var(--card-bg);padding:25px;border-radius:15px;box-shadow:0 8px 15px rgba(0,0,0,.1);max-width:780px;margin:auto}
 
-.form-card { background:var(--card-bg); padding:25px; border-radius:15px; box-shadow:0 8px 15px rgba(0,0,0,.1); max-width:780px; margin:auto; }
-
-input, select, textarea { width:100%; padding:12px; border-radius:10px; border:2px solid var(--title-color); background:white; color:black; margin-bottom:10px; }
-body.dark input, body.dark textarea, body.dark select { background:#0f1729 !important; color:white !important; }
-
-.btn-save, .export-btn, .detail-btn {
-    padding:12px; width:100%; border-radius:10px; cursor:pointer; font-weight:bold; border:none; transition:.3s;
+/* ================= FORM ================= */
+input,select,textarea{
+    width:100%;
+    padding:10px 12px;
+    border-radius:10px;
+    border:2px solid var(--title-color);
+    background:white;
+    color:black;
+    margin-bottom:10px;
+    box-sizing:border-box;
 }
-.btn-save { background:var(--hover-bg); }
-.export-btn { background:#1cbfff; margin-top:10px; }
-.detail-btn { background:#0075ff; color:white; margin-top:10px; }
-button:hover { transform:scale(1.05); }
-
-.toast {
-    position:fixed; top:20px; right:20px; background:#28a745; color:#fff; padding:14px;
-    border-radius:10px; font-weight:bold; animation:fadeIn .4s, fadeOut .5s 2s forwards;
+body.dark input,body.dark textarea,body.dark select{
+    background:#0f1729!important;
+    color:white!important;
 }
 
-.table-wrapper {
-    margin-top:25px;
+/* HILANGKAN TOMBOL NAIK TURUN NUMBER */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+}
+input[type=number]{ -moz-appearance:textfield }
+
+/* ================= BUTTON ================= */
+.btn-save,.export-btn,.detail-btn{
+    padding:12px;
+    width:100%;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    border:none;
+    transition:.3s;
+}
+.btn-save{background:var(--hover-bg)}
+.export-btn{background:#1cbfff;margin-top:10px}
+.detail-btn{background:#0075ff;color:white;margin-top:10px}
+button:hover{transform:scale(1.05)}
+
+/* ================= MODAL ================= */
+.modal-bg{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+}
+.modal-box{
     background:var(--card-bg);
     padding:20px;
-    border-radius:10px;
-    box-shadow: 0px 5px 15px rgba(0,0,0,.1);
+    border-radius:16px;
+    width:95%;
+    max-width:900px;
+    max-height:85vh;
+    overflow-y:auto;
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+    transform:scale(.9) translateY(20px);
+    opacity:0;
+    animation:modalIn .3s ease forwards;
+}
+@keyframes modalIn{
+    to{transform:scale(1) translateY(0);opacity:1}
 }
 
-table { width:100%; border-collapse:collapse; margin-top:15px; }
-th, td { padding:10px; text-align:center; border:1px solid #ccc; }
-th { background:var(--hover-bg); font-weight:bold; }
+/* ================= TABLE ================= */
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{padding:10px;text-align:center;border:1px solid #ccc}
+th{background:var(--hover-bg)}
+.edit-btn{background:#ffc107;padding:6px 12px;border-radius:6px;cursor:pointer}
+.delete-btn{background:#dc3545;padding:6px 12px;border-radius:6px;color:white;cursor:pointer}
 
-.edit-btn { background:#ffc107; padding:6px 12px; border-radius:6px; cursor:pointer; }
-.delete-btn { background:#dc3545; padding:6px 12px; border-radius:6px; color:white; cursor:pointer; }
-
-/* ======== MODAL FIX (LANDSCAPE & SCROLL) ========= */
-.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; justify-content:center; align-items:center; z-index:99999; }
-
-.modal-box { 
-    background:var(--card-bg); 
-    padding:25px; 
-    border-radius:10px; 
-    width:90%; 
-    max-width:760px; 
-    max-height:90vh;
-    overflow-y:auto; 
-    box-shadow:0 10px 30px rgba(0,0,0,.25); 
-}
-
-/* grid form 2 kolom biar rapih */
-.edit-grid {
+/* ================= EDIT GRID ================= */
+.edit-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:12px;
+    gap:10px;
 }
-
-.edit-grid textarea {
+.edit-grid textarea{
     grid-column:span 2;
+    min-height:90px;
 }
 </style>
 
@@ -106,21 +144,41 @@ th { background:var(--hover-bg); font-weight:bold; }
 <h2 style="text-align:center;color:var(--title-color)">📄 Input Produksi Mesin</h2>
 
 <form method="POST">
-
-<select name="mesin" required>
-    <option value="">-- Pilih Mesin --</option>
+<select name="mesin" required title="Pilih mesin produksi yang digunakan">
+    <option value="">-- Pilih Mesin Produksi --</option>
     <option value="A">Mesin A</option>
     <option value="B">Mesin B</option>
 </select>
 
-<input type="time" name="jam_mulai" required placeholder="Jam Mulai">
-<input type="number" name="menit" required placeholder="Durasi Produksi Menit">
-<input type="number" name="defroz" required placeholder="Defroz">
-<input type="number" name="pack" required placeholder="Pack">
-<input type="number" name="qty" required placeholder="Qty">
-<input type="number" name="kristal" required placeholder="Kristal (kg)">
-<input type="number" name="serut" placeholder="Serut">
-<textarea name="keterangan" placeholder="Keterangan tambahan (opsional)"></textarea>
+<input type="time" name="jam_mulai" required title="Jam mulai mesin beroperasi">
+
+<input type="number" name="menit" required 
+placeholder="Durasi produksi (menit)" 
+title="Lama waktu mesin beroperasi dalam menit">
+
+<input type="number" name="defroz" required 
+placeholder="Jumlah defrost" 
+title="Berapa kali proses defrost dilakukan">
+
+<input type="number" name="pack" required 
+placeholder="Jumlah pack dihasilkan" 
+title="Total pack es yang dihasilkan">
+
+<input type="number" name="qty" required 
+placeholder="Total quantity produksi" 
+title="Total hasil produksi keseluruhan">
+
+<input type="number" name="kristal" required 
+placeholder="Berat kristal (kg)" 
+title="Total berat es kristal dalam kilogram">
+
+<input type="number" name="serut" 
+placeholder="Berat serut (kg)" 
+title="Berat es serut (jika ada)">
+
+<textarea name="keterangan" 
+placeholder="Catatan tambahan produksi (opsional)"
+title="Keterangan tambahan jika ada kendala atau catatan khusus"></textarea>
 
 <button class="btn-save" name="submit">💾 Simpan Data</button>
 </form>
@@ -132,18 +190,13 @@ th { background:var(--hover-bg); font-weight:bold; }
 <button id="btnDetail" class="detail-btn">📋 Lihat Data Produksi</button>
 
 </div>
+</div>
 
-<!-- ====== TABEL ====== -->
-<div id="tableSection" class="table-wrapper">
+<!-- ================= MODAL TABEL ================= -->
+<div class="modal-bg" id="modalTable">
+<div class="modal-box">
 <h3 style="text-align:center;color:var(--title-color)">📦 Data Produksi Mesin</h3>
-
-<form method="GET" style="margin-bottom:12px;">
-<select name="mesin" onchange="this.form.submit()">
-    <option value="all" <?= $filterMesin=="all" ? "selected":"" ?>>Semua Mesin</option>
-    <option value="A" <?= $filterMesin=="A" ? "selected":"" ?>>Mesin A</option>
-    <option value="B" <?= $filterMesin=="B" ? "selected":"" ?>>Mesin B</option>
-</select>
-</form>
+<hr style="opacity:.3">
 
 <table>
 <thead>
@@ -152,19 +205,19 @@ th { background:var(--hover-bg); font-weight:bold; }
 </tr>
 </thead>
 <tbody>
-
 <?php
-$where = ($filterMesin=="all") ? "" : "WHERE mesin='$filterMesin'";
-$result = mysqli_query($conn,"SELECT * FROM produksi_mesin $where ORDER BY id_produksi DESC");
-
-while($r=mysqli_fetch_assoc($result)){ ?>
+$where = ($filterMesin=='all') ? '' : "WHERE mesin='".$conn->real_escape_string($filterMesin)."'";
+$q = mysqli_query($conn,"SELECT * FROM produksi_mesin $where ORDER BY id_produksi DESC");
+while($r=mysqli_fetch_assoc($q)):
+?>
 <tr>
 <td><?= $r['id_produksi'] ?></td>
 <td><?= $r['mesin'] ?></td>
 <td><?= $r['jam_mulai'] ?></td>
 <td><?= $r['qty'] ?></td>
 <td>
-<button onclick="openEdit(
+<button class="edit-btn"
+onclick="openEdit(
 '<?= $r['id_produksi'] ?>',
 '<?= $r['mesin'] ?>',
 '<?= $r['jam_mulai'] ?>',
@@ -175,70 +228,70 @@ while($r=mysqli_fetch_assoc($result)){ ?>
 '<?= $r['kristal'] ?>',
 '<?= $r['serut'] ?>',
 `<?= $r['keterangan'] ?>`
-)" class="edit-btn">✏ Edit</button>
+)">✏ Edit</button>
 
-<a href="?delete=<?= $r['id_produksi'] ?>" class="delete-btn" onclick="return confirm('Yakin hapus data ini?')">🗑 Hapus</a>
+<a class="delete-btn" href="?delete=<?= $r['id_produksi'] ?>" onclick="return confirm('Hapus data?')">🗑</a>
 </td>
 </tr>
-<?php } ?>
-
+<?php endwhile; ?>
 </tbody>
 </table>
+
+<button onclick="closeTable()" style="width:100%;margin-top:10px;padding:10px;border-radius:10px">Tutup</button>
 </div>
 </div>
 
-<!-- ==== EDIT MODAL (UPDATED) ==== -->
+<!-- ================= MODAL EDIT ================= -->
 <div class="modal-bg" id="modalEdit">
 <div class="modal-box">
-
 <h3 style="text-align:center;color:var(--title-color)">✏ Edit Data Produksi</h3>
+<hr style="opacity:.3">
 
 <form method="POST" action="update_mesin.php">
 <input type="hidden" id="edit_id" name="id">
 
 <div class="edit-grid">
-
-<div><label>Mesin</label><select id="edit_mesin" name="mesin"><option value="A">Mesin A</option><option value="B">Mesin B</option></select></div>
-<div><label>Jam Mulai</label><input type="time" id="edit_jam" name="jam_mulai" required></div>
-<div><label>Durasi (menit)</label><input type="number" id="edit_menit" name="menit" required></div>
-<div><label>Defroz</label><input type="number" id="edit_defroz" name="defroz" required></div>
-<div><label>Pack</label><input type="number" id="edit_pack" name="pack" required></div>
-<div><label>Qty</label><input type="number" id="edit_qty" name="qty" required></div>
-<div><label>Kristal (kg)</label><input type="number" id="edit_kristal" name="kristal" required></div>
-<div><label>Serut</label><input type="number" id="edit_serut" name="serut"></div>
-
-<textarea id="edit_ket" name="keterangan" placeholder="Keterangan..."></textarea>
-
+<input type="text" id="edit_mesin" name="mesin" placeholder="Kode mesin (A / B)">
+<input type="time" id="edit_jam" name="jam_mulai" title="Jam mulai produksi">
+<input type="number" id="edit_menit" name="menit" placeholder="Durasi (menit)">
+<input type="number" id="edit_defroz" name="defroz" placeholder="Jumlah defrost">
+<input type="number" id="edit_pack" name="pack" placeholder="Jumlah pack">
+<input type="number" id="edit_qty" name="qty" placeholder="Total quantity">
+<input type="number" id="edit_kristal" name="kristal" placeholder="Kristal (kg)">
+<input type="number" id="edit_serut" name="serut" placeholder="Serut (kg)">
+<textarea id="edit_ket" name="keterangan" placeholder="Catatan produksi"></textarea>
 </div>
 
-<button class="btn-save" style="margin-top:10px;">💾 Simpan Perubahan</button>
+<button class="btn-save">💾 Simpan</button>
 </form>
 
-<button onclick="closeEdit()" style="width:100%;padding:10px;border-radius:10px;margin-top:10px;background:#aaa;">Tutup</button>
-
+<button onclick="closeEdit()" style="width:100%;margin-top:10px;padding:10px;border-radius:10px">Tutup</button>
 </div>
 </div>
 
 <script>
-document.getElementById("btnDetail").addEventListener("click", function(){
-    document.getElementById("tableSection").scrollIntoView({behavior:"smooth"});
-});
-
-function openEdit(id,mesin,jam,menit,defroz,pack,qty,kristal,serut,ket){
-    document.getElementById("edit_id").value=id;
-    document.getElementById("edit_mesin").value=mesin;
-    document.getElementById("edit_jam").value=jam;
-    document.getElementById("edit_menit").value=menit;
-    document.getElementById("edit_defroz").value=defroz;
-    document.getElementById("edit_pack").value=pack;
-    document.getElementById("edit_qty").value=qty;
-    document.getElementById("edit_kristal").value=kristal;
-    document.getElementById("edit_serut").value=serut;
-    document.getElementById("edit_ket").value=ket;
-    document.getElementById("modalEdit").style.display="flex";
+document.getElementById('btnDetail').onclick=()=>{
+    document.getElementById('modalTable').style.display='flex'
 }
-
-function closeEdit(){ document.getElementById("modalEdit").style.display="none"; }
+function closeTable(){
+    document.getElementById('modalTable').style.display='none'
+}
+function openEdit(id,mesin,jam,menit,defroz,pack,qty,kristal,serut,ket){
+    edit_id.value=id;
+    edit_mesin.value=mesin;
+    edit_jam.value=jam;
+    edit_menit.value=menit;
+    edit_defroz.value=defroz;
+    edit_pack.value=pack;
+    edit_qty.value=qty;
+    edit_kristal.value=kristal;
+    edit_serut.value=serut;
+    edit_ket.value=ket;
+    modalEdit.style.display='flex';
+}
+function closeEdit(){
+    modalEdit.style.display='none'
+}
 </script>
 
 <?php include "partials/footer.php"; ?>

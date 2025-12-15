@@ -1,35 +1,48 @@
 <?php
-// HAPUS semua output sebelum header
+// ===============================
+// EXPORT EXCEL PRODUKSI MESIN
+// ===============================
+
+// JANGAN ADA SPASI / OUTPUT DI ATAS INI
 ob_start();
-require "../vendor/autoload.php";
-include "../koneksi.php";
+
+require __DIR__ . "/../vendor/autoload.php";
+require __DIR__ . "/../koneksi.php";
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-// Aktifkan error reporting untuk debugging
-ini_set('display_errors', 0);
-
 // Ambil data
-$data = mysqli_query($conn, "SELECT * FROM produksi_mesin");
+$query = mysqli_query($conn, "SELECT * FROM produksi_mesin ORDER BY id_produksi ASC");
 
 // Buat spreadsheet
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
-$headers = ["ID","Mesin","Jam Mulai","Durasi (Menit)","Defroz","Pack","Qty","Kristal","Serut","Keterangan"];
+// Header kolom
+$headers = [
+    "ID",
+    "Mesin",
+    "Jam Mulai",
+    "Durasi (Menit)",
+    "Defrost",
+    "Pack",
+    "Qty",
+    "Kristal (Kg)",
+    "Serut (Kg)",
+    "Keterangan"
+];
 
-// Set Header Excel Table
-$col = "A";
-foreach ($headers as $h) {
-    $sheet->setCellValue($col . "1", $h);
+$col = 'A';
+foreach ($headers as $header) {
+    $sheet->setCellValue($col . '1', $header);
     $col++;
 }
 
 // Isi data
 $row = 2;
-while ($d = mysqli_fetch_assoc($data)) {
-    $sheet->setCellValue("A$row", $d['id']);
+while ($d = mysqli_fetch_assoc($query)) {
+    $sheet->setCellValue("A$row", $d['id_produksi']);
     $sheet->setCellValue("B$row", $d['mesin']);
     $sheet->setCellValue("C$row", $d['jam_mulai']);
     $sheet->setCellValue("D$row", $d['menit']);
@@ -43,20 +56,25 @@ while ($d = mysqli_fetch_assoc($data)) {
 }
 
 // Auto width kolom
-foreach(range('A','J') as $columnID) {
-    $sheet->getColumnDimension($columnID)->setAutoSize(true);
+foreach (range('A', 'J') as $col) {
+    $sheet->getColumnDimension($col)->setAutoSize(true);
 }
 
-$filename = "Produksi_Mesin_" . date("Y-m-d") . ".xlsx";
+// Nama file
+$filename = "Produksi_Mesin_" . date("Y-m-d_H-i-s") . ".xlsx";
 
-// Bersihkan output buffer sebelum kirim file
-ob_end_clean();
+// Bersihkan buffer TOTAL
+while (ob_get_level()) {
+    ob_end_clean();
+}
 
-// Header yang benar untuk XLSX
+// Header download
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header("Content-Disposition: attachment; filename=\"$filename\"");
+header('Content-Disposition: attachment; filename="' . $filename . '"');
 header('Cache-Control: max-age=0');
+header('Pragma: public');
 
+// Output file
 $writer = new Xlsx($spreadsheet);
 $writer->save('php://output');
 exit;

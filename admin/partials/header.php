@@ -12,7 +12,10 @@ if (session_status() === PHP_SESSION_NONE) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
-    :root {
+    /* =============================
+   ROOT VARIABLES (LIGHT MODE)
+============================= */
+:root {
     --sidebar-width: 280px;
     --sidebar-collapsed-width: 100px;
 
@@ -25,19 +28,23 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 /* =============================
-   DARK MODE
+   DARK MODE (BLUE BLACK PREMIUM)
 ============================= */
 body.dark {
-    --body-bg: #0a1224;
-    --card-bg: rgba(22,36,71,0.85);
+    --body-bg: linear-gradient(180deg, #050b18, #0a1224);
+    --card-bg: linear-gradient(
+        180deg,
+        rgba(18,30,60,0.92),
+        rgba(10,18,36,0.92)
+    );
     --text-color: #eaf2ff;
     --title-color: #5aa9ff;
     --accent: #ffb300;
-    --glass-border: rgba(255,255,255,0.15);
+    --glass-border: rgba(90,169,255,0.25);
 }
 
 /* =============================
-   BODY
+   BODY GLOBAL
 ============================= */
 body {
     margin: 0;
@@ -45,11 +52,11 @@ body {
     background: var(--body-bg);
     color: var(--text-color);
     font-family: 'Poppins', Arial, sans-serif;
-    transition: background .3s ease, color .3s ease;
+    transition: background .35s ease, color .35s ease;
 }
 
 /* =============================
-   ADMIN HEADER (PREMIUM)
+   ADMIN HEADER (PREMIUM GLASS)
 ============================= */
 header.admin-header {
     position: fixed;
@@ -60,7 +67,7 @@ header.admin-header {
 
     background: linear-gradient(
         180deg,
-        var(--card-bg),
+        rgba(255,255,255,0.85),
         rgba(255,255,255,0.65)
     );
     backdrop-filter: blur(14px);
@@ -79,7 +86,7 @@ header.admin-header {
     z-index: 550;
 }
 
-/* Accent line bawah (mewah tapi halus) */
+/* Accent line bawah (luxury highlight) */
 header.admin-header::after {
     content: "";
     position: absolute;
@@ -87,11 +94,17 @@ header.admin-header::after {
     left: 0;
     width: 100%;
     height: 3px;
-    background: linear-gradient(90deg, var(--title-color), var(--accent));
+    background: linear-gradient(
+        90deg,
+        var(--title-color),
+        var(--accent)
+    );
     opacity: .85;
 }
 
-/* Saat sidebar collapse */
+/* =============================
+   HEADER — SIDEBAR COLLAPSED
+============================= */
 body.collapsed header.admin-header {
     left: var(--sidebar-collapsed-width);
     width: calc(100% - var(--sidebar-collapsed-width));
@@ -106,10 +119,30 @@ header.admin-header h1 {
     font-weight: 800;
     letter-spacing: .4px;
 
-    background: linear-gradient(90deg, var(--title-color), var(--accent));
+    background: linear-gradient(
+        90deg,
+        var(--title-color),
+        var(--accent)
+    );
     -webkit-background-clip: text;
     color: transparent;
+
     white-space: nowrap;
+}
+
+/* =============================
+   DARK MODE HEADER FIX
+============================= */
+body.dark header.admin-header {
+    background: linear-gradient(
+        180deg,
+        rgba(18,30,60,0.92),
+        rgba(10,18,36,0.92)
+    );
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.65),
+        inset 0 -1px 0 rgba(90,169,255,0.15);
 }
 
 /* =============================
@@ -131,3 +164,4 @@ header.admin-header h1 {
 </header>
 
 <div class="main-content">
+hsla(223, 54%, 15%, 0.92)

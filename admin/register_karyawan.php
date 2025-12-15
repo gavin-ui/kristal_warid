@@ -46,157 +46,204 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php include 'partials/sidebar.php'; ?>
 
 <style>
-/* ===============================
-   FIX HALAMAN (NO SCROLL)
-================================ */
-html, body {
-    height: 100%;
-    overflow: hidden;
+/* ================= PAGE LOCK ================= */
+body.register-page {
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* ===============================
-   PAGE CENTER
-================================ */
+/* ================= WRAPPER ================= */
 .page-wrapper {
-    margin-left: 260px;
-    height: 100vh;
+    margin-left: 280px;
+    min-height: 100vh;
     display: flex;
-    align-items: center;
     justify-content: center;
-
-    /* 👉 ATUR POSISI CARD DI SINI */
-    transform: translateY(-130px); /* NAIK / TURUN CARD */
+    align-items: flex-start;
+    padding-top: 110px;
+    transition: .35s ease;
 }
 
 body.collapsed .page-wrapper {
-    margin-left: 85px;
+    margin-left: 100px;
 }
 
-/* ===============================
-   CARD
-================================ */
+/* ================= CARD (GLASS PREMIUM) ================= */
 .card-form {
-    background: var(--card-bg);
     width: 100%;
-    max-width: 520px;
+    max-width: 640px;
     padding: 42px 46px;
-    border-radius: 22px;
-    box-shadow: 0 25px 60px rgba(0,0,0,.15);
+    border-radius: 24px;
+
+    background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.92),
+        rgba(255,255,255,0.82)
+    );
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border: 1.5px solid rgba(255,255,255,0.6);
+
+    box-shadow:
+        0 28px 55px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.7);
+
+    position: relative;
+    overflow: hidden;
 }
 
-/* ===============================
-   TITLE
-================================ */
+/* Accent glow */
+.card-form::before {
+    content: "";
+    position: absolute;
+    top: -70px;
+    right: -70px;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(37,99,235,.22), transparent 70%);
+    border-radius: 50%;
+}
+
+/* ================= DARK MODE CARD ================= */
+body.dark .card-form {
+    background: linear-gradient(
+        180deg,
+        rgba(18,30,60,0.95),
+        rgba(10,18,36,0.92)
+    );
+    border: 1px solid rgba(90,169,255,0.25);
+    box-shadow:
+        0 28px 55px rgba(0,0,0,.65),
+        inset 0 1px 0 rgba(90,169,255,.12);
+}
+
+/* ================= TITLE ================= */
 .card-form h3 {
     text-align: center;
     font-size: 26px;
-    font-weight: 800;
-    margin-bottom: 32px;
-    color: #1e3a8a;
-}
-body.dark .card-form h3 {
-    color: #e5e7eb;
+    font-weight: 900;
+    letter-spacing: .6px;
+    margin-bottom: 34px;
+
+    background: linear-gradient(90deg,#2563eb,#fbbf24);
+    -webkit-background-clip: text;
+    color: transparent;
 }
 
-/* ===============================
-   LABEL
-================================ */
+/* ================= LABEL ================= */
 .card-form label {
     display: block;
-    font-size: 14px;
+    margin-bottom: 8px;
+    font-size: 13.5px;
     font-weight: 700;
-    margin-bottom: 6px;
+    letter-spacing: .3px;
     color: #0f172a;
 }
+
 body.dark .card-form label {
     color: #e5e7eb;
 }
 
-/* ===============================
-   INPUT
-================================ */
+/* ================= INPUT ================= */
 .card-form input {
     width: 100%;
-    padding: 13px 14px;
-    border-radius: 10px;
-    border: 1.8px solid #cbd5e1;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1.7px solid #cbd5e1;
     font-size: 14px;
-    margin-bottom: 20px; /* 👉 JARAK ANTAR INPUT */
-    background: #fff;
+    margin-bottom: 22px;
+
+    background: rgba(255,255,255,0.9);
     color: #0f172a;
+    transition: .3s ease;
 }
 
 body.dark .card-form input {
-    background: #0f1729;
+    background: rgba(10,18,36,0.85);
+    border-color: rgba(90,169,255,.35);
     color: #fff;
-    border-color: #334155;
 }
 
 .card-form input:focus {
     border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37,99,235,.25);
+    box-shadow: 0 0 0 4px rgba(37,99,235,.28);
     outline: none;
 }
 
-/* ===============================
-   PASSWORD WRAPPER
-================================ */
+/* ================= PASSWORD ================= */
 .password-wrap {
     position: relative;
 }
 
 .password-wrap svg {
     position: absolute;
-    right: -20px;
-    top: 40%;
+    right: 14px;
+    top: 50%;
     transform: translateY(-50%);
-    width: 30px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     cursor: pointer;
     stroke: #64748b;
+    transition: .25s;
 }
+
 .password-wrap svg:hover {
     stroke: #2563eb;
 }
 
-/* ===============================
-   BUTTON
-================================ */
+/* ================= BUTTON ================= */
 .btn-submit {
+    margin-top: 28px;
     width: 100%;
     padding: 15px;
-    border-radius: 16px;
+    border-radius: 18px;
     border: none;
-    background: linear-gradient(135deg,#2563eb,#1d4ed8);
-    color: white;
-    font-size: 16px;
-    font-weight: 800;
+
+    background: linear-gradient(135deg,#2563eb,#1d4ed8,#fbbf24);
+    color: #fff;
+
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: .6px;
     cursor: pointer;
-    margin-top: 10px;
-}
-.btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 35px rgba(37,99,235,.35);
+
+    box-shadow: 0 18px 32px rgba(37,99,235,.35);
+    transition: .35s ease;
 }
 
-/* ===============================
-   ALERT
-================================ */
+.btn-submit:hover {
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 28px 48px rgba(37,99,235,.55);
+}
+
+/* ================= ALERT ================= */
 .alert {
-    margin-bottom: 22px;
-    padding: 14px 18px;
-    border-radius: 14px;
-    font-weight: 700;
+    margin-bottom: 26px;
+    padding: 14px 20px;
+    border-radius: 16px;
+    font-weight: 800;
     text-align: center;
+    letter-spacing: .3px;
 }
+
 .alert-success {
-    background: #dcfce7;
-    color: #166534;
+    background: linear-gradient(135deg,#dcfce7,#bbf7d0);
+    color: #14532d;
 }
+
 .alert-danger {
-    background: #fee2e2;
-    color: #991b1b;
+    background: linear-gradient(135deg,#fee2e2,#fecaca);
+    color: #7f1d1d;
 }
+
+/* ================= RESPONSIVE ================= */
+@media(max-width: 768px) {
+    .card-form {
+        max-width: 92%;
+        padding: 34px 26px;
+    }
+}
+
 </style>
 
 <div class="page-wrapper">

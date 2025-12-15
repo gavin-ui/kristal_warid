@@ -49,62 +49,104 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php include 'partials/sidebar.php'; ?>
 
 <style>
-html, body {
-    height: 100%;
-    overflow: hidden;
+/* ================= PAGE LOCK ================= */
+body.register-page {
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /* ================= WRAPPER ================= */
 .page-wrapper {
-    margin-left: 260px;
-    height: 100vh;
+    margin-left: 280px;
+    min-height: 100vh;
     display: flex;
-    align-items: flex-start;
     justify-content: center;
-    transform: translateY(-20px); /* CARD NAIK */
-    transition: .3s;
+    align-items: flex-start;
+    padding-top: 110px;
+    transition: .35s ease;
 }
 
 body.collapsed .page-wrapper {
-    margin-left: 85px;
+    margin-left: 100px;
 }
 
-/* ================= CARD ================= */
+/* ================= CARD (GLASS PREMIUM) ================= */
 .card-form {
-    background: var(--card-bg);
     width: 100%;
-    max-width: 780px;
-    padding: 45px 50px;
-    border-radius: 22px;
-    box-shadow: 0 25px 55px rgba(0,0,0,.15);
+    max-width: 700px;
+    padding: 42px 46px;
+    border-radius: 24px;
+
+    background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.92),
+        rgba(255,255,255,0.82)
+    );
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border: 1.5px solid rgba(255,255,255,0.6);
+
+    box-shadow:
+        0 28px 55px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.7);
+
+    position: relative;
+    overflow: hidden;
+}
+
+/* Accent Glow */
+.card-form::before {
+    content: "";
+    position: absolute;
+    top: -70px;
+    right: -70px;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(37,99,235,.22), transparent 70%);
+    border-radius: 50%;
+}
+
+/* ================= DARK MODE CARD ================= */
+body.dark .card-form {
+    background: linear-gradient(
+        180deg,
+        rgba(18,30,60,0.95),
+        rgba(10,18,36,0.92)
+    );
+    border: 1px solid rgba(90,169,255,0.25);
+    box-shadow:
+        0 28px 55px rgba(0,0,0,.65),
+        inset 0 1px 0 rgba(90,169,255,.12);
 }
 
 /* ================= TITLE ================= */
 .card-form h3 {
     text-align: center;
     font-size: 26px;
-    font-weight: 800;
-    margin-bottom: 35px;
-    color: #1e3a8a;
-}
+    font-weight: 900;
+    letter-spacing: .6px;
+    margin-bottom: 34px;
 
-body.dark .card-form h3 {
-    color: #e5e7eb;
+    background: linear-gradient(90deg,#2563eb,#fbbf24);
+    -webkit-background-clip: text;
+    color: transparent;
 }
 
 /* ================= GRID ================= */
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px 60px; /* JARAK RAPI */
+    gap: 22px 48px;
 }
 
 /* ================= LABEL ================= */
 .card-form label {
     display: block;
     margin-bottom: 8px;
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 700;
+    letter-spacing: .3px;
     color: #0f172a;
 }
 
@@ -116,25 +158,27 @@ body.dark .card-form label {
 .card-form input,
 .card-form select {
     width: 100%;
-    padding: 13px 15px;
+    padding: 12px 16px;
     border-radius: 12px;
-    border: 1.8px solid #cbd5e1;
+    border: 1.7px solid #cbd5e1;
     font-size: 14px;
-    background: #fff;
+
+    background: rgba(255,255,255,0.9);
     color: #0f172a;
+    transition: .3s ease;
 }
 
 body.dark .card-form input,
 body.dark .card-form select {
-    background: #0f1729;
+    background: rgba(10,18,36,0.85);
+    border-color: rgba(90,169,255,.35);
     color: #fff;
-    border-color: #334155;
 }
 
 .card-form input:focus,
 .card-form select:focus {
     border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37,99,235,.25);
+    box-shadow: 0 0 0 4px rgba(37,99,235,.28);
     outline: none;
 }
 
@@ -145,13 +189,13 @@ body.dark .card-form select {
 
 .toggle-password {
     position: absolute;
-    right: 14px;
+    right: 16px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
     font-size: 18px;
     color: #64748b;
-    user-select: none;
+    transition: .25s;
 }
 
 .toggle-password:hover {
@@ -160,42 +204,63 @@ body.dark .card-form select {
 
 /* ================= BUTTON ================= */
 .btn-submit {
-    margin-top: 34px;
+    margin-top: 38px;
     width: 100%;
     padding: 15px;
-    border-radius: 16px;
+    border-radius: 18px;
     border: none;
-    background: linear-gradient(135deg,#2563eb,#1d4ed8);
+
+    background: linear-gradient(135deg,#2563eb,#1d4ed8,#fbbf24);
     color: #fff;
-    font-size: 16px;
-    font-weight: 800;
+
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: .6px;
     cursor: pointer;
-    transition: .3s;
+
+    box-shadow: 0 18px 32px rgba(37,99,235,.35);
+    transition: .35s ease;
 }
 
 .btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 30px rgba(37,99,235,.4);
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 28px 48px rgba(37,99,235,.55);
 }
 
 /* ================= ALERT ================= */
 .alert {
-    margin-bottom: 25px;
-    padding: 14px 18px;
-    border-radius: 14px;
-    font-weight: 700;
+    margin-bottom: 26px;
+    padding: 14px 20px;
+    border-radius: 16px;
+    font-weight: 800;
     text-align: center;
+    letter-spacing: .3px;
 }
 
 .alert-success {
-    background: #dcfce7;
-    color: #166534;
+    background: linear-gradient(135deg,#dcfce7,#bbf7d0);
+    color: #14532d;
 }
 
 .alert-danger {
-    background: #fee2e2;
-    color: #991b1b;
+    background: linear-gradient(135deg,#fee2e2,#fecaca);
+    color: #7f1d1d;
 }
+
+/* ================= RESPONSIVE ================= */
+@media(max-width: 900px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+
+    .card-form {
+        max-width: 92%;
+        padding: 34px 26px;
+    }
+}
+
+
 </style>
 
 <div class="page-wrapper">

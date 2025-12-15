@@ -5,14 +5,17 @@ include "../koneksi.php";
 <?php include "partials/sidebar.php"; ?>
 
 <style>
-
-/* THEME SUPPORT */
+/* ====================================================
+   GLOBAL THEME SUPPORT
+==================================================== */
 body { 
     background: var(--body-bg); 
-    transition: .3s;
+    transition: .3s ease;
 }
 
-/* Layout wrapper */
+/* ====================================================
+   DASHBOARD LAYOUT
+==================================================== */
 .dashboard {
     margin-left: 290px;
     margin-right: 40px;
@@ -22,81 +25,110 @@ body {
 
 body.collapsed .dashboard {
     margin-left: 110px;
-    margin-right: 40px;
 }
 
-/* wrapper agar rapi */
+/* Wrapper biar rapi & fokus */
 .content-wrapper {
-    max-width: 1050px;
+    max-width: 1150px;
     margin: auto;
 }
 
 /* ====================================================
-   WELCOME BANNER (Match Login Style)
-   ==================================================== */
+   WELCOME BANNER — PREMIUM GLASS
+==================================================== */
 .welcome-banner {
-    background: rgba(0, 174, 239, 0.85);
-    backdrop-filter: blur(10px);
-    border-radius: 22px;
-    padding: 40px;
-    color: white;
-    box-shadow: 0 10px 25px rgba(0,0,0,.18);
+    background: linear-gradient(
+        135deg,
+        rgba(0,174,239,.9),
+        rgba(0,110,200,.95)
+    );
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    border-radius: 26px;
+    padding: 42px 38px;
+    color: #ffffff;
+
+    box-shadow:
+        0 18px 45px rgba(0,110,255,.35),
+        inset 0 0 0 1px rgba(255,255,255,.25);
+
     text-align: center;
-    animation: fadeDown .7s ease;
+    animation: fadeDown .9s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decorative glow */
+.welcome-banner::after {
+    content: "";
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 180px;
+    height: 180px;
+    background: rgba(255,255,255,.25);
+    border-radius: 50%;
+    opacity: .35;
 }
 
 .welcome-banner h1 {
-    font-weight: 800;
-    font-size: 30px;
-    letter-spacing: .5px;
+    font-weight: 900;
+    font-size: 32px;
+    letter-spacing: .6px;
 }
 
 .welcome-banner p {
-    font-size: 15px;
-    opacity: .9;
+    font-size: 15.5px;
+    opacity: .92;
 }
 
 /* ====================================================
    STATISTIC CARDS
-   ==================================================== */
-
+==================================================== */
 .stats-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    margin-top: 35px;
+    gap: 24px;
+    margin-top: 45px;
 }
 
 .stat-card {
     background: var(--card-bg);
-    border-radius: 20px;
-    padding: 28px;
-    border-left: 6px solid #00AEEF;
-    box-shadow: 0px 8px 22px rgba(0,0,0,.08);
+    border-radius: 22px;
+    padding: 30px;
+
+    border-left: 6px solid var(--accent);
+    box-shadow:
+        0 10px 26px rgba(0,0,0,.08),
+        inset 0 1px 0 rgba(255,255,255,.6);
+
     transition: .35s ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
 }
 
-/* Hover Animation Glow */
+/* Hover luxury effect */
 .stat-card:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: 0px 14px 30px rgba(0,174,255,.32);
+    transform: translateY(-7px) scale(1.025);
+    box-shadow:
+        0 18px 45px rgba(0,174,255,.32),
+        inset 0 1px 0 rgba(255,255,255,.6);
 }
 
-/* Soft highlight glow on hover */
+/* Accent glow bubble */
 .stat-card::before {
     content: "";
     position: absolute;
-    top: -60px;
-    right: -60px;
-    width: 120px;
-    height: 120px;
-    background: rgba(0,174,239,.25);
+    top: -70px;
+    right: -70px;
+    width: 160px;
+    height: 160px;
+    background: rgba(0,174,239,.22);
     border-radius: 50%;
-    transition: .4s ease;
     opacity: 0;
+    transition: .45s ease;
 }
 
 .stat-card:hover::before {
@@ -104,35 +136,41 @@ body.collapsed .dashboard {
     transform: scale(1.4);
 }
 
+/* Title */
 .stat-card h3 {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
-    color: #008FC7;
-    margin-bottom: 8px;
+    color: var(--title-color);
+    margin-bottom: 10px;
 }
 
-/* Dark mode color sync */
-body.dark .stat-card h3 {
-    color: #4DAEFF;
-}
-
+/* Value */
 .stat-value {
-    font-size: 34px;
-    font-weight: bold;
-    color: #00AEEF;
+    font-size: 36px;
+    font-weight: 900;
     letter-spacing: 1px;
+    color: var(--accent);
 }
 
-/* Dark correction */
+/* Dark mode correction */
+body.dark .stat-card {
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.08);
+}
+
 body.dark .stat-value {
-    color: #ffcc00;
+    color: #ffd54f;
 }
 
-/* Fade animation */
+/* ====================================================
+   ANIMATION
+==================================================== */
 @keyframes fadeDown {
     from { opacity: 0; transform: translateY(-25px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
 
 </style>
 

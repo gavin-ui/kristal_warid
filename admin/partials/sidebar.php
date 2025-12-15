@@ -6,37 +6,41 @@ $role = $_SESSION['role'] ?? '';
 
 <style>
 html, body {
-    margin: 0; padding: 0;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
 }
 
 /* =============================
-   COLOR VARIABLES
+   COLOR VARIABLES (LIGHT)
 ============================= */
 :root {
-    --sidebar-bg: linear-gradient(180deg, #0A57C9, #0B62D6);
-    --text-color: white;
-    --hover-bg: #ffb300;
+    --sidebar-bg: linear-gradient(180deg, #0a5edc, #0b4fb3);
+    --text-color: #ffffff;
+    --hover-bg: linear-gradient(90deg, #ffcc00, #ffb300);
     --body-bg: #eef6ff;
-    --card-bg: white;
+    --card-bg: #ffffff;
     --title-color: #0b62d6;
     --accent: #ffb300;
+    --glass: rgba(255,255,255,0.15);
 }
 
 /* =============================
    DARK MODE VARIABLES
 ============================= */
 body.dark {
-    --sidebar-bg: #0f1729;
-    --text-color: #ffffff;
-    --hover-bg: #ff9900;
+    --sidebar-bg: linear-gradient(180deg, #0a1224, #0f1b36);
+    --text-color: #eaf2ff;
+    --hover-bg: linear-gradient(90deg, #ffb300, #ff9900);
     --body-bg: #0a1224;
     --card-bg: #162447;
-    --title-color: #4da3ff;
-    --accent: #ff9900;
+    --title-color: #5aa9ff;
+    --accent: #ffb300;
+    --glass: rgba(255,255,255,0.08);
 }
 
 /* =============================
-   SIDEBAR
+   SIDEBAR CONTAINER
 ============================= */
 .sidebar {
     width: 260px;
@@ -45,132 +49,172 @@ body.dark {
     position: fixed;
     top: 0;
     left: 0;
-    padding: 20px;
-    transition: .3s ease;
+    padding: 22px 18px;
     color: var(--text-color);
-    box-shadow: 0 0 18px rgba(0,0,0,0.25);
     display: flex;
     flex-direction: column;
     z-index: 999;
     overflow-y: auto;
-    overflow-x: hidden;
+    transition: all .35s ease;
+    box-shadow: 0 15px 45px rgba(0,0,0,.35);
 }
 
-.sidebar::-webkit-scrollbar { width: 6px; }
-.sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.4);
-    border-radius: 6px;
+/* Glass overlay */
+.sidebar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,.12), transparent);
+    pointer-events: none;
 }
 
 .sidebar.collapsed {
     width: 85px;
-    padding: 20px 10px;
+    padding: 22px 10px;
+}
+
+/* Scrollbar */
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.35);
+    border-radius: 10px;
 }
 
 /* =============================
    TOGGLE BUTTON
 ============================= */
 .toggle-btn {
-    background: var(--accent);
+    background: var(--glass);
+    border: 2px solid rgba(255,255,255,0.5);
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
     padding: 10px 0;
-    cursor: pointer;
-    border-radius: 12px;
-    font-weight: bold;
+    border-radius: 14px;
     text-align: center;
-    border: 2px solid white;
+    cursor: pointer;
     margin-bottom: 22px;
-    transition: .3s;
+    backdrop-filter: blur(8px);
+    transition: .35s ease;
 }
-.toggle-btn:hover { transform: scale(1.05); }
+
+.toggle-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 18px rgba(255,255,255,.35);
+}
 
 /* =============================
    DARK MODE SWITCH
 ============================= */
 .dark-mode-box {
-    margin-bottom: 20px;
     display: flex;
     justify-content: center;
+    margin-bottom: 22px;
 }
 
 .dark-toggle {
-    width: 70px;
-    height: 32px;
-    background: #1e1e1e;
+    width: 72px;
+    height: 34px;
+    background: linear-gradient(180deg,#111,#222);
     border-radius: 50px;
     position: relative;
     cursor: pointer;
-    transition: .35s ease;
-    overflow: hidden;
+    transition: .4s;
+    box-shadow: inset 0 0 10px rgba(0,0,0,.6);
 }
 
 .switch-ball {
-    width: 28px; height: 28px;
-    background: white;
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle,#fff,#ddd);
     border-radius: 50%;
     position: absolute;
-    top: 2px; left: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: .35s ease;
-    z-index: 5;
-    font-size: 18px;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.45);
+    top: 2px;
+    left: 2px;
+    transition: .4s ease;
+    box-shadow: 0 6px 14px rgba(0,0,0,.6);
 }
 
-.switch-ball .sun { opacity: 1; }
-.switch-ball .moon { opacity: 0; }
-
-.dark-toggle.active .sun { opacity: 0; }
-.dark-toggle.active .moon { opacity: 1; }
-.dark-toggle.active .switch-ball { transform: translateX(38px); }
+.dark-toggle.active .switch-ball {
+    transform: translateX(38px);
+    background: radial-gradient(circle,#ffd966,#ffb300);
+}
 
 /* =============================
    LOGO
 ============================= */
-.logo img {
-    width: 70px;
-    border-radius: 50%;
-    border: 3px solid white;
-    margin-bottom: 10px;
-    transition: .25s;
+.logo {
+    margin-bottom: 28px;
 }
-.sidebar.collapsed .logo img { width: 48px; }
+
+.logo img {
+    width: 72px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,.8);
+    box-shadow: 0 0 18px rgba(255,255,255,.45);
+    transition: .3s;
+}
+
+.logo h4 {
+    margin-top: 10px;
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+.sidebar.collapsed .logo img { width: 46px; }
 .sidebar.collapsed .logo h4 { display: none; }
 
 /* =============================
-   MENU ITEMS
+   MENU ITEM
 ============================= */
 .menu-item {
     display: flex;
     align-items: center;
-    padding: 13px;
     gap: 15px;
+    padding: 13px 16px;
+    margin-top: 10px;
+    border-radius: 14px;
+    font-size: 15.5px;
     cursor: pointer;
-    border-radius: 12px;
-    transition: .25s;
-    font-size: 16px;
-    margin-top: 8px;
+    transition: .3s ease;
+    background: transparent;
+    position: relative;
 }
 
+.menu-item i {
+    font-size: 18px;
+}
+
+/* Hover luxury effect */
 .menu-item:hover {
     background: var(--hover-bg);
-    transform: translateX(5px);
+    color: #002244;
+    transform: translateX(6px);
+    box-shadow: 0 10px 25px rgba(255,179,0,.45);
 }
 
+/* Text hide on collapse */
 .sidebar.collapsed .menu-text { display: none; }
 
 /* =============================
    SUBMENU
 ============================= */
 .submenu {
-    margin-left: 18px;
+    margin-left: 20px;
+    margin-top: 6px;
     display: none;
-    transition: .3s ease;
+    border-left: 2px dashed rgba(255,255,255,.4);
+    padding-left: 12px;
 }
 
-.submenu.show { display: block; }
-.sidebar.collapsed .submenu { display: none !important; }
+.submenu.show {
+    display: block;
+}
+
+.sidebar.collapsed .submenu {
+    display: none !important;
+}
+
 
 </style>
 

@@ -13,77 +13,114 @@ if (session_status() === PHP_SESSION_NONE) {
 
     <style>
     :root {
-        --sidebar-width: 280px; /* mengikuti real width visual */
-        --sidebar-collapsed-width: 100px;
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 100px;
 
-        --sidebar-bg: linear-gradient(180deg, #0A57C9, #0B62D6);
-        --text-color: #000;
-        --body-bg: #eef6ff;
-        --card-bg: #ffffff;
-        --title-color: #0b62d6;
-        --hover-bg: #ffb300;
-        --accent: #ffb300;
-    }
+    --body-bg: #eef6ff;
+    --card-bg: rgba(255,255,255,0.88);
+    --text-color: #0b2545;
+    --title-color: #0b62d6;
+    --accent: #ffb300;
+    --glass-border: rgba(255,255,255,0.5);
+}
 
-    /* DARK MODE */
-    body.dark {
-        --text-color: #ffffff;
-        --body-bg: #0a1224;
-        --card-bg: #162447;
-        --title-color: #4da3ff;
-        --hover-bg: #ff9900;
-        --accent: #ff9900;
-    }
+/* =============================
+   DARK MODE
+============================= */
+body.dark {
+    --body-bg: #0a1224;
+    --card-bg: rgba(22,36,71,0.85);
+    --text-color: #eaf2ff;
+    --title-color: #5aa9ff;
+    --accent: #ffb300;
+    --glass-border: rgba(255,255,255,0.15);
+}
 
-    body {
-        margin: 0;
-        padding: 0;
-        background: var(--body-bg);
-        color: var(--text-color);
-        font-family: Arial, sans-serif;
-    }
+/* =============================
+   BODY
+============================= */
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--body-bg);
+    color: var(--text-color);
+    font-family: 'Poppins', Arial, sans-serif;
+    transition: background .3s ease, color .3s ease;
+}
 
-    /* =============================
-       FIXED HEADER — AUTO RESPONSIVE
-    ============================== */
-    header.admin-header {
-        position: fixed;
-        top: 0;
-        left: var(--sidebar-width);
-        width: calc(100% - var(--sidebar-width));
-        height: 68px;
+/* =============================
+   ADMIN HEADER (PREMIUM)
+============================= */
+header.admin-header {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    height: 72px;
 
-        background: var(--card-bg);
-        border-bottom: 3px solid var(--title-color);
-        display: flex;
-        align-items: center;
-        padding: 0 28px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        transition: .28s ease;
-        z-index: 550;
-    }
+    background: linear-gradient(
+        180deg,
+        var(--card-bg),
+        rgba(255,255,255,0.65)
+    );
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 
-    /* Saat sidebar collapse */
-    body.collapsed header.admin-header {
-        left: var(--sidebar-collapsed-width);
-        width: calc(100% - var(--sidebar-collapsed-width));
-    }
+    border-bottom: 2px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
 
-    header.admin-header h1 {
-        margin: 0;
-        font-size: 21px;
-        font-weight: bold;
-        color: var(--title-color);
-        white-space: nowrap;
-        letter-spacing: .3px;
-    }
+    box-shadow:
+        0 8px 25px rgba(0,0,0,0.12),
+        inset 0 -1px 0 rgba(255,255,255,0.4);
 
-    /* AREA KONTEN START */
-    .main-content {
-        margin-top: 85px; 
-        padding: 20px;
-        transition: .3s ease;
-    }
+    transition: .35s ease;
+    z-index: 550;
+}
+
+/* Accent line bawah (mewah tapi halus) */
+header.admin-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--title-color), var(--accent));
+    opacity: .85;
+}
+
+/* Saat sidebar collapse */
+body.collapsed header.admin-header {
+    left: var(--sidebar-collapsed-width);
+    width: calc(100% - var(--sidebar-collapsed-width));
+}
+
+/* =============================
+   HEADER TITLE
+============================= */
+header.admin-header h1 {
+    margin: 0;
+    font-size: 20.5px;
+    font-weight: 800;
+    letter-spacing: .4px;
+
+    background: linear-gradient(90deg, var(--title-color), var(--accent));
+    -webkit-background-clip: text;
+    color: transparent;
+    white-space: nowrap;
+}
+
+/* =============================
+   MAIN CONTENT
+============================= */
+.main-content {
+    margin-top: 95px;
+    padding: 24px;
+    transition: .3s ease;
+}
+
     </style>
 </head>
 

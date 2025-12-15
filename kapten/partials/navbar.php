@@ -21,6 +21,10 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link" href="produksi_mesin_list.php">Data Produksi Mesin</a>
+                </li>
+
+                <li class="nav-item">
                     <a class="nav-link text-warning" href="../admin/logout.php">Logout</a>
                 </li>
 

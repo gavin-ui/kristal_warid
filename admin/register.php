@@ -1,9 +1,9 @@
 <?php
 include '../koneksi.php';
-session_start();
+include 'partials/header.php'; // header sudah start session
 
 // HANYA ADMIN YANG BOLEH AKSES
-if (!isset($_SESSION['admin_login']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../login/login.php");
     exit;
 }

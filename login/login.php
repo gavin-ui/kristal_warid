@@ -36,10 +36,10 @@ function send_otp_wa($nomor, $otp, $token) {
     return $response ? true : false;
 }
 
+
 // ===============================================
 // =============== LOGIN PROCESS =================
 // ===============================================
-// =============== LOGIN PROCESS =================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'login') {
 
     $username = trim($_POST['username']);
@@ -49,80 +49,101 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'login
         $error = "Isi username dan password.";
     } else {
 
-        // ==== 1. LOGIN ADMIN UTAMA (HARDCODE) ====
+        // =====================================================
+        // 1. LOGIN ADMIN UTAMA (HARDCODE)
+        // =====================================================
         if ($username === "admin") {
 
             $adminPassword = "admin123";
 
             if ($password === $adminPassword) {
-                $_SESSION['admin_login'] = true;
+
+                $_SESSION['role'] = "admin";
                 $_SESSION['username'] = "admin";
                 $_SESSION['nama_admin'] = "Administrator";
-                $_SESSION['role'] = "admin";
 
                 header("Location: ../admin/index.php");
                 exit;
+
             } else {
                 $error = "Password admin salah.";
             }
         }
 
-        // ==== 2. LOGIN MENGGUNAKAN DATABASE ====
-        else {
+        // =====================================================
+        // 2. LOGIN ADMIN / KAPTEN DATABASE
+        // =====================================================
+        $stmt = $conn->prepare("
+            SELECT id_admin, username, password, nama_admin, role 
+            FROM admin 
+            WHERE username = ?
+        ");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $res = $stmt->get_result();
 
-            $stmt = $conn->prepare("SELECT id_admin, username, password, nama_admin, role 
-                                    FROM admin WHERE username = ?");
-            $stmt->bind_param("s", $username);
-            $stmt->execute();
-            $res = $stmt->get_result();
+        if ($res->num_rows === 1) {
 
-            if ($res->num_rows === 1) {
+            $row = $res->fetch_assoc();
 
-                $row = $res->fetch_assoc();
+            if (password_verify($password, $row['password'])) {
 
-                if (password_verify($password, $row['password'])) {
+                // ADMIN
+                if ($row['role'] === "admin") {
+                    $_SESSION['role'] = "admin";
+                    $_SESSION['id_admin'] = $row['id_admin'];
+                    $_SESSION['nama_admin'] = $row['nama_admin'];
+                    $_SESSION['username'] = $row['username'];
 
-                    // === LOGIN SEBAGAI ADMIN ===
-                    if ($row['role'] === 'admin') {
-
-                        $_SESSION['admin_login'] = true;
-                        $_SESSION['id_admin'] = $row['id_admin'];
-                        $_SESSION['username'] = $row['username'];
-                        $_SESSION['nama_admin'] = $row['nama_admin'];
-                        $_SESSION['role'] = "admin";
-
-                        header("Location: ../admin/index.php");
-                        exit;
-                    }
-
-                    // === LOGIN SEBAGAI KAPTEN ===
-                    elseif ($row['role'] === 'kapten') {
-
-                        $_SESSION['admin_login'] = true;
-                        $_SESSION['id_admin'] = $row['id_admin'];
-                        $_SESSION['username'] = $row['username'];
-                        $_SESSION['nama_admin'] = $row['nama_admin'];
-                        $_SESSION['role'] = "kapten";
-
-                        header("Location: ../kapten/index.php");
-                        exit;
-                    }
-
-                    // === ROLE TIDAK VALID ===
-                    else {
-                        $error = "Role tidak dikenal.";
-                    }
-
-                } else {
-                    $error = "Password salah.";
+                    header("Location: ../admin/index.php");
+                    exit;
                 }
 
-            } else {
-                $error = "Username tidak ditemukan.";
-            }
+                // KAPTEN
+                if ($row['role'] === "kapten") {
+                    $_SESSION['role'] = "kapten";
+                    $_SESSION['id_admin'] = $row['id_admin'];
+                    $_SESSION['nama_admin'] = $row['nama_admin'];
+                    $_SESSION['username'] = $row['username'];
 
-            $stmt->close();
+                    header("Location: ../kapten/index.php");
+                    exit;
+                }
+            }
         }
+
+        // =====================================================
+        // 3. LOGIN KARYAWAN (TAMBAHAN BARU)
+        // =====================================================
+        $stmt2 = $conn->prepare("
+            SELECT id_karyawan, nama_karyawan, nomor_karyawan, divisi, username, password 
+            FROM karyawan 
+            WHERE username = ?
+        ");
+        $stmt2->bind_param("s", $username);
+        $stmt2->execute();
+        $res2 = $stmt2->get_result();
+
+        if ($res2->num_rows === 1) {
+
+            $kr = $res2->fetch_assoc();
+
+            if (password_verify($password, $kr['password'])) {
+
+                // SET SESSION KARYAWAN
+                $_SESSION['role'] = "karyawan";
+                $_SESSION['id_karyawan'] = $kr['id_karyawan'];
+                $_SESSION['nama_karyawan'] = $kr['nama_karyawan'];
+                $_SESSION['nomor_karyawan'] = $kr['nomor_karyawan'];
+                $_SESSION['divisi'] = $kr['divisi'];
+                $_SESSION['username'] = $kr['username'];
+
+                header("Location: ../karyawan/index.php");
+                exit;
+            }
+        }
+
+        $error = "Username atau password salah!";
     }
 }
 
@@ -141,11 +162,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
 
     if ($res->num_rows === 1) {
 
-        // Limit 60 detik
         if (!empty($_SESSION['otp_last_sent_time']) &&
             (time() - $_SESSION['otp_last_sent_time']) < $OTP_MIN_INTERVAL) {
 
             $error = "Tunggu 1 menit untuk meminta OTP lagi.";
+
         } else {
 
             $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
@@ -170,6 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
     $stmt->close();
 }
 
+
 // ===============================================
 // ================ VERIFIKASI OTP ===============
 // ===============================================
@@ -192,6 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'verif
         exit;
     }
 }
+
 
 // ===============================================
 // ============== SET PASSWORD BARU ==============
@@ -225,7 +248,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'set_n
     }
 }
 
-// Tentukan halaman
 $action = $_GET['action'] ?? 'login';
 ?>
 <!doctype html>
@@ -337,10 +359,6 @@ body {
         Kembali ke <a href="login.php" style="color:#00AEEF;">Login</a>
     </p>
 
-
-
-
-
 <?php elseif ($action === 'verify'): ?>
 
     <h3 class="text-center mb-4" style="color:#00AEEF;">Verifikasi OTP</h3>
@@ -366,11 +384,6 @@ body {
     <p class="mt-3 text-center small-muted">
         <a href="login.php" style="color:#00AEEF;">Kembali ke Login</a>
     </p>
-
-
-
-
-
 
 <?php elseif ($action === 'newpass'): ?>
 
@@ -399,10 +412,6 @@ body {
         <a href="login.php" style="color:#00AEEF;">Kembali ke Login</a>
     </p>
 
-
-
-
-
 <?php else: ?>
 
     <h3 class="text-center mb-4" style="color:#00AEEF;">Admin Es Kristal Warid</h3>
@@ -426,17 +435,8 @@ body {
     </form>
 
     <div class="mt-3 text-center">
-        <small class="small-muted">
-            Belum punya akun?  
-            <a href="register.php" style="color:#00AEEF;">Daftar</a>
-        </small>
-    </div>
-
-    <?php if (!empty($_SESSION['last_failed_username'])): ?>
-    <div class="mt-3 text-center">
         <a href="?action=forgot" style="color:#00AEEF; font-weight:600;">Lupa password?</a>
     </div>
-    <?php endif; ?>
 
 <?php endif; ?>
 
@@ -444,4 +444,3 @@ body {
 
 </body>
 </html>
-

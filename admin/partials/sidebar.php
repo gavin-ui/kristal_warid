@@ -1,3 +1,7 @@
+<?php
+$role = $_SESSION['role'] ?? '';
+?>
+
 <div id="sidebar" class="sidebar">
 
 <style>
@@ -48,13 +52,11 @@ body.dark {
     display: flex;
     flex-direction: column;
     z-index: 999;
-    overflow-y: auto;            /* <-- SCROLL BAR */
+    overflow-y: auto;
     overflow-x: hidden;
 }
 
-.sidebar::-webkit-scrollbar {
-    width: 6px;
-}
+.sidebar::-webkit-scrollbar { width: 6px; }
 .sidebar::-webkit-scrollbar-thumb {
     background: rgba(255,255,255,0.4);
     border-radius: 6px;
@@ -167,14 +169,10 @@ body.dark {
     transition: .3s ease;
 }
 
-.submenu.show {
-    display: block;
-}
-
+.submenu.show { display: block; }
 .sidebar.collapsed .submenu { display: none !important; }
 
 </style>
-
 
 
 <!-- =============================
@@ -191,10 +189,15 @@ body.dark {
 
 <div class="logo text-center">
     <img src="../home/assets/logo.png">
-    <h4>Admin</h4>
+    <h4>Dashboard</h4>
 </div>
 
-<!-- Menu Utama -->
+
+<!-- ===============================================================
+     MENU ADMIN (FULL ACCESS)
+=============================================================== -->
+<?php if ($role === "admin"): ?>
+
 <div class="menu-item" onclick="location.href='../admin/index.php'">
     <i>🏠</i> <span class="menu-text">Dashboard</span>
 </div>
@@ -202,6 +205,12 @@ body.dark {
 <div class="menu-item" onclick="location.href='../admin/register.php'">
     <i>👤</i> <span class="menu-text">Register</span>
 </div>
+
+<!-- ===== MENU BARU: REGISTER KARYAWAN ===== -->
+<div class="menu-item" onclick="location.href='../admin/register_karyawan.php'">
+    <i>📝</i> <span class="menu-text">Register Karyawan</span>
+</div>
+<!-- ======================================== -->
 
 <div class="menu-item" onclick="location.href='../admin/tambah_karyawan.php'">
     <i>👤</i> <span class="menu-text">Tambah Karyawan</span>
@@ -211,9 +220,6 @@ body.dark {
     <i>📋</i> <span class="menu-text">Data Karyawan</span>
 </div>
 
-<!-- =============================
-     MENU SCAN ABSEN *BARU*
-============================= -->
 <div class="menu-item" onclick="location.href='../admin/absen.php'">
     <i>📡</i> <span class="menu-text">Scan Absen</span>
 </div>
@@ -226,16 +232,10 @@ body.dark {
     <i>🚀</i> <span class="menu-text">CRM</span>
 </div>
 
-
-<!-- =============================
-     MENU UTAMA — PENGGUNAAN PLASTIK
-============================= -->
 <div class="menu-item" onclick="togglePlastikMenu()">
-    <i>🧊</i> 
-    <span class="menu-text">Penggunaan Plastik</span>
+    <i>🧊</i> <span class="menu-text">Penggunaan Plastik</span>
 </div>
 
-<!-- SUBMENU -->
 <div id="plastikSubMenu" class="submenu">
     <div class="menu-item" onclick="location.href='../admin/penggunaan_plastik_data_awal.php'"><i>📥</i> <span class="menu-text">Data Awal</span></div>
     <div class="menu-item" onclick="location.href='../admin/penggunaan_plastik_produksi.php'"><i>🏭</i> <span class="menu-text">Produksi</span></div>
@@ -245,7 +245,47 @@ body.dark {
     <div class="menu-item" onclick="location.href='../admin/penggunaan_plastik.php'"><i>👌</i> <span class="menu-text">Edit</span></div>
 </div>
 
+<?php endif; ?>
 
+
+
+<!-- ===============================================================
+     MENU KARYAWAN
+=============================================================== -->
+<?php if ($role === "karyawan"): ?>
+
+<div class="menu-item" onclick="location.href='../karyawan/index.php'">
+    <i>🏠</i> <span class="menu-text">Home</span>
+</div>
+
+<div class="menu-item" onclick="location.href='../admin/absen.php'">
+    <i>📡</i> <span class="menu-text">Absen</span>
+</div>
+
+<?php endif; ?>
+
+
+
+<!-- ===============================================================
+     MENU KAPTEN
+=============================================================== -->
+<?php if ($role === "kapten"): ?>
+
+<div class="menu-item" onclick="location.href='../kapten/index.php'">
+    <i>🏠</i> <span class="menu-text">Dashboard Kapten</span>
+</div>
+
+<div class="menu-item" onclick="location.href='../admin/absen.php'">
+    <i>📡</i> <span class="menu-text">Absen</span>
+</div>
+
+<?php endif; ?>
+
+
+
+<!-- ===============================================================
+     LOGOUT
+=============================================================== -->
 <div class="menu-item" onclick="location.href='../admin/logout.php'">
     <i>🚪</i> <span class="menu-text">Logout</span>
 </div>
@@ -253,20 +293,12 @@ body.dark {
 </div>
 
 
-
 <script>
-// =============================
-// SIDEBAR COLLAPSE
-// =============================
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
     document.body.classList.toggle("collapsed");
 }
 
-
-// =============================
-// DARK MODE SYSTEM
-// =============================
 const darkSwitch = document.getElementById("darkSwitch");
 if(localStorage.getItem("theme") === "dark"){
     document.body.classList.add("dark");
@@ -282,13 +314,9 @@ darkSwitch.addEventListener("click", () => {
     );
 });
 
-
-// =============================
-// SUBMENU PENGGUNAAN PLASTIK
-// =============================
 function togglePlastikMenu() {
     const sub = document.getElementById("plastikSubMenu");
     sub.classList.toggle("show");
 }
-
 </script>
+    

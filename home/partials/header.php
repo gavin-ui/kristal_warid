@@ -12,67 +12,89 @@
 <style>
 
 /* ===============================
-   ❄ GLOBAL THEME
-   =============================== */
-
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #f4faff;
-    font-family: 'Poppins', sans-serif;
-    overflow-x: hidden;
-}
-
-/* ===============================
-   ❄ HERO SECTION
+   ❄ LUXURY HERO HEADER
    =============================== */
 
 .hero-section {
-    height: 75vh;
+    height: 78vh;
     width: 100%;
-    background: linear-gradient(180deg, rgba(0,123,255,.35), rgba(0,67,160,.5)), 
-                url('../home/assets/ice-bg.jpg');
+    position: relative;
+    background:
+        linear-gradient(180deg, rgba(0,123,255,.45), rgba(0,45,110,.75)),
+        url('../home/assets/ice-bg.jpg');
     background-size: cover;
     background-position: center;
-    position: relative;
-    animation: fadeHero 1.2s ease-in-out forwards;
     overflow: hidden;
 }
 
-/* Frost floating particles (es kecil melayang) */
+/* Snow / ice particles */
 .hero-section::before {
     content: "";
     position: absolute;
     inset: 0;
     background: url('../home/assets/snow.png') repeat;
-    opacity: .25;
-    animation: snowDrift 18s linear infinite;
+    opacity: .22;
+    animation: snowDrift 22s linear infinite;
 }
 
-/* Frost glass content box */
+/* Ice light flare */
+.hero-section::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at top left,
+            rgba(255,255,255,0.35),
+            transparent 45%);
+    pointer-events: none;
+}
+
+/* Glass hero box */
 .hero-box {
     position: absolute;
-    bottom: 16%;
+    bottom: 15%;
     left: 50%;
     transform: translateX(-50%);
-    width: 85%;
-    max-width: 900px;
-    background: rgba(255,255,255,0.50);
-    backdrop-filter: blur(12px);
-    padding: 40px;
-    border-radius: 20px;
+    width: 90%;
+    max-width: 980px;
+
+    background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.65),
+        rgba(255,255,255,0.45)
+    );
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 48px;
+    border-radius: 26px;
+
     text-align: center;
-    border: 2px solid rgba(255, 255, 255, 0.35);
-    box-shadow: 0 8px 32px rgba(0,102,255,0.20);
-    animation: riseUp 1.3s ease forwards;
+
+    border: 1.8px solid rgba(255,255,255,0.45);
+    box-shadow:
+        0 12px 38px rgba(0,85,200,0.30),
+        inset 0 0 18px rgba(255,255,255,0.6);
+
+    animation: riseUp 1.4s ease forwards;
+}
+
+/* Ice divider */
+.hero-divider {
+    width: 80px;
+    height: 4px;
+    margin: 18px auto;
+    border-radius: 20px;
+    background: linear-gradient(90deg,#00c8ff,#007bff,#00c8ff);
+    box-shadow: 0 0 15px rgba(0,160,255,.6);
 }
 
 /* Title */
 .hero-title {
-    font-size: 42px;
-    font-weight: 800;
-    letter-spacing: .5px;
-    background: linear-gradient(90deg, #007bff, #003b9b);
+    font-size: 46px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg,#007bff,#00bfff,#007bff);
     -webkit-background-clip: text;
     color: transparent;
 }
@@ -80,28 +102,51 @@ body {
 /* Subtitle */
 .hero-sub {
     font-size: 18px;
-    color: #004f9c;
-    margin-bottom: 18px;
-    opacity: .85;
+    color: #003f82;
+    max-width: 720px;
+    margin: auto;
+    opacity: .9;
 }
 
-/* Button */
+/* Button shimmer */
 .hero-btn {
-    background: #ffc400;
-    color: #001d3d;
-    font-weight: 700;
+    margin-top: 24px;
+    background: linear-gradient(90deg,#ffd000,#ffae00);
+    color: #00244f;
+    font-weight: 800;
     border-radius: 50px;
-    padding: 12px 30px;
-    transition: .3s;
+    padding: 14px 34px;
     text-decoration: none;
     display: inline-block;
-    box-shadow: 0 5px 18px rgba(255,217,0,.28);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 22px rgba(255,190,0,.45);
+    transition: .35s;
+}
+
+.hero-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 120%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.6),
+        transparent
+    );
+    transition: .6s;
+}
+
+.hero-btn:hover::after {
+    left: 120%;
 }
 
 .hero-btn:hover {
-    background: #ffa200;
-    transform: scale(1.09) translateY(-3px);
-    box-shadow: 0 0 18px rgba(255,165,0,.5);
+    background: linear-gradient(90deg,#ffb300,#ff9800);
+    transform: scale(1.1) translateY(-3px);
 }
 
 /* ===============================
@@ -109,18 +154,13 @@ body {
    =============================== */
 
 @keyframes riseUp {
-    0% { transform: translate(-50%, 30px); opacity: 0; }
+    0% { transform: translate(-50%, 40px); opacity: 0; }
     100% { transform: translate(-50%, 0); opacity: 1; }
-}
-
-@keyframes fadeHero {
-    0% { filter: brightness(.8); }
-    100% { filter: brightness(1); }
 }
 
 @keyframes snowDrift {
     0% { background-position: 0 0; }
-    100% { background-position: 0 1000px; }
+    100% { background-position: 0 1200px; }
 }
 
 /* ===============================
@@ -128,10 +168,11 @@ body {
    =============================== */
 
 @media(max-width: 768px) {
-    .hero-title { font-size: 30px; }
+    .hero-title { font-size: 32px; }
     .hero-sub { font-size: 15px; }
-    .hero-box { padding: 25px; }
+    .hero-box { padding: 30px; }
 }
+
 
 </style>
 </head>
@@ -141,6 +182,7 @@ body {
 <!-- HERO SECTION -->
 <div class="hero-section">
     <div class="hero-box">
+        <div class="hero-divider"></div>
         <h1 class="hero-title">Es Kristal Warid</h1>
         <p class="hero-sub">
             Produsen Es Kristal Higienis Berstandar Modern — Magelang, Jawa Tengah

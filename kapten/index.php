@@ -151,9 +151,6 @@ include "partials/navbar.php";
                 ➕ Mulai Input
             </a>
         </div>
-
     </div>
-
 </div>
-
 <?php include "partials/footer.php"; ?>

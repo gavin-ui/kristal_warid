@@ -123,16 +123,50 @@ body {
 }
 
 /* ================= FOOTER ================= */
-footer {
-    background: linear-gradient(90deg, #ffffff, #f7f9ff);
-    border-top: 4px solid var(--orange);
-    padding: 18px;
-    margin-top: 60px;
-    text-align: center;
-    color: #666;
-    font-size: .9rem;
-    box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+.footer-premium {
+    background: linear-gradient(
+        90deg,
+        rgba(0,123,255,0.95),
+        rgba(255,145,0,0.9)
+    );
+    color: #fff;
+    padding: 18px 0;
+    box-shadow: 0 -6px 25px rgba(0,0,0,0.15);
+    position: relative;
 }
+
+/* GARIS GLOW ATAS */
+.footer-premium::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0.9),
+        rgba(255,255,255,0)
+    );
+}
+
+.footer-brand {
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 0.95rem;
+}
+
+.footer-sub {
+    font-weight: 500;
+    opacity: 0.9;
+    margin-left: 6px;
+}
+
+.footer-copy {
+    font-size: 0.85rem;
+    opacity: 0.95;
+}
+
 </style>
 </head>
 <body>

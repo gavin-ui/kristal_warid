@@ -261,51 +261,78 @@ $action = $_GET['action'] ?? 'login';
 <style>
 /* FULL BACKGROUND */
 body {
-    height: 100vh; 
-    margin: 0; 
-    display:flex; 
-    justify-content:center; 
+    height: 100vh;
+    margin: 0;
+    display:flex;
+    justify-content:center;
     align-items:center;
-    background: radial-gradient(circle at center,
-        rgba(255,255,255,0.85) 0%,
-        rgba(255,255,255,0.65) 35%,
-        rgba(0, 174, 239, 0.9) 100%);
+    background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.6), transparent 40%),
+        radial-gradient(circle at bottom right, rgba(255,255,255,0.5), transparent 45%),
+        radial-gradient(circle at center,
+            rgba(255,255,255,0.85) 0%,
+            rgba(255,255,255,0.65) 35%,
+            rgba(0, 174, 239, 0.9) 100%);
     background-color:#00AEEF;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Arial, sans-serif;
 }
 
 /* GLASS CARD */
 .card-glass {
-    width: 420px; 
-    padding:35px; 
-    border-radius:20px;
-    background:rgba(255,255,255,0.35); 
-    backdrop-filter:blur(10px);
-    box-shadow:0 8px 25px rgba(0,0,0,0.15); 
-    animation:fadeIn 0.6s ease;
+    width: 430px;
+    padding:38px;
+    border-radius:26px;
+    background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.55),
+        rgba(255,255,255,0.35)
+    );
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.18),
+        inset 0 0 0 1px rgba(255,255,255,0.5);
+    animation: floatIn 0.8s ease;
+    position: relative;
 }
 
-@keyframes fadeIn {
-    from { opacity:0; transform:translateY(20px); }
-    to   { opacity:1; transform:translateY(0); }
+/* CARD GLOW */
+.card-glass::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:26px;
+    background: linear-gradient(
+        120deg,
+        rgba(255,255,255,0.5),
+        transparent 40%,
+        rgba(255,255,255,0.4)
+    );
+    pointer-events:none;
 }
 
-/* BUTTON */
-.btn-primary {
-    background:#00AEEF;
-    border:none;
-    font-weight:bold;
-}
-.btn-primary:hover {
-    background:#008FC7;
+/* ANIMATION */
+@keyframes floatIn {
+    from { opacity:0; transform:translateY(30px) scale(.96); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
 }
 
-/* SMALL TEXT */
-.small-muted {
-    color:rgba(0,0,0,0.6);
+/* LOGO */
+.logo-circle {
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background: linear-gradient(135deg,#00AEEF,#008FC7);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:42px;
+    color:white;
+    margin:auto;
+    box-shadow:0 12px 30px rgba(0,0,0,0.25);
 }
 
-/* LABELS */
+/* FORM LABEL */
 .form-label {
     font-weight:600;
     color:#004b66;
@@ -313,18 +340,48 @@ body {
 
 /* INPUT */
 .form-control {
-    border-radius:10px;
+    border-radius:14px;
+    padding:12px 14px;
+    border:1px solid rgba(0,0,0,0.15);
+}
+.form-control:focus {
+    box-shadow:0 0 0 3px rgba(0,174,239,.25);
+    border-color:#00AEEF;
+}
+
+/* BUTTON */
+.btn-primary {
+    background: linear-gradient(135deg,#00AEEF,#008FC7);
+    border:none;
+    border-radius:14px;
+    font-weight:bold;
+    letter-spacing:.4px;
+    box-shadow:0 8px 20px rgba(0,174,239,.45);
+}
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow:0 12px 28px rgba(0,174,239,.55);
+}
+
+/* LINK */
+a {
+    text-decoration:none;
+}
+a:hover {
+    text-decoration:underline;
 }
 
 /* BACK BUTTON */
 .back-btn {
-    position:absolute; 
-    top:20px; 
-    left:20px; 
-    text-decoration:none;
-    display:flex; 
-    align-items:center; 
+    position:absolute;
+    top:25px;
+    left:25px;
+    transition:.3s ease;
 }
+.back-btn:hover {
+    transform: translateX(-5px);
+}
+
 </style>
 </head>
 <body>
@@ -337,6 +394,15 @@ body {
 </a>
 
 <div class="card-glass">
+<div class="text-center mb-4">
+    <div class="logo-circle">
+        ❄️
+    </div>
+    <h5 class="fw-bold mt-3" style="color:#004b66; letter-spacing:1px;">
+        ES KRISTAL WARID
+    </h5>
+    <small class="text-muted">Management System</small>
+</div>
 
 <?php if ($action === 'forgot'): ?>
 
@@ -414,7 +480,9 @@ body {
 
 <?php else: ?>
 
-    <h3 class="text-center mb-4" style="color:#00AEEF;">Admin Es Kristal Warid</h3>
+    <h4 class="text-center fw-bold mb-4" style="color:#00AEEF; letter-spacing:.5px;">
+    Login
+</h4>
 
     <?php if ($error): ?><div class="alert alert-danger py-2"><?=$error?></div><?php endif; ?>
 

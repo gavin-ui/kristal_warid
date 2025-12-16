@@ -164,4 +164,3 @@ body.dark header.admin-header {
 </header>
 
 <div class="main-content">
-hsla(223, 54%, 15%, 0.92)

@@ -195,49 +195,88 @@ title="Keterangan tambahan jika ada kendala atau catatan khusus"></textarea>
 <!-- ================= MODAL TABEL ================= -->
 <div class="modal-bg" id="modalTable">
 <div class="modal-box">
-<h3 style="text-align:center;color:var(--title-color)">📦 Data Produksi Mesin</h3>
+
+<h3 style="text-align:center;color:var(--title-color)">
+📦 Data Produksi Mesin (Lengkap)
+</h3>
 <hr style="opacity:.3">
 
+<div style="overflow-x:auto">
 <table>
 <thead>
 <tr>
-<th>ID</th><th>Mesin</th><th>Jam</th><th>Qty</th><th>Aksi</th>
+    <th>ID</th>
+    <th>Mesin</th>
+    <th>Jam Mulai</th>
+    <th>Menit</th>
+    <th>Defroz</th>
+    <th>Pack</th>
+    <th>Qty</th>
+    <th>Kristal (kg)</th>
+    <th>Serut (kg)</th>
+    <th>Keterangan</th>
+    <th>Aksi</th>
 </tr>
 </thead>
+
 <tbody>
 <?php
-$where = ($filterMesin=='all') ? '' : "WHERE mesin='".$conn->real_escape_string($filterMesin)."'";
-$q = mysqli_query($conn,"SELECT * FROM produksi_mesin $where ORDER BY id_produksi DESC");
-while($r=mysqli_fetch_assoc($q)):
+$where = ($filterMesin=='all') 
+    ? '' 
+    : "WHERE mesin='".$conn->real_escape_string($filterMesin)."'";
+
+$q = mysqli_query(
+    $conn,
+    "SELECT * FROM produksi_mesin $where ORDER BY id_produksi DESC"
+);
+
+while($r = mysqli_fetch_assoc($q)):
 ?>
 <tr>
-<td><?= $r['id_produksi'] ?></td>
-<td><?= $r['mesin'] ?></td>
-<td><?= $r['jam_mulai'] ?></td>
-<td><?= $r['qty'] ?></td>
-<td>
-<button class="edit-btn"
-onclick="openEdit(
-'<?= $r['id_produksi'] ?>',
-'<?= $r['mesin'] ?>',
-'<?= $r['jam_mulai'] ?>',
-'<?= $r['menit'] ?>',
-'<?= $r['defroz'] ?>',
-'<?= $r['pack'] ?>',
-'<?= $r['qty'] ?>',
-'<?= $r['kristal'] ?>',
-'<?= $r['serut'] ?>',
-`<?= $r['keterangan'] ?>`
-)">✏ Edit</button>
+    <td><?= $r['id_produksi'] ?></td>
+    <td><?= $r['mesin'] ?></td>
+    <td><?= $r['jam_mulai'] ?></td>
+    <td><?= $r['menit'] ?></td>
+    <td><?= $r['defroz'] ?></td>
+    <td><?= $r['pack'] ?></td>
+    <td><?= $r['qty'] ?></td>
+    <td><?= $r['kristal'] ?></td>
+    <td><?= $r['serut'] ?></td>
+    <td style="max-width:220px;white-space:normal">
+        <?= nl2br(htmlspecialchars($r['keterangan'])) ?>
+    </td>
+    <td>
+        <button class="edit-btn"
+        onclick="openEdit(
+            '<?= $r['id_produksi'] ?>',
+            '<?= $r['mesin'] ?>',
+            '<?= $r['jam_mulai'] ?>',
+            '<?= $r['menit'] ?>',
+            '<?= $r['defroz'] ?>',
+            '<?= $r['pack'] ?>',
+            '<?= $r['qty'] ?>',
+            '<?= $r['kristal'] ?>',
+            '<?= $r['serut'] ?>',
+            `<?= htmlspecialchars($r['keterangan'], ENT_QUOTES) ?>`
+        )">✏ Edit</button>
 
-<a class="delete-btn" href="?delete=<?= $r['id_produksi'] ?>" onclick="return confirm('Hapus data?')">🗑</a>
-</td>
+        <a class="delete-btn"
+           href="?delete=<?= $r['id_produksi'] ?>"
+           onclick="return confirm('Hapus data ini?')">
+           🗑
+        </a>
+    </td>
 </tr>
 <?php endwhile; ?>
 </tbody>
 </table>
+</div>
 
-<button onclick="closeTable()" style="width:100%;margin-top:10px;padding:10px;border-radius:10px">Tutup</button>
+<button onclick="closeTable()"
+style="width:100%;margin-top:12px;padding:10px;border-radius:10px">
+Tutup
+</button>
+
 </div>
 </div>
 

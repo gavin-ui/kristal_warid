@@ -1,174 +1,222 @@
 <?php
 include "../koneksi.php";
 
-/* jika submit full edit */
+/* =========================
+   SIMPAN FULL EDIT
+========================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_full_edit'])) {
+
     $id = intval($_POST['id_plastik']);
 
-    // daftar kolom yang akan di-update (ambil dari struktur tabel)
     $cols = [
-      'plastik_awal','sisa_plastik_kemarin','total_penggunaan_plastik',
-      'total_kristal','total_serut','total_rusak','sisa_total_plastik_terpakai','keterangan',
-      'retur_armada_carry_h8516gk','retur_armada_long_hb017ov','retur_armada_traga_h9876ag',
-      'retur_armada_elf_h8023ov','retur_armada_elf_h8019ov','retur_armada_elf_dobel_h8021ov',
-      'distribusi_barkel_carry_h8516gk','distribusi_barkel_long_hb017ov','distribusi_barkel_traga_h9876ag',
-      'distribusi_barkel_elf_h8023ov','distribusi_barkel_elf_h8019ov','hasil_produksi_hari_ini',
-      'retur_total_dari_armada','stok_cs_kemarin','repack_stok','jumlah_total_stok_kemarin_retur_repack',
-      'total_hasil_produksi_mesin_a','total_hasil_produksi_mesin_b','jumlah_hasil_produksi_keseluruhan',
-      'total_barel','total_produksi_hari_ini_final','stok_cs_setelah_dikurangi_barel'
+        'plastik_awal','sisa_plastik_kemarin','total_penggunaan_plastik',
+        'total_kristal','total_serut','total_rusak','sisa_total_plastik_terpakai','keterangan',
+        'retur_armada_carry_h8516gk','retur_armada_long_hb017ov','retur_armada_traga_h9876ag',
+        'retur_armada_elf_h8023ov','retur_armada_elf_h8019ov','retur_armada_elf_dobel_h8021ov',
+        'distribusi_barkel_carry_h8516gk','distribusi_barkel_long_hb017ov','distribusi_barkel_traga_h9876ag',
+        'distribusi_barkel_elf_h8023ov','distribusi_barkel_elf_h8019ov','hasil_produksi_hari_ini',
+        'retur_total_dari_armada','stok_cs_kemarin','repack_stok',
+        'jumlah_total_stok_kemarin_retur_repack','total_hasil_produksi_mesin_a',
+        'total_hasil_produksi_mesin_b','jumlah_hasil_produksi_keseluruhan',
+        'total_barel','total_produksi_hari_ini_final','stok_cs_setelah_dikurangi_barel'
     ];
 
-    $sets = [];
-    foreach($cols as $c) {
+    $set = [];
+    foreach ($cols as $c) {
         if (isset($_POST[$c]) && $_POST[$c] !== '') {
-            $val = mysqli_real_escape_string($conn, $_POST[$c]);
-            $sets[] = "$c = '$val'";
+            $v = mysqli_real_escape_string($conn, $_POST[$c]);
+            $set[] = "$c = '$v'";
         } else {
-            $sets[] = "$c = NULL";
+            $set[] = "$c = NULL";
         }
     }
 
-    if (count($sets)) {
-        $sql = "UPDATE penggunaan_plastik SET " . implode(",", $sets) . " WHERE id_plastik = $id";
-        mysqli_query($conn, $sql);
-    }
+    mysqli_query($conn,"
+        UPDATE penggunaan_plastik SET ".implode(',', $set)."
+        WHERE id_plastik = $id
+    ");
 
-    header("Location: penggunaan_plastik.php?success=1");
+    header("Location: penggunaan_plastik_edit_full.php?success=1");
     exit;
 }
 
-/* ambil data untuk dropdown */
-$rows = mysqli_query($conn, "SELECT id_plastik, tanggal_input FROM penggunaan_plastik ORDER BY id_plastik DESC LIMIT 300");
+/* =========================
+   DROPDOWN ID
+========================= */
+$list = mysqli_query($conn,"
+    SELECT id_plastik, tanggal_input
+    FROM penggunaan_plastik
+    ORDER BY id_plastik DESC
+    LIMIT 300
+");
 ?>
+
 <?php include "partials/header.php"; ?>
 <?php include "partials/sidebar.php"; ?>
 
 <style>
-.page-container { margin-left:290px; padding:24px; min-height:100vh; background:var(--body-bg); }
-.form-card { max-width:1100px; margin:auto; background:var(--card-bg); padding:18px; border-radius:12px; }
-.form-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-input, textarea, select { width:100%; padding:8px; border-radius:8px; border:2px solid var(--title-color); box-sizing:border-box; }
-textarea { min-height:80px; }
-.btn { padding:12px; border-radius:10px; border:none; cursor:pointer; font-weight:700; }
-.btn-save { background:var(--hover-bg); }
-.notice{ color:green; font-weight:700; }
+.page-container{
+    margin-left:290px;
+    padding:32px;
+    min-height:100vh;
+    background:var(--body-bg);
+}
+.form-card{
+    max-width:1200px;
+    margin:auto;
+    background:var(--card-bg);
+    padding:24px;
+    border-radius:16px;
+}
+h2{
+    color:var(--title-color);
+    text-align:center;
+    margin-bottom:16px;
+}
+.notice{
+    color:#16a34a;
+    font-weight:700;
+    margin-bottom:12px;
+}
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+}
+label{
+    font-weight:700;
+    color:var(--title-color);
+    margin:10px 0 6px;
+    display:block;
+}
+input, textarea, select{
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    border:2px solid var(--title-color);
+    background:transparent;
+    color:var(--title-color);
+    box-sizing:border-box;
+}
+textarea{ min-height:90px; }
+
+/* HILANGKAN SPINNER */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+}
+input[type=number]{ -moz-appearance:textfield; }
+
+.btn{
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    font-weight:700;
+    cursor:pointer;
+}
+.btn-save{
+    background:var(--hover-bg);
+    color:var(--title-color);
+}
+.btn-save:hover{ transform:scale(1.05); }
 </style>
 
 <div class="page-container">
-  <div class="form-card">
-    <h2 style="color:var(--title-color); text-align:center;">🛠 Edit Semua Field — Penggunaan Plastik</h2>
+<div class="form-card">
 
-    <?php if(isset($_GET['success'])): ?><div class="notice">✔ Perubahan berhasil disimpan.</div><?php endif; ?>
+<h2>🛠 Edit Semua Data — Penggunaan Plastik</h2>
 
-    <label>Pilih ID</label>
-    <select id="selectRecord" onchange="loadRecord()" >
-      <option value="">-- Pilih ID untuk load data --</option>
-      <?php while($r = mysqli_fetch_assoc($rows)) echo "<option value=\"{$r['id_plastik']}\">ID {$r['id_plastik']} — {$r['tanggal_input']}</option>"; ?>
-    </select>
+<?php if(isset($_GET['success'])): ?>
+<div class="notice">✔ Data berhasil diperbarui</div>
+<?php endif; ?>
 
-    <form method="POST" id="fullEditForm" style="margin-top:12px;">
-      <input type="hidden" name="id_plastik" id="id_plastik">
+<label>Pilih ID</label>
+<select id="selectID" onchange="loadData()">
+    <option value="">-- Pilih ID --</option>
+    <?php while($r=mysqli_fetch_assoc($list)): ?>
+        <option value="<?= $r['id_plastik'] ?>">
+            ID <?= $r['id_plastik'] ?> — <?= $r['tanggal_input'] ?>
+        </option>
+    <?php endwhile; ?>
+</select>
 
-      <div class="form-grid">
-        <div>
-          <label>Plastik Awal</label><input name="plastik_awal" id="plastik_awal">
-          <label>Sisa Plastik Kemarin</label><input name="sisa_plastik_kemarin" id="sisa_plastik_kemarin">
-          <label>Total Penggunaan Plastik</label><input name="total_penggunaan_plastik" id="total_penggunaan_plastik">
-          <label>Total Kristal</label><input name="total_kristal" id="total_kristal">
-          <label>Total Serut</label><input name="total_serut" id="total_serut">
-          <label>Total Rusak</label><input name="total_rusak" id="total_rusak">
-        </div>
+<form method="POST" style="margin-top:16px;">
+<input type="hidden" name="id_plastik" id="id_plastik">
 
-        <div>
-          <label>Sisa Total Plastik Terpakai</label><input name="sisa_total_plastik_terpakai" id="sisa_total_plastik_terpakai">
-          <label>Keterangan</label><textarea name="keterangan" id="keterangan"></textarea>
-          <label>Hasil Produksi Hari Ini</label><input name="hasil_produksi_hari_ini" id="hasil_produksi_hari_ini">
-          <label>Total Mesin A</label><input name="total_hasil_produksi_mesin_a" id="total_hasil_produksi_mesin_a">
-          <label>Total Mesin B</label><input name="total_hasil_produksi_mesin_b" id="total_hasil_produksi_mesin_b">
-        </div>
+<div class="form-grid">
 
-        <div>
-          <label>Jumlah Produksi Keseluruhan</label><input name="jumlah_hasil_produksi_keseluruhan" id="jumlah_hasil_produksi_keseluruhan">
-          <label>Retur Carry</label><input name="retur_armada_carry_h8516gk" id="retur_armada_carry_h8516gk">
-          <label>Retur Long</label><input name="retur_armada_long_hb017ov" id="retur_armada_long_hb017ov">
-          <label>Retur Traga</label><input name="retur_armada_traga_h9876ag" id="retur_armada_traga_h9876ag">
-          <label>Retur Elf 8023</label><input name="retur_armada_elf_h8023ov" id="retur_armada_elf_h8023ov">
-        </div>
+<div>
+<label>Plastik Awal</label><input id="plastik_awal" name="plastik_awal" type="number">
+<label>Sisa Plastik Kemarin</label><input id="sisa_plastik_kemarin" name="sisa_plastik_kemarin" type="number">
+<label>Total Penggunaan Plastik</label><input id="total_penggunaan_plastik" name="total_penggunaan_plastik" type="number">
+<label>Total Kristal</label><input id="total_kristal" name="total_kristal" type="number">
+<label>Total Serut</label><input id="total_serut" name="total_serut" type="number">
+<label>Total Rusak</label><input id="total_rusak" name="total_rusak" type="number">
+</div>
 
-        <div>
-          <label>Retur Elf 8019</label><input name="retur_armada_elf_h8019ov" id="retur_armada_elf_h8019ov">
-          <label>Retur Elf Dobel</label><input name="retur_armada_elf_dobel_h8021ov" id="retur_armada_elf_dobel_h8021ov">
-          <label>Distribusi Carry</label><input name="distribusi_barkel_carry_h8516gk" id="distribusi_barkel_carry_h8516gk">
-          <label>Distribusi Long</label><input name="distribusi_barkel_long_hb017ov" id="distribusi_barkel_long_hb017ov">
-          <label>Distribusi Traga</label><input name="distribusi_barkel_traga_h9876ag" id="distribusi_barkel_traga_h9876ag">
-        </div>
+<div>
+<label>Sisa Total Plastik Terpakai</label><input id="sisa_total_plastik_terpakai" name="sisa_total_plastik_terpakai" type="number">
+<label>Keterangan</label><textarea id="keterangan" name="keterangan"></textarea>
+<label>Hasil Produksi Hari Ini</label><input id="hasil_produksi_hari_ini" name="hasil_produksi_hari_ini" type="number">
+<label>Total Mesin A</label><input id="total_hasil_produksi_mesin_a" name="total_hasil_produksi_mesin_a" type="number">
+<label>Total Mesin B</label><input id="total_hasil_produksi_mesin_b" name="total_hasil_produksi_mesin_b" type="number">
+</div>
 
-        <div>
-          <label>Distribusi Elf 8023</label><input name="distribusi_barkel_elf_h8023ov" id="distribusi_barkel_elf_h8023ov">
-          <label>Distribusi Elf 8019</label><input name="distribusi_barkel_elf_h8019ov" id="distribusi_barkel_elf_h8019ov">
-          <label>Retur Total dari Armada</label><input name="retur_total_dari_armada" id="retur_total_dari_armada">
-          <label>Stok CS Kemarin</label><input name="stok_cs_kemarin" id="stok_cs_kemarin">
-          <label>Repack Stok</label><input name="repack_stok" id="repack_stok">
-        </div>
+<div>
+<label>Jumlah Produksi Keseluruhan</label><input id="jumlah_hasil_produksi_keseluruhan" name="jumlah_hasil_produksi_keseluruhan" type="number">
+<label>Retur Carry</label><input id="retur_armada_carry_h8516gk" name="retur_armada_carry_h8516gk" type="number">
+<label>Retur Long</label><input id="retur_armada_long_hb017ov" name="retur_armada_long_hb017ov" type="number">
+<label>Retur Traga</label><input id="retur_armada_traga_h9876ag" name="retur_armada_traga_h9876ag" type="number">
+<label>Retur Elf 8023</label><input id="retur_armada_elf_h8023ov" name="retur_armada_elf_h8023ov" type="number">
+<label>Retur Elf 8019</label><input id="retur_armada_elf_h8019ov" name="retur_armada_elf_h8019ov" type="number">
+</div>
 
-        <div>
-          <label>Jumlah Total Stok Kemarin/Retur/Repack</label><input name="jumlah_total_stok_kemarin_retur_repack" id="jumlah_total_stok_kemarin_retur_repack">
-          <label>Total Barkel</label><input name="total_barel" id="total_barel">
-          <label>Total Produksi Hari Ini Final</label><input name="total_produksi_hari_ini_final" id="total_produksi_hari_ini_final">
-          <label>Stok CS Setelah Dikurangi Barkel</label><input name="stok_cs_setelah_dikurangi_barel" id="stok_cs_setelah_dikurangi_barel">
-        </div>
-      </div>
+<div>
+<label>Retur Elf Dobel</label><input id="retur_armada_elf_dobel_h8021ov" name="retur_armada_elf_dobel_h8021ov" type="number">
+<label>Distribusi Carry</label><input id="distribusi_barkel_carry_h8516gk" name="distribusi_barkel_carry_h8516gk" type="number">
+<label>Distribusi Long</label><input id="distribusi_barkel_long_hb017ov" name="distribusi_barkel_long_hb017ov" type="number">
+<label>Distribusi Traga</label><input id="distribusi_barkel_traga_h9876ag" name="distribusi_barkel_traga_h9876ag" type="number">
+<label>Distribusi Elf 8023</label><input id="distribusi_barkel_elf_h8023ov" name="distribusi_barkel_elf_h8023ov" type="number">
+<label>Distribusi Elf 8019</label><input id="distribusi_barkel_elf_h8019ov" name="distribusi_barkel_elf_h8019ov" type="number">
+</div>
 
-      <div style="margin-top:12px;">
-        <button class="btn btn-save" name="submit_full_edit" type="submit">💾 Simpan Semua Perubahan</button>
-      </div>
-    </form>
-  </div>
+<div>
+<label>Retur Total Armada</label><input id="retur_total_dari_armada" name="retur_total_dari_armada" type="number">
+<label>Stok CS Kemarin</label><input id="stok_cs_kemarin" name="stok_cs_kemarin" type="number">
+<label>Repack Stok</label><input id="repack_stok" name="repack_stok" type="number">
+<label>Jumlah Total Stok</label><input id="jumlah_total_stok_kemarin_retur_repack" name="jumlah_total_stok_kemarin_retur_repack" type="number">
+<label>Total Barkel</label><input id="total_barel" name="total_barel" type="number">
+<label>Total Produksi Final</label><input id="total_produksi_hari_ini_final" name="total_produksi_hari_ini_final" type="number">
+</div>
+
+<div>
+<label>Stok CS Setelah Barkel</label>
+<input id="stok_cs_setelah_dikurangi_barel" name="stok_cs_setelah_dikurangi_barel" type="number">
+</div>
+
+</div>
+
+<button class="btn btn-save" name="submit_full_edit" style="margin-top:18px;">
+💾 Simpan Semua Perubahan
+</button>
+
+</form>
+</div>
 </div>
 
 <script>
-// load record via AJAX-ish (fetch) - simple approach: call a tiny endpoint that returns JSON
-// but kita tidak buat endpoint baru; sebagai solusi ringan, kita dapat fetch data lewat PHP file that outputs JSON
-// implementasi simple: AJAX fetch ke same file with ?get=id -> we return JSON
-async function loadRecord(){
-    const id = document.getElementById('selectRecord').value;
+async function loadData(){
+    const id = document.getElementById('selectID').value;
     if(!id) return;
-    const res = await fetch('penggunaan_plastik_get.php?id=' + encodeURIComponent(id));
-    if(!res.ok) return alert('Gagal mengambil data');
-    const data = await res.json();
 
-    document.getElementById('id_plastik').value = data.id_plastik || '';
-    // set many fields safely (if element exists)
-    const setIf = (idk, val) => { const el = document.getElementById(idk); if(el) el.value = val === null ? '' : val; };
-    setIf('plastik_awal', data.plastik_awal);
-    setIf('sisa_plastik_kemarin', data.sisa_plastik_kemarin);
-    setIf('total_penggunaan_plastik', data.total_penggunaan_plastik);
-    setIf('total_kristal', data.total_kristal);
-    setIf('total_serut', data.total_serut);
-    setIf('total_rusak', data.total_rusak);
-    setIf('sisa_total_plastik_terpakai', data.sisa_total_plastik_terpakai);
-    setIf('keterangan', data.keterangan);
-    setIf('retur_armada_carry_h8516gk', data.retur_armada_carry_h8516gk);
-    setIf('retur_armada_long_hb017ov', data.retur_armada_long_hb017ov);
-    setIf('retur_armada_traga_h9876ag', data.retur_armada_traga_h9876ag);
-    setIf('retur_armada_elf_h8023ov', data.retur_armada_elf_h8023ov);
-    setIf('retur_armada_elf_h8019ov', data.retur_armada_elf_h8019ov);
-    setIf('retur_armada_elf_dobel_h8021ov', data.retur_armada_elf_dobel_h8021ov);
-    setIf('distribusi_barkel_carry_h8516gk', data.distribusi_barkel_carry_h8516gk);
-    setIf('distribusi_barkel_long_hb017ov', data.distribusi_barkel_long_hb017ov);
-    setIf('distribusi_barkel_traga_h9876ag', data.distribusi_barkel_traga_h9876ag);
-    setIf('distribusi_barkel_elf_h8023ov', data.distribusi_barkel_elf_h8023ov);
-    setIf('distribusi_barkel_elf_h8019ov', data.distribusi_barkel_elf_h8019ov);
-    setIf('hasil_produksi_hari_ini', data.hasil_produksi_hari_ini);
-    setIf('retur_total_dari_armada', data.retur_total_dari_armada);
-    setIf('stok_cs_kemarin', data.stok_cs_kemarin);
-    setIf('repack_stok', data.repack_stok);
-    setIf('jumlah_total_stok_kemarin_retur_repack', data.jumlah_total_stok_kemarin_retur_repack);
-    setIf('total_hasil_produksi_mesin_a', data.total_hasil_produksi_mesin_a);
-    setIf('total_hasil_produksi_mesin_b', data.total_hasil_produksi_mesin_b);
-    setIf('jumlah_hasil_produksi_keseluruhan', data.jumlah_hasil_produksi_keseluruhan);
-    setIf('total_barel', data.total_barel);
-    setIf('total_produksi_hari_ini_final', data.total_produksi_hari_ini_final);
-    setIf('stok_cs_setelah_dikurangi_barel', data.stok_cs_setelah_dikurangi_barel);
+    const res = await fetch('penggunaan_plastik_get.php?id='+id);
+    const d = await res.json();
+
+    for(const k in d){
+        const el = document.getElementById(k);
+        if(el) el.value = d[k] ?? '';
+    }
+    document.getElementById('id_plastik').value = d.id_plastik;
 }
 </script>

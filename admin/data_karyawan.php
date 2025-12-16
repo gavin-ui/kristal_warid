@@ -58,38 +58,44 @@ if (isset($_POST['update_karyawan'])) {
 
 <style>
 /* =============================
-   GLOBAL (AMAN)
+   GLOBAL
 ============================= */
 body {
     margin:0;
     padding:0;
-    font-family: Arial, sans-serif;
-    background:var(--body-bg);
-}
-
-/* LIGHT MODE */
-:root {
-    --table-text:#1a1a1a;
-    --table-border:#e0e0e0;
-    --row-even:#fafafa;
-    --row-hover:#eef6ff;
-}
-
-/* DARK MODE */
-body.dark {
-    --table-text:#ffffff;
-    --table-border:#ffba27;
-    --row-even:#1b2238;
-    --row-hover:#2b3454;
+    font-family: 'Inter', Arial, sans-serif;
+    background: var(--body-bg);
 }
 
 /* =============================
-   WRAPPER KONTEN
+   COLOR THEME
+============================= */
+:root {
+    --orange:#f59e0b;
+    --orange-dark:#d97706;
+    --blue:#2563eb;
+    --blue-dark:#1e40af;
+
+    --table-text:#0f172a;
+    --row-even:#f8fafc;
+    --row-hover:#eef4ff;
+    --border-soft:rgba(15,23,42,.08);
+}
+
+body.dark {
+    --table-text:#ffffff;
+    --row-even:#1e293b;
+    --row-hover:#273449;
+    --border-soft:rgba(255,255,255,.12);
+}
+
+/* =============================
+   PAGE WRAPPER
 ============================= */
 .page-wrapper {
     padding-left:260px;
-    padding-top:30px;
-    padding-right:20px;
+    padding-top:32px;
+    padding-right:24px;
     padding-bottom:120px;
     transition:.3s ease;
 }
@@ -108,67 +114,87 @@ body.collapsed .page-wrapper {
 }
 
 /* =============================
-   TABLE (LEBIH ELEGAN, TAPI AMAN)
+   TABLE CARD
 ============================= */
 table {
     width:95%;
-    max-width:1100px;
-    border-collapse:collapse;
+    max-width:1200px;
+    border-collapse:separate;
+    border-spacing:0;
     background:var(--card-bg);
-    border-radius:14px;
+    border-radius:18px;
     overflow:hidden;
+
+    box-shadow:
+        0 22px 40px rgba(0,0,0,.12),
+        inset 0 1px 0 rgba(255,255,255,.7);
+
     margin-bottom:40px;
-    box-shadow:0 10px 30px rgba(0,0,0,.15);
 }
 
 /* =============================
-   ROW & CELL
+   HEADER TABLE (ORANGE TOP)
 ============================= */
-tr {
-    height:78px;
-    transition:background .2s ease;
+thead th {
+    background: linear-gradient(
+        180deg,
+        var(--orange),
+        var(--orange-dark)
+    );
+
+    color:#fff;
+    font-weight:900;
+    font-size:13.5px;
+    letter-spacing:.6px;
+    text-transform:uppercase;
+
+    padding:16px 14px;
+    border-bottom:3px solid var(--blue-dark);
 }
 
-tr:nth-child(even) {
+/* =============================
+   BODY ROW
+============================= */
+tbody tr {
+    height:78px;
+    transition:.25s ease;
+}
+
+tbody tr:nth-child(even) {
     background:var(--row-even);
 }
 
-tr:hover {
+tbody tr:hover {
     background:var(--row-hover);
+    transform: scale(1.004);
+    box-shadow: inset 0 0 0 1px rgba(37,99,235,.25);
 }
 
+/* =============================
+   CELL
+============================= */
 th, td {
-    padding:14px 16px;
-    border-bottom:1px solid var(--table-border);
+    padding:14px 14px;
     text-align:center;
     color:var(--table-text);
+    border-bottom:1px solid var(--border-soft);
 }
 
 /* =============================
-   HEADER TABLE (ORANYE RAPI)
-============================= */
-th {
-    background: linear-gradient(135deg,#ffb347,#ff9800);
-    color:#fff !important;
-    font-weight:700;
-    font-size:13px;
-    letter-spacing:.4px;
-    border-bottom:2px solid #d69300;
-}
-
-/* =============================
-   FOTO (HALUS, TANPA OVERFLOW)
+   FOTO KARYAWAN
 ============================= */
 .foto-karyawan {
-    width:60px;
-    height:70px;
+    width:62px;
+    height:74px;
     object-fit:cover;
-    border-radius:8px;
-    border:2px solid #ffb347;
+    border-radius:10px;
+
+    border:2px solid #fff;
+    box-shadow:0 6px 14px rgba(0,0,0,.25);
 }
 
 /* =============================
-   ACTION BUTTON (MEWAH TAPI AMAN)
+   AKSI BUTTON
 ============================= */
 td.aksi {
     display:flex;
@@ -177,83 +203,120 @@ td.aksi {
     gap:10px;
 }
 
+/* tombol base */
 .btn-edit,
 .btn-hapus,
 .btn-detail {
-    height:34px;
-    padding:0 16px;
-    border-radius:8px;
-    font-size:13px;
+    padding:10px 14px;
+    border-radius:12px;
+    font-size:12.5px;
+    font-weight:900;
     color:white;
-    font-weight:700;
     cursor:pointer;
+
     display:flex;
     align-items:center;
     justify-content:center;
     text-decoration:none;
-    transition:.2s ease;
-    box-shadow:0 4px 10px rgba(0,0,0,.25);
+
+    box-shadow:0 6px 14px rgba(0,0,0,.25);
+    transition:.3s ease;
 }
 
+/* warna tombol */
 .btn-edit {
-    background:linear-gradient(135deg,#4facfe,#007bff);
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
 }
-
 .btn-hapus {
-    background:linear-gradient(135deg,#ff6b6b,#c0392b);
+    background:linear-gradient(135deg,#ef4444,#b91c1c);
 }
-
 .btn-detail {
-    background:linear-gradient(135deg,#2ecc71,#1e8449);
+    background:linear-gradient(135deg,#22c55e,#15803d);
 }
 
+/* hover tombol */
 .btn-edit:hover,
 .btn-hapus:hover,
 .btn-detail:hover {
     transform:translateY(-2px);
-    box-shadow:0 8px 18px rgba(0,0,0,.35);
+    box-shadow:0 14px 24px rgba(0,0,0,.35);
 }
 
 /* =============================
-   MODAL (TETAP AMAN)
+   MODAL
 ============================= */
 .modal {
     position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    display: none;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 80px;
-    z-index: 1000;
+    inset:0;
+    background:rgba(15,23,42,.65);
+    display:none;
+    justify-content:center;
+    align-items:flex-start;
+    padding-top:80px;
+    z-index:1000;
 }
 
 .modal-content {
-    width: 380px;
-    background: var(--card-bg);
-    padding: 24px 26px;
-    border-radius: 14px;
-    border: 1px solid var(--table-border);
+    width:420px;
+    background:var(--card-bg);
+    padding:26px 28px;
+    border-radius:20px;
+
+    border:1px solid var(--border-soft);
+
+    box-shadow:
+        0 30px 60px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.7);
 }
 
 .modal-content h3 {
-    margin: 0 0 16px;
+    margin-bottom:18px;
     text-align:center;
+    font-size:20px;
+    font-weight:900;
+
+    background:linear-gradient(90deg,var(--blue),var(--orange));
+    -webkit-background-clip:text;
+    color:transparent;
 }
 
+/* =============================
+   DETAIL FOTO
+============================= */
 .detail-foto {
-    width:110px;
-    height:135px;
-    border-radius: 10px;
-    object-fit: cover;
-    border:2px solid #ddd;
+    width:120px;
+    height:150px;
+    object-fit:cover;
+    border-radius:14px;
+    border:3px solid #fff;
+    box-shadow:0 10px 20px rgba(0,0,0,.35);
 }
 
 .detail-kartu-preview {
-    width: 250px;
-    border-radius: 10px;
-    border: 2px solid #444;
+    width:260px;
+    border-radius:14px;
+    border:2px solid var(--blue);
     background:#fff;
+    box-shadow:0 10px 24px rgba(0,0,0,.25);
+}
+
+/* =============================
+   MOBILE
+============================= */
+@media(max-width:768px){
+    .page-wrapper {
+        padding-left:16px;
+        padding-right:16px;
+    }
+
+    table {
+        width:100%;
+        font-size:13px;
+    }
+
+    td.aksi {
+        flex-wrap:wrap;
+    }
 }
 
 </style>

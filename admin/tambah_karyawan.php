@@ -100,47 +100,40 @@ html, body {
     justify-content: center;
     align-items: center;
 
-    /* 🔑 KUNCI UTAMA */
-    min-height: calc(100vh - var(--header-height) - var(--footer-height));
-
     padding: 24px;
     box-sizing: border-box;
 
-    transition: left .35s ease;
+    background: transparent;
 }
 
 body.collapsed .page-wrapper {
     left: 100px;
 }
 
+
 /* =====================================================
    CARD FORM (PREMIUM COMPACT)
 ===================================================== */
-.card-form,
 .form-card {
     width: 100%;
-    max-width: 640px;
+    max-width: 560px;
 
-    padding: 36px 40px;
+    padding: 34px 38px;
     border-radius: 24px;
 
     background: linear-gradient(
         180deg,
-        rgba(255,255,255,0.92),
-        rgba(255,255,255,0.82)
+        rgba(255,255,255,0.94),
+        rgba(255,255,255,0.86)
     );
 
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-
-    border: 1.5px solid rgba(255,255,255,0.6);
-
     box-shadow:
-        0 28px 55px rgba(0,0,0,.18),
-        inset 0 1px 0 rgba(255,255,255,.7);
+        0 30px 60px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.8);
 
     position: relative;
 }
+
 
 /* Accent Glow */
 .card-form::before,
@@ -327,60 +320,69 @@ button[type="submit"]:hover {
     .page-wrapper {
         left: 0;
         padding: 16px;
-        min-height: calc(100vh - var(--header-height) - var(--footer-height));
+    }
+
+    .form-card {
+        padding: 26px 22px;
     }
 }
+
 
 </style>
 
 </head>
 <body>
 
-<div class="main-content">
-    <div class="page-content">
-        <div class="form-card">
-            <h2>Tambah Karyawan</h2>
+<?php include "partials/header.php"; ?>
+<?php include "partials/sidebar.php"; ?>
 
-            <form method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label>Nama Karyawan</label>
-                    <input type="text" name="nama_karyawan" required>
+<div class="page-wrapper">
+
+    <div class="form-card">
+        <h2>Tambah Karyawan</h2>
+
+        <form method="post" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label>Nama Karyawan</label>
+                <input type="text" name="nama_karyawan" required>
+            </div>
+
+            <div class="form-group">
+                <label>Alamat</label>
+                <textarea name="alamat" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Divisi</label>
+                <select name="divisi" required>
+                    <option value="">-- Pilih Divisi --</option>
+                    <option>Staff</option>
+                    <option>Marketing</option>
+                    <option>Produksi</option>
+                    <option>Teknisi</option>
+                    <option>Tukang masak & Bersih-bersih</option>
+                    <option>Retail</option>
+                    <option>Driver / Helper</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Foto Karyawan</label>
+                <div class="foto-wrapper">
+                    <label class="foto-upload">
+                        📷 Pilih Foto
+                        <input type="file" name="foto_karyawan" accept="image/*" onchange="previewImage(event)">
+                    </label>
+                    <img id="previewFoto">
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label>Alamat</label>
-                    <textarea name="alamat" required></textarea>
-                </div>
+            <button type="submit">Simpan</button>
 
-                <div class="form-group">
-                    <label>Divisi</label>
-                    <select name="divisi" required>
-                        <option value="">-- Pilih Divisi --</option>
-                        <option>Staff</option>
-                        <option>Marketing</option>
-                        <option>Produksi</option>
-                        <option>Teknisi</option>
-                        <option>Tukang masak & Bersih-bersih</option>
-                        <option>Retail</option>
-                        <option>Driver / Helper</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Foto Karyawan</label>
-                    <div class="foto-wrapper">
-                        <label class="foto-upload">
-                            📷 Pilih Foto
-                            <input type="file" name="foto_karyawan" accept="image/*" onchange="previewImage(event)">
-                        </label>
-                        <img id="previewFoto">
-                    </div>
-                </div>
-
-                <button type="submit">Simpan</button>
-            </form>
-        </div>
+        </form>
     </div>
+
 </div>
 
 <?php include "partials/footer.php"; ?>
@@ -394,4 +396,5 @@ function previewImage(event) {
 </script>
 
 </body>
+
 </html>

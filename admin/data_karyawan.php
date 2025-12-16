@@ -58,24 +58,24 @@ if (isset($_POST['update_karyawan'])) {
 
 <style>
 /* =============================
-   GLOBAL
+   GLOBAL (AMAN)
 ============================= */
 body {
     margin:0;
     padding:0;
-    font-family:Arial;
+    font-family: Arial, sans-serif;
     background:var(--body-bg);
 }
 
-/* teks default terang */
+/* LIGHT MODE */
 :root {
-    --table-text:#000000;
-    --table-border:#1a1a1a;
+    --table-text:#1a1a1a;
+    --table-border:#e0e0e0;
     --row-even:#fafafa;
-    --row-hover:#f0f7ff;
+    --row-hover:#eef6ff;
 }
 
-/* teks default gelap */
+/* DARK MODE */
 body.dark {
     --table-text:#ffffff;
     --table-border:#ffba27;
@@ -108,50 +108,68 @@ body.collapsed .page-wrapper {
 }
 
 /* =============================
-   TABLE
+   TABLE (LEBIH ELEGAN, TAPI AMAN)
 ============================= */
 table {
     width:95%;
     max-width:1100px;
     border-collapse:collapse;
     background:var(--card-bg);
-    border-radius:10px;
+    border-radius:14px;
     overflow:hidden;
-    box-shadow:0 4px 14px rgba(0,0,0,0.12);
     margin-bottom:40px;
+    box-shadow:0 10px 30px rgba(0,0,0,.15);
 }
 
-/* baris agar konsisten */
+/* =============================
+   ROW & CELL
+============================= */
 tr {
     height:78px;
+    transition:background .2s ease;
+}
+
+tr:nth-child(even) {
+    background:var(--row-even);
+}
+
+tr:hover {
+    background:var(--row-hover);
 }
 
 th, td {
-    padding:12px 14px;
+    padding:14px 16px;
     border-bottom:1px solid var(--table-border);
     text-align:center;
     color:var(--table-text);
 }
 
+/* =============================
+   HEADER TABLE (ORANYE RAPI)
+============================= */
 th {
-    background: var(--accent);
-    color:white !important;
-    font-weight:bold;
+    background: linear-gradient(135deg,#ffb347,#ff9800);
+    color:#fff !important;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:.4px;
     border-bottom:2px solid #d69300;
 }
 
 /* =============================
-   FOTO
+   FOTO (HALUS, TANPA OVERFLOW)
 ============================= */
 .foto-karyawan {
     width:60px;
     height:70px;
     object-fit:cover;
-    border-radius:6px;
-    border:2px solid #ddd;
+    border-radius:8px;
+    border:2px solid #ffb347;
 }
 
-/* ACTION BUTTON */
+/* =============================
+   ACTION BUTTON (MEWAH TAPI AMAN)
+============================= */
 td.aksi {
     display:flex;
     justify-content:center;
@@ -162,28 +180,46 @@ td.aksi {
 .btn-edit,
 .btn-hapus,
 .btn-detail {
-    padding:25px 13px;
-    border-radius:6px;
+    height:34px;
+    padding:0 16px;
+    border-radius:8px;
     font-size:13px;
     color:white;
-    font-weight:bold;
+    font-weight:700;
     cursor:pointer;
     display:flex;
     align-items:center;
     justify-content:center;
-    height:32px;
     text-decoration:none;
+    transition:.2s ease;
+    box-shadow:0 4px 10px rgba(0,0,0,.25);
 }
 
-.btn-edit { background:#3498db; }
-.btn-hapus { background:#e74c3c; }
-.btn-detail { background:#27ae60; }
+.btn-edit {
+    background:linear-gradient(135deg,#4facfe,#007bff);
+}
 
-/* MODAL GLOBAL */
+.btn-hapus {
+    background:linear-gradient(135deg,#ff6b6b,#c0392b);
+}
+
+.btn-detail {
+    background:linear-gradient(135deg,#2ecc71,#1e8449);
+}
+
+.btn-edit:hover,
+.btn-hapus:hover,
+.btn-detail:hover {
+    transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(0,0,0,.35);
+}
+
+/* =============================
+   MODAL (TETAP AMAN)
+============================= */
 .modal {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    inset: 0;
     background: rgba(0,0,0,0.55);
     display: none;
     justify-content: center;
@@ -201,25 +237,25 @@ td.aksi {
 }
 
 .modal-content h3 {
-    margin: 0 0 16px 0;
+    margin: 0 0 16px;
     text-align:center;
 }
 
 .detail-foto {
     width:110px;
     height:135px;
-    border-radius: 8px;
+    border-radius: 10px;
     object-fit: cover;
     border:2px solid #ddd;
 }
 
 .detail-kartu-preview {
     width: 250px;
-    height: auto;
     border-radius: 10px;
     border: 2px solid #444;
     background:#fff;
 }
+
 </style>
 </head>
 <body>

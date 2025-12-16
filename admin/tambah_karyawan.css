@@ -1,0 +1,250 @@
+/* =====================================================
+   GLOBAL LOCK
+===================================================== */
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Poppins', Arial, sans-serif;
+}
+
+/* =====================================================
+   PAGE CENTER WRAPPER
+===================================================== */
+.page-content {
+    position: fixed;
+    top: var(--header-height);
+    left: 280px;
+    right: 0;
+    bottom: var(--footer-height);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 24px;
+    box-sizing: border-box;
+    transition: left .35s ease;
+}
+
+body.collapsed .page-content {
+    left: 100px;
+}
+
+/* =====================================================
+   FORM CARD (PREMIUM COMPACT)
+===================================================== */
+.form-card {
+    width: 100%;
+    max-width: 640px;
+
+    padding: 36px 40px;
+    border-radius: 24px;
+
+    background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.92),
+        rgba(255,255,255,0.82)
+    );
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border: 1.5px solid rgba(255,255,255,0.6);
+
+    box-shadow:
+        0 28px 55px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.7);
+
+    position: relative;
+}
+
+/* Accent glow */
+.form-card::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(37,99,235,.18), transparent 70%);
+    border-radius: 50%;
+}
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+body.dark .form-card {
+    background: linear-gradient(
+        180deg,
+        rgba(18,30,60,0.95),
+        rgba(10,18,36,0.92)
+    );
+    border: 1px solid rgba(90,169,255,0.25);
+    box-shadow:
+        0 24px 45px rgba(0,0,0,.65),
+        inset 0 1px 0 rgba(90,169,255,.12);
+}
+
+/* =====================================================
+   TITLE
+===================================================== */
+.form-card h2 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 28px;
+
+    background: linear-gradient(90deg,#2563eb,#fbbf24);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* =====================================================
+   FORM GROUP
+===================================================== */
+.form-group {
+    margin-bottom: 16px;
+}
+
+/* =====================================================
+   LABEL
+===================================================== */
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+body.dark .form-group label {
+    color: #e5e7eb;
+}
+
+/* =====================================================
+   INPUT & SELECT
+===================================================== */
+.form-control,
+.form-select,
+textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 11px;
+    border: 1.6px solid #cbd5e1;
+    font-size: 13.5px;
+
+    background: rgba(255,255,255,0.92);
+    color: #0f172a;
+    transition: .3s ease;
+}
+
+textarea {
+    resize: none;
+    height: 70px;
+}
+
+body.dark .form-control,
+body.dark .form-select,
+body.dark textarea {
+    background: rgba(10,18,36,0.85);
+    border-color: rgba(90,169,255,.35);
+    color: #fff;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.25);
+    outline: none;
+}
+
+/* =====================================================
+   FOTO UPLOAD
+===================================================== */
+.foto-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.foto-upload {
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1.6px dashed #94a3b8;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    background: rgba(255,255,255,.85);
+    transition: .3s ease;
+}
+
+.foto-upload:hover {
+    border-color: #2563eb;
+    box-shadow: 0 0 12px rgba(37,99,235,.35);
+}
+
+.foto-upload input {
+    display: none;
+}
+
+#previewFoto {
+    width: 90px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #cbd5e1;
+    display: none;
+}
+
+#previewFoto.show {
+    display: block;
+}
+
+/* =====================================================
+   SUBMIT BUTTON (BIRU + RING ORANYE)
+===================================================== */
+button[type="submit"] {
+    margin-top: 26px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 18px;
+
+    background: linear-gradient(135deg,#2563eb,#1d4ed8);
+    color: #fff;
+
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: .5px;
+
+    border: 2.5px solid #fbbf24;
+
+    box-shadow:
+        0 0 0 4px rgba(251,191,36,.35),
+        0 18px 30px rgba(37,99,235,.45);
+
+    cursor: pointer;
+    transition: .35s ease;
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 0 0 6px rgba(251,191,36,.55),
+        0 28px 45px rgba(37,99,235,.6);
+}
+
+/* =====================================================
+   MOBILE MODE
+===================================================== */
+@media (max-width: 768px) {
+    .page-content {
+        left: 0;
+        padding: 16px;
+    }
+
+    .form-card {
+        padding: 28px 22px;
+    }
+}

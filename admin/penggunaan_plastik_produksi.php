@@ -1,116 +1,221 @@
 <?php
-// penggunaan_plastik_produksi.php
 include "../koneksi.php";
 
-/* PROSES UPDATE: jika form submit untuk produksi, update record yang dipilih */
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_produksi'])) {
+/* ================= UPDATE PRODUKSI ================= */
+if(isset($_POST['update_produksi'])){
+    function v($x){ return ($x==='' ? "NULL" : intval($x)); }
 
     $id = intval($_POST['id_plastik']);
 
-    // ambil nilai (jika kosong, set NULL)
-    $total_kristal = $_POST['total_kristal'] !== '' ? intval($_POST['total_kristal']) : "NULL";
-    $total_serut   = $_POST['total_serut'] !== '' ? intval($_POST['total_serut']) : "NULL";
-    $total_rusak   = $_POST['total_rusak'] !== '' ? intval($_POST['total_rusak']) : "NULL";
-    $sisa_terpakai = $_POST['sisa_total_plastik_terpakai'] !== '' ? intval($_POST['sisa_total_plastik_terpakai']) : "NULL";
-    $hasil_hari    = $_POST['hasil_produksi_hari_ini'] !== '' ? intval($_POST['hasil_produksi_hari_ini']) : "NULL";
-    $total_a       = $_POST['total_hasil_produksi_mesin_a'] !== '' ? intval($_POST['total_hasil_produksi_mesin_a']) : "NULL";
-    $total_b       = $_POST['total_hasil_produksi_mesin_b'] !== '' ? intval($_POST['total_hasil_produksi_mesin_b']) : "NULL";
-    $jumlah_total  = $_POST['jumlah_hasil_produksi_keseluruhan'] !== '' ? intval($_POST['jumlah_hasil_produksi_keseluruhan']) : "NULL";
-    $total_final   = $_POST['total_produksi_hari_ini_final'] !== '' ? intval($_POST['total_produksi_hari_ini_final']) : "NULL";
-    $retur_total   = $_POST['retur_total_dari_armada'] !== '' ? intval($_POST['retur_total_dari_armada']) : "NULL";
-
-    $sql = "UPDATE penggunaan_plastik SET
-        total_kristal = " . ($total_kristal === "NULL" ? "NULL" : $total_kristal) . ",
-        total_serut = "   . ($total_serut   === "NULL" ? "NULL" : $total_serut)   . ",
-        total_rusak = "   . ($total_rusak   === "NULL" ? "NULL" : $total_rusak)   . ",
-        sisa_total_plastik_terpakai = " . ($sisa_terpakai === "NULL" ? "NULL" : $sisa_terpakai) . ",
-        hasil_produksi_hari_ini = " . ($hasil_hari === "NULL" ? "NULL" : $hasil_hari) . ",
-        total_hasil_produksi_mesin_a = " . ($total_a === "NULL" ? "NULL" : $total_a) . ",
-        total_hasil_produksi_mesin_b = " . ($total_b === "NULL" ? "NULL" : $total_b) . ",
-        jumlah_hasil_produksi_keseluruhan = " . ($jumlah_total === "NULL" ? "NULL" : $jumlah_total) . ",
-        total_produksi_hari_ini_final = " . ($total_final === "NULL" ? "NULL" : $total_final) . ",
-        retur_total_dari_armada = " . ($retur_total === "NULL" ? "NULL" : $retur_total) . "
-        WHERE id_plastik = " . $id;
-
-    mysqli_query($conn, $sql);
-    header("Location: penggunaan_plastik_produksi.php?success=1");
+    mysqli_query($conn,"
+        UPDATE penggunaan_plastik SET
+            total_kristal=".v($_POST['total_kristal']).",
+            total_serut=".v($_POST['total_serut']).",
+            total_rusak=".v($_POST['total_rusak']).",
+            sisa_total_plastik_terpakai=".v($_POST['sisa_total_plastik_terpakai']).",
+            hasil_produksi_hari_ini=".v($_POST['hasil_produksi_hari_ini']).",
+            total_hasil_produksi_mesin_a=".v($_POST['total_hasil_produksi_mesin_a']).",
+            total_hasil_produksi_mesin_b=".v($_POST['total_hasil_produksi_mesin_b']).",
+            jumlah_hasil_produksi_keseluruhan=".v($_POST['jumlah_hasil_produksi_keseluruhan']).",
+            total_produksi_hari_ini_final=".v($_POST['total_produksi_hari_ini_final']).",
+            retur_total_dari_armada=".v($_POST['retur_total_dari_armada'])."
+        WHERE id_plastik=$id
+    ");
     exit;
 }
 
-/* --- setelah semua proses, include sidebar dan tampilkan form --- */
+/* ================= DELETE ================= */
+if(isset($_GET['hapus'])){
+    mysqli_query($conn,"DELETE FROM penggunaan_plastik WHERE id_plastik=".$_GET['hapus']);
+    header("Location: penggunaan_plastik_produksi.php");
+    exit;
+}
+
+include "partials/header.php";
+include "partials/sidebar.php";
 ?>
-<?php include "partials/header.php"; ?>
-<?php include "partials/sidebar.php"; ?>
 
 <style>
-.page-container { margin-left:290px; padding:32px; min-height:100vh; background:var(--body-bg); }
-.form-card { max-width:980px; margin:auto; background:var(--card-bg); padding:20px; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,.06);}
-.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-input, select { width:100%; padding:10px; border-radius:8px; border:2px solid var(--title-color); box-sizing:border-box; }
-.btn { width:100%; padding:12px; border-radius:10px; border:none; font-weight:700; cursor:pointer; }
-.btn-save { background:var(--hover-bg); }
-.notice { margin-bottom:12px; color:green; font-weight:700;}
+.page-container{margin-left:290px;padding:32px;background:var(--body-bg);min-height:100vh}
+.form-card{background:var(--card-bg);padding:50px;border-radius:14px;max-width:10000px;margin:auto}
+.form-grid{display:grid;grid-template-columns:5fr 5fr;gap:50px}
+label{font-weight:700;color:var(--title-color)}
+input,select{width:100%;padding:10px;border-radius:10px;border:2px solid var(--title-color)}
+body.dark input,body.dark select{background:#0f1729;color:#fff}
+.btn{padding:12px;border:none;border-radius:10px;font-weight:700;cursor:pointer}
+.btn-save{background:var(--hover-bg);width:100%}
+.btn-detail{background:linear-gradient(135deg,#0075ff,#00b4ff);color:#fff;width:100%;margin-top:10px}
+.form-actions{
+    margin-top:25px;
+}
+
+/* ===== MODAL ===== */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;justify-content:center;align-items:center;z-index:9999}
+.modal-box{background:var(--card-bg);padding:20px;border-radius:16px;width:95%;max-width:1100px;max-height:85vh;overflow:auto}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #ccc;padding:6px;text-align:center;color:var(--title-color)}
+th{background:var(--hover-bg)}
+.btn-edit{background:#ffc107}
+.btn-delete{background:#dc3545;color:#fff}
+.modal-box table{
+    margin-bottom:20px;
+}
+
+
+
+/* HILANGKAN PANAH NUMBER */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+input[type=number]{-moz-appearance:textfield}
 </style>
 
 <div class="page-container">
-  <div class="form-card">
-    <h2 style="color:var(--title-color); text-align:center;">🏭 Input / Update — Produksi</h2>
+<div class="form-card">
 
-    <?php if(isset($_GET['success'])): ?>
-      <div class="notice">✔ Data produksi berhasil diperbarui.</div>
-    <?php endif; ?>
+<h2 style="text-align:center;color:var(--title-color)">🏭 Input / Update Produksi</h2>
 
-    <!-- Pilih ID (record yang mau di-update) -->
-    <form method="POST">
-      <label>Pilih ID (rekam yang ingin di-update)</label>
-      <select name="id_plastik" required>
-        <option value="">-- Pilih ID --</option>
-        <?php
-        $r = mysqli_query($conn, "SELECT id_plastik, tanggal_input FROM penggunaan_plastik ORDER BY id_plastik DESC LIMIT 200");
-        while($row = mysqli_fetch_assoc($r)) {
-            echo "<option value=\"{$row['id_plastik']}\">ID {$row['id_plastik']} — {$row['tanggal_input']}</option>";
-        }
-        ?>
-      </select>
+<!-- ===== FORM INPUT UTAMA (TIDAK DIHILANGKAN) ===== -->
+<form method="POST">
+<label>Pilih ID</label>
+<select name="id_plastik" required>
+<option value="">-- Pilih ID --</option>
+<?php
+$q=mysqli_query($conn,"SELECT id_plastik,tanggal_input FROM penggunaan_plastik ORDER BY id_plastik DESC");
+while($r=mysqli_fetch_assoc($q)){
+    echo "<option value='{$r['id_plastik']}'>ID {$r['id_plastik']} - {$r['tanggal_input']}</option>";
+}
+?>
+</select>
 
-      <div class="form-grid" style="margin-top:12px;">
-        <div>
-          <label>Total Kristal</label>
-          <input name="total_kristal" type="number" step="1" placeholder="0">
-          <label>Total Serut</label>
-          <input name="total_serut" type="number" step="1" placeholder="0">
-          <label>Total Rusak</label>
-          <input name="total_rusak" type="number" step="1" placeholder="0">
-          <label>Sisa Total Plastik Terpakai</label>
-          <input name="sisa_total_plastik_terpakai" type="number" step="1" placeholder="0">
-        </div>
-
-        <div>
-          <label>Hasil Produksi Hari Ini</label>
-          <input name="hasil_produksi_hari_ini" type="number" step="1" placeholder="0">
-          <label>Total Mesin A</label>
-          <input name="total_hasil_produksi_mesin_a" type="number" step="1" placeholder="0">
-          <label>Total Mesin B</label>
-          <input name="total_hasil_produksi_mesin_b" type="number" step="1" placeholder="0">
-          <label>Jumlah Produksi Keseluruhan</label>
-          <input name="jumlah_hasil_produksi_keseluruhan" type="number" step="1" placeholder="0">
-        </div>
-      </div>
-
-      <div style="margin-top:12px;" class="form-grid">
-        <div>
-          <label>Total Produksi Hari Ini (Final)</label>
-          <input name="total_produksi_hari_ini_final" type="number" step="1" placeholder="0">
-        </div>
-        <div>
-          <label>Retur Total dari Armada</label>
-          <input name="retur_total_dari_armada" type="number" step="1" placeholder="0">
-        </div>
-      </div>
-
-      <div style="margin-top:14px;">
-        <button class="btn btn-save" name="submit_produksi" type="submit">💾 Update Produksi</button>
-      </div>
-    </form>
-  </div>
+<div class="form-grid" style="margin-top:12px">
+<div>
+<label>Total Kristal</label><input name="total_kristal" type="number">
+<label>Total Serut</label><input name="total_serut" type="number">
+<label>Total Rusak</label><input name="total_rusak" type="number">
+<label>Sisa Plastik</label><input name="sisa_total_plastik_terpakai" type="number">
 </div>
+<div>
+<label>Hasil Hari Ini</label><input name="hasil_produksi_hari_ini" type="number">
+<label>Mesin A</label><input name="total_hasil_produksi_mesin_a" type="number">
+<label>Mesin B</label><input name="total_hasil_produksi_mesin_b" type="number">
+<label>Jumlah Produksi</label><input name="jumlah_hasil_produksi_keseluruhan" type="number">
+</div>
+</div>
+
+<div class="form-grid" style="margin-top:12px">
+<div><label>Total Final</label><input name="total_produksi_hari_ini_final" type="number"></div>
+<div><label>Retur Armada</label><input name="retur_total_dari_armada" type="number"></div>
+</div>
+
+<div class="form-actions">
+    <button class="btn btn-save" name="update_produksi">
+        💾 Update Produksi
+    </button>
+</div>
+</form>
+
+<button class="btn btn-detail" onclick="openDetail()">📋 Lihat Detail</button>
+</div>
+</div>
+
+<!-- ================= MODAL DETAIL ================= -->
+<div class="modal-bg" id="modalDetail">
+<div class="modal-box">
+<h3 style="text-align:center">📊 Detail Produksi Lengkap</h3>
+
+<table>
+<thead>
+<tr>
+<th>ID</th><th>Tanggal</th>
+<th>Kristal</th><th>Serut</th><th>Rusak</th>
+<th>Mesin A</th><th>Mesin B</th>
+<th>Total</th><th>Retur</th><th>Aksi</th>
+</tr>
+</thead>
+<tbody>
+<?php
+$q=mysqli_query($conn,"SELECT * FROM penggunaan_plastik ORDER BY id_plastik DESC");
+while($r=mysqli_fetch_assoc($q)):
+?>
+<tr>
+<td><?= $r['id_plastik'] ?></td>
+<td><?= $r['tanggal_input'] ?></td>
+<td><?= $r['total_kristal'] ?></td>
+<td><?= $r['total_serut'] ?></td>
+<td><?= $r['total_rusak'] ?></td>
+<td><?= $r['total_hasil_produksi_mesin_a'] ?></td>
+<td><?= $r['total_hasil_produksi_mesin_b'] ?></td>
+<td><?= $r['total_produksi_hari_ini_final'] ?></td>
+<td><?= $r['retur_total_dari_armada'] ?></td>
+<td>
+<button class="btn btn-edit" onclick='openEdit(<?= json_encode($r) ?>)'>Edit</button>
+<a class="btn btn-delete" href="?hapus=<?= $r['id_plastik'] ?>" onclick="return confirm('Hapus data?')">Hapus</a>
+</td>
+</tr>
+<?php endwhile; ?>
+</tbody>
+</table>
+
+<button class="btn btn-save" onclick="closeDetail()">Tutup</button>
+</div>
+</div>
+
+<!-- ================= MODAL EDIT ================= -->
+<div class="modal-bg" id="modalEdit">
+<div class="modal-box">
+<h3>✏ Edit Produksi</h3>
+
+<form id="formEdit">
+<input type="hidden" name="id_plastik" id="e_id">
+
+<div class="form-grid">
+<div>
+<label>Kristal</label><input id="e_kristal" name="total_kristal" type="number">
+<label>Serut</label><input id="e_serut" name="total_serut" type="number">
+<label>Rusak</label><input id="e_rusak" name="total_rusak" type="number">
+<label>Sisa</label><input id="e_sisa" name="sisa_total_plastik_terpakai" type="number">
+</div>
+<div>
+<label>Mesin A</label><input id="e_a" name="total_hasil_produksi_mesin_a" type="number">
+<label>Mesin B</label><input id="e_b" name="total_hasil_produksi_mesin_b" type="number">
+<label>Total</label><input id="e_total" name="total_produksi_hari_ini_final" type="number">
+<label>Retur</label><input id="e_retur" name="retur_total_dari_armada" type="number">
+</div>
+</div>
+
+<button type="button" class="btn btn-save" onclick="submitEdit()">💾 Simpan</button>
+</form>
+
+<button class="btn btn-detail" onclick="backToDetail()">Kembali</button>
+</div>
+</div>
+
+<script>
+const md=document.getElementById('modalDetail');
+const me=document.getElementById('modalEdit');
+
+function openDetail(){md.style.display='flex'}
+function closeDetail(){md.style.display='none'}
+function backToDetail(){me.style.display='none';md.style.display='flex'}
+
+function openEdit(d){
+    md.style.display='none';me.style.display='flex';
+    e_id.value=d.id_plastik;
+    e_kristal.value=d.total_kristal;
+    e_serut.value=d.total_serut;
+    e_rusak.value=d.total_rusak;
+    e_sisa.value=d.sisa_total_plastik_terpakai;
+    e_a.value=d.total_hasil_produksi_mesin_a;
+    e_b.value=d.total_hasil_produksi_mesin_b;
+    e_total.value=d.total_produksi_hari_ini_final;
+    e_retur.value=d.retur_total_dari_armada;
+}
+
+function submitEdit(){
+    const f=new FormData(document.getElementById('formEdit'));
+    f.append('update_produksi',1);
+    fetch('',{method:'POST',body:f}).then(()=>location.reload());
+}
+</script>
+
+<?php include "partials/footer.php"; ?>

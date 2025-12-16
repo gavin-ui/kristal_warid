@@ -98,7 +98,10 @@ html, body {
 
     display: flex;
     justify-content: center;
-    align-items: center; /* 🔥 KUNCI UTAMA */
+    align-items: center;
+
+    /* 🔑 KUNCI UTAMA */
+    min-height: calc(100vh - var(--header-height) - var(--footer-height));
 
     padding: 24px;
     box-sizing: border-box;
@@ -324,11 +327,7 @@ button[type="submit"]:hover {
     .page-wrapper {
         left: 0;
         padding: 16px;
-    }
-
-    .card-form,
-    .form-card {
-        padding: 26px 22px;
+        min-height: calc(100vh - var(--header-height) - var(--footer-height));
     }
 }
 

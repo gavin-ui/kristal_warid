@@ -1,4 +1,5 @@
 <?php
+session_start();
 include "../koneksi.php";
 require_once __DIR__ . "/../phpqrcode/qrlib.php";
 

@@ -62,15 +62,12 @@ body.register-page {
 
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center; /* 🔥 KUNCI STABIL */
 
-    padding-top: 40px; /* base aman */
-    padding-left: 24px;
-    padding-right: 24px;
-
-    transform: translateY(-98px); /* ⬅️ INI KUNCINYA */
+    padding: 24px;
     box-sizing: border-box;
-    transition: .35s ease;
+
+    transition: left .35s ease;
 }
 
 body.collapsed .page-wrapper {

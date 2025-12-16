@@ -48,37 +48,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <style>
 /* ================= PAGE LOCK ================= */
 body.register-page {
-    min-height: 100vh;
-    overflow-x: hidden;
+    height: 100%;
+    overflow: hidden;
 }
 
 /* ================= WRAPPER ================= */
 .page-wrapper {
-    margin-left: 280px;
-    min-height: 100vh;
+    position: fixed;
+    top: var(--header-height);
+    left: 280px;
+    right: 0;
+    bottom: var(--footer-height);
+
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding-top: 110px;
+
+    padding-top: 40px; /* base aman */
+    padding-left: 24px;
+    padding-right: 24px;
+
+    transform: translateY(-98px); /* ⬅️ INI KUNCINYA */
+    box-sizing: border-box;
     transition: .35s ease;
 }
 
 body.collapsed .page-wrapper {
-    margin-left: 100px;
+    left: 100px;
 }
 
 /* ================= CARD (GLASS PREMIUM) ================= */
 .card-form {
     width: 100%;
-    max-width: 640px;
-    padding: 42px 46px;
+    max-width: 640px;   /* DESKTOP */
+    max-height: 90%;    /* MOBILE SAFE */
+
+    padding: 36px 40px;
     border-radius: 24px;
+
+    overflow: hidden; /* JANGAN SCROLL */
 
     background: linear-gradient(
         180deg,
         rgba(255,255,255,0.92),
         rgba(255,255,255,0.82)
     );
+
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
 
@@ -89,8 +104,8 @@ body.collapsed .page-wrapper {
         inset 0 1px 0 rgba(255,255,255,.7);
 
     position: relative;
-    overflow: hidden;
 }
+
 
 /* Accent glow */
 .card-form::before {
@@ -120,10 +135,10 @@ body.dark .card-form {
 /* ================= TITLE ================= */
 .card-form h3 {
     text-align: center;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 900;
-    letter-spacing: .6px;
-    margin-bottom: 34px;
+    margin-bottom: 28px;
+    letter-spacing: .5px;
 
     background: linear-gradient(90deg,#2563eb,#fbbf24);
     -webkit-background-clip: text;
@@ -193,27 +208,34 @@ body.dark .card-form input {
 
 /* ================= BUTTON ================= */
 .btn-submit {
-    margin-top: 28px;
+    margin-top: 32px;
     width: 100%;
-    padding: 15px;
+    padding: 14px;
     border-radius: 18px;
-    border: none;
 
-    background: linear-gradient(135deg,#2563eb,#1d4ed8,#fbbf24);
+    background: linear-gradient(135deg,#2563eb,#1d4ed8);
     color: #fff;
 
     font-size: 15px;
     font-weight: 900;
     letter-spacing: .6px;
+
+    border: 2.5px solid #fbbf24; /* RING ORANYE */
+    outline: none;
+
     cursor: pointer;
-
-    box-shadow: 0 18px 32px rgba(37,99,235,.35);
     transition: .35s ease;
-}
 
+    box-shadow:
+        0 0 0 4px rgba(251,191,36,.35), /* glow ring */
+        0 18px 30px rgba(37,99,235,.45);
+}
+/* HOVER MEWAH */
 .btn-submit:hover {
-    transform: translateY(-3px) scale(1.01);
-    box-shadow: 0 28px 48px rgba(37,99,235,.55);
+    transform: translateY(-2px);
+    box-shadow:
+        0 0 0 6px rgba(251,191,36,.55),
+        0 28px 45px rgba(37,99,235,.6);
 }
 
 /* ================= ALERT ================= */
@@ -237,12 +259,14 @@ body.dark .card-form input {
 }
 
 /* ================= RESPONSIVE ================= */
-@media(max-width: 768px) {
-    .card-form {
-        max-width: 92%;
-        padding: 34px 26px;
+@media (max-width: 768px) {
+    .page-wrapper {
+        left: 0;
+        transform: translateY(-80px); /* mobile lebih halus */
+        padding-top: 24px;
     }
 }
+
 
 </style>
 

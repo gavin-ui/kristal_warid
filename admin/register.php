@@ -50,38 +50,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <style>
 /* ================= PAGE LOCK ================= */
-body.register-page {
-    min-height: 100vh;
-    overflow-x: hidden;
+html, body {
+    height: 100%;
+    overflow: hidden;
 }
 
 /* ================= WRAPPER ================= */
 .page-wrapper {
-    margin-left: 280px;
-    min-height: 100vh;
+    position: fixed;
+    top: var(--header-height);
+    left: 280px;
+    right: 0;
+    bottom: var(--footer-height);
+
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding-top: 110px;
+
+    padding-top: 40px; /* base aman */
+    padding-left: 24px;
+    padding-right: 24px;
+
+    transform: translateY(-75px); /* ⬅️ INI KUNCINYA */
+    box-sizing: border-box;
     transition: .35s ease;
 }
 
 body.collapsed .page-wrapper {
-    margin-left: 100px;
+    left: 100px;
 }
-
-/* ================= CARD (GLASS PREMIUM) ================= */
+/* ================= CARD (COMPACT PREMIUM) ================= */
 .card-form {
     width: 100%;
-    max-width: 700px;
-    padding: 42px 46px;
+    max-width: 640px;   /* DESKTOP */
+    max-height: 90%;    /* MOBILE SAFE */
+
+    padding: 36px 40px;
     border-radius: 24px;
+
+    overflow: hidden; /* JANGAN SCROLL */
 
     background: linear-gradient(
         180deg,
         rgba(255,255,255,0.92),
         rgba(255,255,255,0.82)
     );
+
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
 
@@ -92,18 +106,16 @@ body.collapsed .page-wrapper {
         inset 0 1px 0 rgba(255,255,255,.7);
 
     position: relative;
-    overflow: hidden;
 }
-
 /* Accent Glow */
 .card-form::before {
     content: "";
     position: absolute;
-    top: -70px;
-    right: -70px;
-    width: 180px;
-    height: 180px;
-    background: radial-gradient(circle, rgba(37,99,235,.22), transparent 70%);
+    top: -60px;
+    right: -60px;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(37,99,235,.18), transparent 70%);
     border-radius: 50%;
 }
 
@@ -116,17 +128,17 @@ body.dark .card-form {
     );
     border: 1px solid rgba(90,169,255,0.25);
     box-shadow:
-        0 28px 55px rgba(0,0,0,.65),
+        0 24px 45px rgba(0,0,0,.65),
         inset 0 1px 0 rgba(90,169,255,.12);
 }
 
 /* ================= TITLE ================= */
 .card-form h3 {
     text-align: center;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 900;
-    letter-spacing: .6px;
-    margin-bottom: 34px;
+    margin-bottom: 28px;
+    letter-spacing: .5px;
 
     background: linear-gradient(90deg,#2563eb,#fbbf24);
     -webkit-background-clip: text;
@@ -137,14 +149,14 @@ body.dark .card-form {
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 22px 48px;
+    gap: 18px 36px;
 }
 
 /* ================= LABEL ================= */
 .card-form label {
     display: block;
-    margin-bottom: 8px;
-    font-size: 13.5px;
+    margin-bottom: 6px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: .3px;
     color: #0f172a;
@@ -158,12 +170,12 @@ body.dark .card-form label {
 .card-form input,
 .card-form select {
     width: 100%;
-    padding: 12px 16px;
-    border-radius: 12px;
-    border: 1.7px solid #cbd5e1;
-    font-size: 14px;
+    padding: 11px 14px;
+    border-radius: 11px;
+    border: 1.6px solid #cbd5e1;
+    font-size: 13.5px;
 
-    background: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.92);
     color: #0f172a;
     transition: .3s ease;
 }
@@ -178,7 +190,7 @@ body.dark .card-form select {
 .card-form input:focus,
 .card-form select:focus {
     border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37,99,235,.28);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.25);
     outline: none;
 }
 
@@ -189,52 +201,56 @@ body.dark .card-form select {
 
 .toggle-password {
     position: absolute;
-    right: 16px;
+    right: 14px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    font-size: 18px;
+    font-size: 17px;
     color: #64748b;
-    transition: .25s;
 }
 
-.toggle-password:hover {
-    color: #2563eb;
-}
-
-/* ================= BUTTON ================= */
+/* ================= BUTTON (BLUE CORE + ORANGE RING) ================= */
 .btn-submit {
-    margin-top: 38px;
+    margin-top: 32px;
     width: 100%;
-    padding: 15px;
+    padding: 14px;
     border-radius: 18px;
-    border: none;
 
-    background: linear-gradient(135deg,#2563eb,#1d4ed8,#fbbf24);
+    background: linear-gradient(135deg,#2563eb,#1d4ed8);
     color: #fff;
 
     font-size: 15px;
     font-weight: 900;
     letter-spacing: .6px;
+
+    border: 2.5px solid #fbbf24; /* RING ORANYE */
+    outline: none;
+
     cursor: pointer;
-
-    box-shadow: 0 18px 32px rgba(37,99,235,.35);
     transition: .35s ease;
+
+    box-shadow:
+        0 0 0 4px rgba(251,191,36,.35), /* glow ring */
+        0 18px 30px rgba(37,99,235,.45);
 }
 
+/* HOVER MEWAH */
 .btn-submit:hover {
-    transform: translateY(-3px) scale(1.01);
-    box-shadow: 0 28px 48px rgba(37,99,235,.55);
+    transform: translateY(-2px);
+    box-shadow:
+        0 0 0 6px rgba(251,191,36,.55),
+        0 28px 45px rgba(37,99,235,.6);
 }
+
 
 /* ================= ALERT ================= */
 .alert {
-    margin-bottom: 26px;
-    padding: 14px 20px;
-    border-radius: 16px;
+    margin-bottom: 22px;
+    padding: 13px 18px;
+    border-radius: 14px;
     font-weight: 800;
     text-align: center;
-    letter-spacing: .3px;
+    font-size: 13.5px;
 }
 
 .alert-success {
@@ -247,18 +263,15 @@ body.dark .card-form select {
     color: #7f1d1d;
 }
 
-/* ================= RESPONSIVE ================= */
-@media(max-width: 900px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-        gap: 22px;
-    }
-
-    .card-form {
-        max-width: 92%;
-        padding: 34px 26px;
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+    .page-wrapper {
+        left: 0;
+        transform: translateY(-20px); /* mobile lebih halus */
+        padding-top: 24px;
     }
 }
+
 
 
 </style>

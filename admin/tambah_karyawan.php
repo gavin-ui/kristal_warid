@@ -86,9 +86,6 @@ html, body {
     overflow: hidden;
 }
 
-/* =====================================================
-   WRAPPER UTAMA (AUTO CENTER SEMUA DEVICE)
-===================================================== */
 .page-wrapper {
     position: fixed;
     top: var(--header-height);
@@ -103,12 +100,16 @@ html, body {
     padding: 24px;
     box-sizing: border-box;
 
-    background: transparent;
+    /* 🔥 TAMBAHAN PENTING */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    transform: translateY(-175px);
 }
 
-body.collapsed .page-wrapper {
-    left: 100px;
-}
+
+
+
 
 
 /* =====================================================

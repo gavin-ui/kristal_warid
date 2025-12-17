@@ -49,71 +49,165 @@ include "partials/sidebar.php";
 ?>
 
 <style>
-/* ===== THEME FIX ===== */
-body{ color:var(--title-color); }
+/* =====================================================
+   BASE
+===================================================== */
+body{
+    color:var(--text-color);
+    background:var(--body-bg);
+    font-family:Inter, Arial, sans-serif;
+}
 
-/* ===== PAGE ===== */
+/* =====================================================
+   PAGE
+===================================================== */
 .page-container{
     margin-left:290px;
     padding:32px;
     min-height:100vh;
-    background:var(--body-bg);
+    transition:.3s ease;
 }
 
+body.collapsed .page-container{
+    margin-left:110px;
+}
+
+/* =====================================================
+   CARD
+===================================================== */
 .form-card{
-    max-width:960px;
+    max-width:820px;
     margin:auto;
+    padding:26px 28px;
     background:var(--card-bg);
-    padding:28px;
-    border-radius:16px;
+    border-radius:20px;
+    border:1.5px solid rgba(245,158,11,.35);
+    box-shadow:
+        0 25px 45px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.5);
 }
 
-/* ===== FORM ===== */
+/* =====================================================
+   TITLE
+===================================================== */
+.form-card h2{
+    text-align:center;
+    font-size:24px;
+    font-weight:900;
+    margin-bottom:22px;
+    background:linear-gradient(90deg,#2563eb,#f59e0b);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+/* =====================================================
+   FORM GRID
+===================================================== */
 .form-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:20px;
+    gap:50px;
+    margin-top:14px;
 }
 
+/* =====================================================
+   LABEL
+===================================================== */
 label{
-    font-weight:700;
-    margin:12px 0 6px;
     display:block;
+    margin:10px 0 6px;
+    font-size:13px;
+    font-weight:800;
     color:var(--title-color);
 }
 
-input,select{
+/* =====================================================
+   INPUT & SELECT
+===================================================== */
+input, select{
     width:100%;
-    padding:10px;
-    border-radius:10px;
-    border:2px solid var(--title-color);
-    color:var(--title-color);
+    padding:9px 12px;
+    font-size:14px;
+    border-radius:14px;
+    border:1.8px solid rgba(245,158,11,.45);
+    background:var(--input-bg, #ffffff);
+    color:var(--text-color);
+    transition:.25s ease;
 }
 
-/* ===== REMOVE NUMBER SPINNER ===== */
+/* DARK MODE INPUT */
+body.dark input,
+body.dark select{
+    background:#0f1729;
+    color:#fff;
+    border-color:rgba(59,130,246,.6);
+}
+
+input:focus, select:focus{
+    outline:none;
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.25);
+}
+
+/* HILANGKAN SPINNER NUMBER */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button{
     -webkit-appearance:none;
     margin:0;
 }
-input[type=number]{ -moz-appearance:textfield; }
+input[type=number]{ -moz-appearance:textfield }
 
-/* ===== BUTTON ===== */
+/* =====================================================
+   BUTTON
+===================================================== */
 .btn{
     padding:12px;
-    border:none;
-    border-radius:10px;
-    font-weight:700;
+    border-radius:16px;
+    font-weight:900;
+    letter-spacing:.4px;
     cursor:pointer;
-    color:var(--title-color);
+    border:none;
+    transition:.3s ease;
 }
 
-.btn-save{ background:var(--hover-bg); width:100%; }
-.btn-detail{ background:#0075ff; color:#fff; width:100%; margin-top:12px; }
-.btn-edit{ background:#ffc107; }
-.btn-delete{ background:#dc3545; color:#fff; }
+.btn-save{
+    margin-top:22px;
+    width:100%;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+    box-shadow:0 18px 35px rgba(37,99,235,.45);
+}
 
-/* ===== MODAL ===== */
+.btn-save:hover{
+    transform:translateY(-2px);
+}
+
+.btn-detail{
+    width:100%;
+    margin-top:12px;
+    background:linear-gradient(135deg,#0ea5e9,#0284c7);
+    color:#fff;
+}
+
+.btn-edit{
+    background:#facc15;
+    color:#111;
+    padding:6px 10px;
+    border-radius:10px;
+    font-weight:800;
+}
+
+.btn-delete{
+    background:#ef4444;
+    color:#fff;
+    padding:6px 10px;
+    border-radius:10px;
+    font-weight:800;
+}
+
+/* =====================================================
+   MODAL BASE
+===================================================== */
 .modal-bg{
     position:fixed;
     inset:0;
@@ -121,54 +215,113 @@ input[type=number]{ -moz-appearance:textfield; }
     display:none;
     justify-content:center;
     align-items:center;
-    z-index:9999;
+    z-index:99999;
 }
 
 .modal-box{
-    background:var(--card-bg);
     width:95%;
-    max-width:1100px;
+    max-width:1050px;
     max-height:85vh;
-    border-radius:16px;
+    background:var(--card-bg);
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:0 30px 60px rgba(0,0,0,.45);
     display:flex;
     flex-direction:column;
 }
 
+/* =====================================================
+   MODAL HEADER
+===================================================== */
 .modal-header{
-    padding:16px 20px;
-    font-weight:700;
-    border-bottom:1px solid #ccc;
-    color:var(--title-color);
+    padding:18px 22px;
+    font-size:18px;
+    font-weight:900;
+    text-align:center;
+    background:linear-gradient(90deg,#2563eb,#f59e0b);
+    color:#fff;
 }
 
+/* =====================================================
+   MODAL BODY
+===================================================== */
 .modal-body{
     padding:20px;
     overflow:auto;
-    color:var(--title-color);
+    color:var(--text-color);
 }
 
+/* =====================================================
+   MODAL FOOTER
+===================================================== */
 .modal-footer{
     padding:16px;
-    border-top:1px solid #ccc;
+    border-top:1px solid rgba(0,0,0,.15);
     display:flex;
     gap:12px;
     justify-content:flex-end;
 }
 
-/* ===== TABLE ===== */
+/* =====================================================
+   TABLE
+===================================================== */
 table{
     width:100%;
     border-collapse:collapse;
+    font-size:13px;
 }
 
-th,td{
-    border:1px solid #ccc;
-    padding:8px;
+th, td{
+    padding:10px;
+    border:1px solid rgba(0,0,0,.12);
     text-align:center;
-    color:var(--title-color);
 }
 
-th{ background:var(--hover-bg); }
+/* LIGHT MODE TABLE */
+th{
+    background:#fbbf24;
+    color:#111;
+    font-weight:900;
+}
+
+/* DARK MODE TABLE */
+body.dark th{
+    background:#1e293b;
+    color:#fff;
+}
+
+body.dark td{
+    color:#e5e7eb;
+}
+
+/* =====================================================
+   EDIT FORM (MODAL)
+===================================================== */
+#modalEdit .form-grid{
+    gap:14px;
+}
+
+#modalEdit label{
+    font-size:12px;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media(max-width:768px){
+    .page-container{
+        margin-left:0;
+        padding:22px 14px;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .modal-box{
+        max-height:90vh;
+    }
+}
 </style>
 
 <div class="page-container">

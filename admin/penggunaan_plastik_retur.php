@@ -86,7 +86,7 @@ include "partials/sidebar.php";
 .form-grid{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:24px;
+    gap:50px;
 }
 
 label{

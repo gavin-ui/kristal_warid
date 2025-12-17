@@ -77,7 +77,7 @@ include "partials/sidebar.php";
 .form-card{max-width:950px;margin:auto;background:var(--card-bg);padding:24px;border-radius:16px;}
 .page-title{text-align:center;font-weight:800;color:var(--title-color);margin-bottom:24px;}
 
-.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:50px;}
 label{font-weight:700;margin:12px 0 6px;display:block;}
 
 input,select{

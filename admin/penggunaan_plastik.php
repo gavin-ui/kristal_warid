@@ -55,52 +55,165 @@ $list = mysqli_query($conn,"
 <?php include "partials/sidebar.php"; ?>
 
 <style>
+/* =====================================================
+   PAGE LAYOUT
+===================================================== */
 .page-container{
     margin-left:290px;
-    padding:32px;
+    padding:32px 28px 160px;
     min-height:100vh;
     background:var(--body-bg);
+    transition:.35s ease;
 }
+
+body.collapsed .page-container{
+    margin-left:110px;
+}
+
+/* =====================================================
+   CARD UTAMA
+===================================================== */
 .form-card{
-    max-width:1200px;
+    max-width:1180px;
     margin:auto;
-    background:var(--card-bg);
-    padding:24px;
-    border-radius:16px;
+    padding:26px 30px 32px;
+    border-radius:22px;
+
+    background:linear-gradient(
+        180deg,
+        rgba(255,255,255,.96),
+        rgba(255,255,255,.88)
+    );
+
+    border:1.5px solid rgba(255,186,39,.45);
+
+    box-shadow:
+        0 28px 55px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.7);
 }
-h2{
-    color:var(--title-color);
+
+body.dark .form-card{
+    background:linear-gradient(
+        180deg,
+        rgba(10,18,36,.96),
+        rgba(8,14,30,.92)
+    );
+    border:1.5px solid rgba(90,169,255,.25);
+    box-shadow:
+        0 28px 55px rgba(0,0,0,.65),
+        inset 0 1px 0 rgba(90,169,255,.12);
+}
+
+/* =====================================================
+   TITLE
+===================================================== */
+.form-card h2{
     text-align:center;
-    margin-bottom:16px;
+    margin-bottom:20px;
+    font-size:24px;
+    font-weight:900;
+    letter-spacing:.6px;
+
+    background:linear-gradient(90deg,#2563eb,#f59e0b);
+    -webkit-background-clip:text;
+    color:transparent;
 }
+
+/* =====================================================
+   NOTICE
+===================================================== */
 .notice{
-    color:#16a34a;
+    background:rgba(34,197,94,.12);
+    border-left:6px solid #22c55e;
+    padding:10px 14px;
+    border-radius:10px;
     font-weight:700;
-    margin-bottom:12px;
+    margin-bottom:14px;
+    color:#16a34a;
 }
+
+/* =====================================================
+   SELECT ID
+===================================================== */
+select{
+    width:100%;
+    padding:11px 14px;
+    border-radius:14px;
+    border:1.8px solid #cbd5e1;
+    font-size:13.5px;
+    background:#fff;
+    color:#0f172a;
+}
+
+body.dark select{
+    background:rgba(10,18,36,.85);
+    border-color:rgba(90,169,255,.35);
+    color:#e5e7eb;
+}
+
+/* =====================================================
+   FORM GRID BESAR (RAPI & RINGKAS)
+===================================================== */
 .form-grid{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:16px;
+    gap:30px 50px;
+    margin-top:18px;
 }
-label{
-    font-weight:700;
-    color:var(--title-color);
-    margin:10px 0 6px;
-    display:block;
-}
-input, textarea, select{
-    width:100%;
-    padding:10px;
-    border-radius:10px;
-    border:2px solid var(--title-color);
-    background:transparent;
-    color:var(--title-color);
-    box-sizing:border-box;
-}
-textarea{ min-height:90px; }
 
-/* HILANGKAN SPINNER */
+/* =====================================================
+   LABEL
+===================================================== */
+label{
+    display:block;
+    margin:8px 0 5px;
+    font-size:12.5px;
+    font-weight:800;
+    letter-spacing:.3px;
+    color:#0f172a;
+}
+
+body.dark label{
+    color:#e5e7eb;
+}
+
+/* =====================================================
+   INPUT / TEXTAREA
+===================================================== */
+input,
+textarea{
+    width:100%;
+    padding:9px 12px;
+    border-radius:12px;
+    border:1.6px solid #cbd5e1;
+    font-size:13px;
+
+    background:rgba(255,255,255,.92);
+    transition:.25s ease;
+}
+
+textarea{
+    min-height:78px;
+    resize:none;
+}
+
+body.dark input,
+body.dark textarea{
+    background:rgba(10,18,36,.85);
+    border-color:rgba(90,169,255,.35);
+    color:#fff;
+}
+
+input:focus,
+textarea:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.25);
+    outline:none;
+}
+
+/* =====================================================
+   REMOVE NUMBER SPINNER
+===================================================== */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button{
     -webkit-appearance:none;
@@ -108,18 +221,62 @@ input[type=number]::-webkit-outer-spin-button{
 }
 input[type=number]{ -moz-appearance:textfield; }
 
-.btn{
-    padding:12px;
-    border:none;
-    border-radius:12px;
-    font-weight:700;
-    cursor:pointer;
-}
+/* =====================================================
+   BUTTON SAVE
+===================================================== */
 .btn-save{
-    background:var(--hover-bg);
-    color:var(--title-color);
+    margin-top:22px;
+    width:100%;
+    padding:14px;
+    border-radius:18px;
+
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+
+    font-size:14.5px;
+    font-weight:900;
+    letter-spacing:.6px;
+
+    border:2.5px solid #f59e0b;
+
+    box-shadow:
+        0 0 0 4px rgba(245,158,11,.35),
+        0 18px 30px rgba(37,99,235,.45);
+
+    cursor:pointer;
+    transition:.35s ease;
 }
-.btn-save:hover{ transform:scale(1.05); }
+
+.btn-save:hover{
+    transform:translateY(-2px);
+    box-shadow:
+        0 0 0 6px rgba(245,158,11,.55),
+        0 28px 45px rgba(37,99,235,.6);
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media(max-width:1200px){
+    .form-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:768px){
+    .page-container{
+        margin-left:0;
+        padding:28px 16px 140px;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-card{
+        padding:22px 18px 26px;
+    }
+}
 </style>
 
 <div class="page-container">

@@ -205,6 +205,30 @@ input[type=number]{ -moz-appearance:textfield }
     font-weight:800;
 }
 
+/* ================= EXPORT BUTTON ================= */
+.action-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-top:18px;
+}
+
+.btn-excel{
+    background:linear-gradient(135deg,#16a34a,#15803d);
+    color:#fff;
+    box-shadow:0 14px 30px rgba(22,163,74,.45);
+}
+
+.btn-excel:hover:not(:disabled){
+    transform:translateY(-2px);
+}
+
+.btn-excel:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+    box-shadow:none;
+}
+
 /* =====================================================
    MODAL BASE
 ===================================================== */
@@ -370,6 +394,16 @@ while($r=mysqli_fetch_assoc($q)){
 
 <button class="btn btn-detail" onclick="openDetail()">📋 Lihat Detail Stok</button>
 
+<div>
+<button
+        id="btnExport"
+        class="btn btn-excel"
+        disabled
+        onclick="exportExcel()">
+        📊 Export Excel
+    </button>
+</div>
+
 </div>
 </div>
 
@@ -480,6 +514,21 @@ function submitEdit(){
     const f=new FormData(document.getElementById('formEdit'));
     f.append('submit_stok',1);
     fetch('',{method:'POST',body:f}).then(()=>location.reload());
+}
+const selectID = document.querySelector('select[name="id_plastik"]');
+const btnExport = document.getElementById('btnExport');
+
+selectID.addEventListener('change', () => {
+    btnExport.disabled = selectID.value === "";
+});
+
+function exportExcel(){
+    const id = selectID.value;
+    if(!id){
+        alert("Silakan pilih ID terlebih dahulu");
+        return;
+    }
+    window.location.href = "produksi_mesin_export_excel.php?id=" + id;
 }
 </script>
 

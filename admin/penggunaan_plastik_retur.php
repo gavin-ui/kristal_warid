@@ -1,55 +1,58 @@
 <?php
-/* =====================================================
-   KONEKSI
-===================================================== */
 include "../koneksi.php";
 
-/* =====================================================
-   UPDATE (AJAX SAFE – TIDAK PUTIH)
-===================================================== */
+/* ================= UPDATE RETUR ================= */
 if (isset($_POST['submit_retur'])) {
 
     function v($x){
-        return ($x === '' ? "NULL" : intval($x));
+        return ($x === '' ? 0 : intval($x));
     }
 
     $id = intval($_POST['id_plastik']);
 
-    $r1 = v($_POST['retur_armada_carry_h8516gk']);
-    $r2 = v($_POST['retur_armada_long_hb017ov']);
-    $r3 = v($_POST['retur_armada_traga_h9876ag']);
-    $r4 = v($_POST['retur_armada_elf_h8023ov']);
-    $r5 = v($_POST['retur_armada_elf_h8019ov']);
-    $r6 = v($_POST['retur_armada_elf_dobel_h8021ov']);
-
-    $arr=[];
-    foreach([$r1,$r2,$r3,$r4,$r5,$r6] as $x){
-        if($x!=="NULL") $arr[]=$x;
-    }
-    $total = count($arr)?array_sum($arr):"NULL";
+    $total_retur =
+        v($_POST['retur_armada_carry_h8516gk']) +
+        v($_POST['retur_armada_long_hb017ov']) +
+        v($_POST['retur_armada_traga_h9876ag']) +
+        v($_POST['retur_armada_elf_h8023ov']) +
+        v($_POST['retur_armada_elf_h8019ov']) +
+        v($_POST['retur_armada_elf_dobel_h8021ov']);
 
     mysqli_query($conn,"
         UPDATE penggunaan_plastik SET
-            retur_armada_carry_h8516gk     = $r1,
-            retur_armada_long_hb017ov      = $r2,
-            retur_armada_traga_h9876ag     = $r3,
-            retur_armada_elf_h8023ov       = $r4,
-            retur_armada_elf_h8019ov       = $r5,
-            retur_armada_elf_dobel_h8021ov = $r6,
-            retur_total_dari_armada        = $total
+            retur_armada_carry_h8516gk = ".v($_POST['retur_armada_carry_h8516gk']).",
+            retur_armada_long_hb017ov = ".v($_POST['retur_armada_long_hb017ov']).",
+            retur_armada_traga_h9876ag = ".v($_POST['retur_armada_traga_h9876ag']).",
+            retur_armada_elf_h8023ov = ".v($_POST['retur_armada_elf_h8023ov']).",
+            retur_armada_elf_h8019ov = ".v($_POST['retur_armada_elf_h8019ov']).",
+            retur_armada_elf_dobel_h8021ov = ".v($_POST['retur_armada_elf_dobel_h8021ov']).",
+            retur_total_dari_armada = $total_retur
         WHERE id_plastik = $id
     ");
 
-    echo "OK";
+    header("Location: penggunaan_plastik_retur.php?success=1");
     exit;
 }
 
 /* =====================================================
    DELETE
 ===================================================== */
-if(isset($_GET['hapus'])){
-    mysqli_query($conn,"DELETE FROM penggunaan_plastik WHERE id_plastik=".$_GET['hapus']);
-    header("Location: penggunaan_plastik_retur.php");
+if (isset($_GET['reset_retur'])) {
+    $id = intval($_GET['reset_retur']);
+
+    mysqli_query($conn,"
+        UPDATE penggunaan_plastik SET
+            retur_armada_carry_h8516gk = NULL,
+            retur_armada_long_hb017ov = NULL,
+            retur_armada_traga_h9876ag = NULL,
+            retur_armada_elf_h8023ov = NULL,
+            retur_armada_elf_h8019ov = NULL,
+            retur_armada_elf_dobel_h8021ov = NULL,
+            retur_total_dari_armada = NULL
+        WHERE id_plastik = $id
+    ");
+
+    header("Location: penggunaan_plastik_retur.php?reset=1");
     exit;
 }
 
@@ -370,3 +373,4 @@ function submitEdit(){
 </script>
 
 <?php include "partials/footer.php"; ?>
+

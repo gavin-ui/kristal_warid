@@ -15,5 +15,3 @@ if (!$conn) {
 
 // Optional (untuk memastikan format karakter aman, terutama input form)
 mysqli_set_charset($conn, "utf8");
-
-?>

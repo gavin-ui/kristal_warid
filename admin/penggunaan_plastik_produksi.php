@@ -2,34 +2,50 @@
 include "../koneksi.php";
 
 /* ================= UPDATE PRODUKSI ================= */
-if(isset($_POST['update_produksi'])){
-    function v($x){ return ($x==='' ? "NULL" : intval($x)); }
+if (isset($_POST['update_produksi'])) {
+
+    function v($x){
+        return ($x === '' ? "NULL" : intval($x));
+    }
 
     $id = intval($_POST['id_plastik']);
 
     mysqli_query($conn,"
         UPDATE penggunaan_plastik SET
-            total_kristal=".v($_POST['total_kristal']).",
-            total_serut=".v($_POST['total_serut']).",
-            total_rusak=".v($_POST['total_rusak']).",
-            sisa_total_plastik_terpakai=".v($_POST['sisa_total_plastik_terpakai']).",
-            hasil_produksi_hari_ini=".v($_POST['hasil_produksi_hari_ini']).",
-            total_hasil_produksi_mesin_a=".v($_POST['total_hasil_produksi_mesin_a']).",
-            total_hasil_produksi_mesin_b=".v($_POST['total_hasil_produksi_mesin_b']).",
-            jumlah_hasil_produksi_keseluruhan=".v($_POST['jumlah_hasil_produksi_keseluruhan']).",
-            total_produksi_hari_ini_final=".v($_POST['total_produksi_hari_ini_final']).",
-            retur_total_dari_armada=".v($_POST['retur_total_dari_armada'])."
-        WHERE id_plastik=$id
+            total_kristal = ".v($_POST['total_kristal']).",
+            total_serut = ".v($_POST['total_serut']).",
+            total_rusak = ".v($_POST['total_rusak']).",
+            sisa_total_plastik_terpakai = ".v($_POST['sisa_total_plastik_terpakai']).",
+            hasil_produksi_hari_ini = ".v($_POST['hasil_produksi_hari_ini']).",
+            total_hasil_produksi_mesin_a = ".v($_POST['total_hasil_produksi_mesin_a']).",
+            total_hasil_produksi_mesin_b = ".v($_POST['total_hasil_produksi_mesin_b']).",
+            jumlah_hasil_produksi_keseluruhan = ".v($_POST['jumlah_hasil_produksi_keseluruhan']).",
+            total_produksi_hari_ini_final = ".v($_POST['total_produksi_hari_ini_final']).",
+            retur_total_dari_armada = ".v($_POST['retur_total_dari_armada'])."
+        WHERE id_plastik = $id
     ");
+
+    header("Location: penggunaan_plastik_produksi.php?success=1");
     exit;
 }
 
 /* ================= DELETE ================= */
-if(isset($_GET['hapus'])){
-    mysqli_query($conn,"DELETE FROM penggunaan_plastik WHERE id_plastik=".$_GET['hapus']);
-    header("Location: penggunaan_plastik_produksi.php");
+if (isset($_GET['reset_produksi'])) {
+    $id = intval($_GET['reset_produksi']);
+
+    mysqli_query($conn,"
+        UPDATE penggunaan_plastik SET
+            total_hasil_produksi_mesin_a = NULL,
+            total_hasil_produksi_mesin_b = NULL,
+            jumlah_hasil_produksi_keseluruhan = NULL,
+            hasil_produksi_hari_ini = NULL
+        WHERE id_plastik = $id
+    ");
+
+    header("Location: penggunaan_plastik_produksi.php?reset=1");
     exit;
 }
+
 
 include "partials/header.php";
 include "partials/sidebar.php";

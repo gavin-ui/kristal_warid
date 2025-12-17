@@ -47,9 +47,21 @@ if (isset($_POST['submit_distribusi'])) {
 /* =====================================================
    DELETE
 ===================================================== */
-if (isset($_GET['hapus'])) {
-    mysqli_query($conn,"DELETE FROM penggunaan_plastik WHERE id_plastik=".$_GET['hapus']);
-    header("Location: penggunaan_plastik_distribusi.php");
+if (isset($_GET['reset_distribusi'])) {
+    $id = intval($_GET['reset_distribusi']);
+
+    mysqli_query($conn,"
+        UPDATE penggunaan_plastik SET
+            distribusi_barkel_carry_h8516gk = NULL,
+            distribusi_barkel_long_hb017ov = NULL,
+            distribusi_barkel_traga_h9876ag = NULL,
+            distribusi_barkel_elf_h8023ov = NULL,
+            distribusi_barkel_elf_h8019ov = NULL,
+            total_barel = NULL
+        WHERE id_plastik = $id
+    ");
+
+    header("Location: penggunaan_plastik_distribusi.php?reset=1");
     exit;
 }
 

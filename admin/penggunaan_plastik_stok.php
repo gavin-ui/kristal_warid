@@ -10,31 +10,37 @@ if (isset($_POST['submit_stok'])) {
 
     $id = intval($_POST['id_plastik']);
 
-    $stok_cs_kemarin  = v($_POST['stok_cs_kemarin']);
-    $repack_stok      = v($_POST['repack_stok']);
-    $jumlah_total     = v($_POST['jumlah_total_stok_kemarin_retur_repack']);
-    $total_barel      = v($_POST['total_barel']);
-    $stok_setelah     = v($_POST['stok_cs_setelah_dikurangi_barel']);
-    $total_final      = v($_POST['total_produksi_hari_ini_final']);
-
     mysqli_query($conn,"
         UPDATE penggunaan_plastik SET
-            stok_cs_kemarin = $stok_cs_kemarin,
-            repack_stok = $repack_stok,
-            jumlah_total_stok_kemarin_retur_repack = $jumlah_total,
-            total_barel = $total_barel,
-            stok_cs_setelah_dikurangi_barel = $stok_setelah,
-            total_produksi_hari_ini_final = $total_final
+            stok_cs_kemarin = ".v($_POST['stok_cs_kemarin']).",
+            repack_stok = ".v($_POST['repack_stok']).",
+            jumlah_total_stok_kemarin_retur_repack = ".v($_POST['jumlah_total_stok_kemarin_retur_repack']).",
+            total_barel = ".v($_POST['total_barel']).",
+            stok_cs_setelah_dikurangi_barel = ".v($_POST['stok_cs_setelah_dikurangi_barel']).",
+            total_produksi_hari_ini_final = ".v($_POST['total_produksi_hari_ini_final'])."
         WHERE id_plastik = $id
     ");
 
+    header("Location: penggunaan_plastik_stok.php?success=1");
     exit;
 }
 
 /* ================= DELETE ================= */
-if (isset($_GET['hapus'])) {
-    mysqli_query($conn,"DELETE FROM penggunaan_plastik WHERE id_plastik=".$_GET['hapus']);
-    header("Location: penggunaan_plastik_stok.php");
+if (isset($_GET['reset_stok'])) {
+    $id = intval($_GET['reset_stok']);
+
+    mysqli_query($conn,"
+        UPDATE penggunaan_plastik SET
+            stok_cs_kemarin = NULL,
+            repack_stok = NULL,
+            jumlah_total_stok_kemarin_retur_repack = NULL,
+            total_barel = NULL,
+            stok_cs_setelah_dikurangi_barel = NULL,
+            total_produksi_hari_ini_final = NULL
+        WHERE id_plastik = $id
+    ");
+
+    header("Location: penggunaan_plastik_stok.php?reset=1");
     exit;
 }
 

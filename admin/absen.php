@@ -169,87 +169,266 @@ if ($resIzin->num_rows > 0) {
 <title>Absen Karyawan</title>
 
 <style>
-/* (SEMUA STYLE TIDAK DIUBAH) */
+/* =====================================================
+   GLOBAL
+===================================================== */
 body{
     margin:0;
-    font-family:Inter,Arial;
+    font-family:Inter,Arial,sans-serif;
     background:var(--body-bg);
     color:var(--text-color);
 }
+
+/* =====================================================
+   PAGE WRAPPER (SCROLL AKTIF)
+===================================================== */
 .page-wrapper{
     padding-left:260px;
-    padding-top:30px;
+    padding-top:42px;
     padding-right:20px;
     padding-bottom:150px;
+    transition:.3s ease;
 }
-body.collapsed .page-wrapper{ padding-left:90px; }
 
-.card{
-    background:var(--card-bg);
-    max-width:800px;
-    margin:auto;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.1);
+body.collapsed .page-wrapper{
+    padding-left:90px;
 }
+
+/* =====================================================
+   CARD UTAMA (DIPERKECIL)
+===================================================== */
+.card{
+    max-width:720px;            /* 🔥 lebih kecil */
+    margin:auto;
+    padding:22px 26px;          /* 🔥 lebih rapat */
+
+    background:linear-gradient(
+        180deg,
+        rgba(255,255,255,.96),
+        rgba(255,255,255,.88)
+    );
+
+    border-radius:20px;
+    border:1.5px solid rgba(255,186,39,.45);
+
+    box-shadow:
+        0 24px 45px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.7);
+
+    position:relative;
+}
+
+/* Glow Accent */
+.card::before{
+    content:"";
+    position:absolute;
+    top:-70px;
+    right:-70px;
+    width:180px;
+    height:180px;
+    background:radial-gradient(circle, rgba(255,186,39,.25), transparent 70%);
+    border-radius:50%;
+}
+
+/* =====================================================
+   DARK MODE CARD
+===================================================== */
+body.dark .card{
+    background:linear-gradient(
+        180deg,
+        rgba(18,30,60,.95),
+        rgba(10,18,36,.92)
+    );
+    border:1px solid rgba(255,186,39,.35);
+    box-shadow:
+        0 24px 45px rgba(0,0,0,.65),
+        inset 0 1px 0 rgba(90,169,255,.12);
+}
+
+/* =====================================================
+   TITLE
+===================================================== */
 h2{
     text-align:center;
-    color:var(--title-color);
-    margin-bottom:20px;
-    font-weight:800;
+    margin-bottom:22px;
+    font-weight:900;
+    letter-spacing:.6px;
+    font-size:24px;
+
+    background:linear-gradient(90deg,#2563eb,#f59e0b);
+    -webkit-background-clip:text;
+    color:transparent;
 }
 
+/* =====================================================
+   QR READER (LEBIH COMPACT)
+===================================================== */
 #reader{
     width:100%;
-    min-height:270px;
-    border-radius:10px;
+    min-height:240px;
+    border-radius:14px;
     background:#000;
     overflow:hidden;
+    border:3px solid var(--accent);
+    box-shadow:0 14px 25px rgba(0,0,0,.35);
 }
 
+/* =====================================================
+   SWITCH CAMERA BUTTON
+===================================================== */
+#switchCam{
+    margin-top:12px;
+    width:100%;
+    padding:10px;
+    border-radius:12px;
+
+    background:linear-gradient(135deg,#374151,#111827);
+    color:#fff;
+
+    font-weight:800;
+    border:none;
+    cursor:pointer;
+    transition:.3s ease;
+}
+
+#switchCam:hover{
+    transform:translateY(-2px);
+}
+
+/* =====================================================
+   AFTER SCAN SECTION
+===================================================== */
+#afterScan{
+    margin-top:24px;
+}
+
+#afterScan p{
+    background:rgba(37,99,235,.08);
+    padding:12px 16px;
+    border-radius:12px;
+    border-left:6px solid #2563eb;
+    font-weight:600;
+    font-size:14px;
+}
+
+body.dark #afterScan p{
+    background:rgba(90,169,255,.12);
+}
+
+/* =====================================================
+   GRID CAMERA + FORM (DIPERKECIL)
+===================================================== */
 .grid{
     display:grid;
-    grid-template-columns:1fr 200px;
-    gap:15px;
-    margin-top:15px;
+    grid-template-columns:1fr 210px;
+    gap:16px;
+    margin-top:16px;
 }
 
+/* VIDEO SELFIE */
 video{
     width:100%;
-    border-radius:10px;
+    border-radius:14px;
     background:#111;
+    box-shadow:0 10px 22px rgba(0,0,0,.35);
 }
 
+/* PREVIEW SELFIE */
 #previewSelfie{
-    width:200px;
-    height:260px;
-    border-radius:10px;
-    border:3px solid var(--accent);
+    width:100%;
+    height:240px;
+    border-radius:16px;
+    border:3px solid #f59e0b;
     object-fit:cover;
+    box-shadow:0 10px 22px rgba(0,0,0,.35);
 }
 
-label{ font-weight:600; margin-top:8px; }
+/* =====================================================
+   FORM ELEMENT
+===================================================== */
+label{
+    display:block;
+    margin-top:8px;
+    font-weight:700;
+    font-size:13px;
+}
 
 select, textarea{
     width:100%;
-    padding:10px;
-    border-radius:8px;
-    background:var(--card-bg);
-    border:1px solid var(--accent);
-    color:var(--text-color);
+    padding:10px 12px;
+    border-radius:12px;
+    background:rgba(255,255,255,.92);
+    border:1.6px solid var(--accent);
+    font-size:13.5px;
+    color:#0f172a;
 }
 
-button{
-    width:100%;
+textarea{
+    resize:none;
+    min-height:70px;
+}
+
+/* DARK MODE FORM */
+body.dark select,
+body.dark textarea{
+    background:rgba(10,18,36,.85);
+    color:#e5e7eb;
+    border-color:rgba(90,169,255,.45);
+}
+
+/* =====================================================
+   SUBMIT BUTTON (COMPACT)
+===================================================== */
+button#kirimBtn{
+    margin-top:22px;
     padding:14px;
-    background:var(--accent);
-    border:none;
-    color:white;
-    border-radius:10px;
-    margin-top:15px;
-    font-size:16px;
-    font-weight:700;
+    width:100%;
+
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+
+    font-size:15px;
+    font-weight:900;
+    letter-spacing:.5px;
+
+    border-radius:18px;
+    border:3px solid #f59e0b;
+
+    box-shadow:
+        0 0 0 4px rgba(245,158,11,.35),
+        0 18px 30px rgba(37,99,235,.5);
+
     cursor:pointer;
+    transition:.35s ease;
+}
+
+button#kirimBtn:hover{
+    transform:translateY(-2px);
+    box-shadow:
+        0 0 0 6px rgba(245,158,11,.55),
+        0 26px 45px rgba(37,99,235,.65);
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+@media(max-width:768px){
+    .page-wrapper{
+        padding-left:0;
+        padding:28px 14px 130px;
+    }
+
+    .card{
+        padding:20px 18px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    #previewSelfie{
+        height:220px;
+    }
 }
 </style>
 </head>

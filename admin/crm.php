@@ -61,64 +61,310 @@ include "partials/sidebar.php";
 ?>
 
 <style>
-.page-container{margin-left:290px;padding:35px;background:var(--body-bg);min-height:100vh}
-body.collapsed .page-container{margin-left:110px}
+/* =====================================================
+   GLOBAL
+===================================================== */
+body{
+    margin:0;
+    font-family:Inter,Arial,sans-serif;
+    background:var(--body-bg);
+    color:var(--text-color);
+}
 
+/* =====================================================
+   PAGE CONTAINER
+===================================================== */
+.page-container{
+    margin-left:290px;
+    padding:42px 28px 160px;
+    min-height:100vh;
+    transition:.35s ease;
+}
+body.collapsed .page-container{
+    margin-left:110px;
+}
+
+/* =====================================================
+   FORM CARD (PREMIUM COMPACT)
+===================================================== */
 .form-card{
-    background:var(--card-bg);
-    padding:25px;
-    border-radius:15px;
-    max-width:900px;
+    max-width:760px;
     margin:auto;
-    box-shadow:0 8px 15px rgba(0,0,0,.1)
+    padding:30px 34px;
+
+    background:linear-gradient(
+        180deg,
+        rgba(255,255,255,.96),
+        rgba(255,255,255,.88)
+    );
+
+    border-radius:26px;
+    border:1.5px solid rgba(245,158,11,.45);
+
+    box-shadow:
+        0 28px 55px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.75);
+
+    position:relative;
 }
 
-input,textarea{
-    width:97%;
-    padding:10px;
-    border-radius:10px;
-    border:2px solid var(--title-color);
-    margin-bottom:10px;
-    background:#fff;
+/* Glow */
+.form-card::before{
+    content:"";
+    position:absolute;
+    top:-70px;
+    right:-70px;
+    width:180px;
+    height:180px;
+    background:radial-gradient(circle, rgba(245,158,11,.25), transparent 70%);
+    border-radius:50%;
 }
-body.dark input,body.dark textarea{background:#0f1729;color:#fff}
 
-.btn-save,.detail-btn,.edit-btn,.delete-btn{
-    padding:10px;
-    border-radius:8px;
+/* =====================================================
+   DARK MODE FORM CARD
+===================================================== */
+body.dark .form-card{
+    background:linear-gradient(
+        180deg,
+        rgba(12,22,40,.96),
+        rgba(8,16,32,.94)
+    );
+    border:1px solid rgba(90,169,255,.25);
+    box-shadow:
+        0 24px 45px rgba(0,0,0,.65),
+        inset 0 1px 0 rgba(90,169,255,.15);
+}
+
+/* =====================================================
+   TITLE
+===================================================== */
+.form-card h2{
+    text-align:center;
+    font-size:26px;
+    font-weight:900;
+    margin-bottom:28px;
+    letter-spacing:.6px;
+
+    background:linear-gradient(90deg,#2563eb,#f59e0b);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+/* =====================================================
+   FORM INPUT
+===================================================== */
+input,
+textarea{
+    width:100%;
+    padding:13px 16px;
+    border-radius:16px;
+    border:1.6px solid #cbd5e1;
+    margin-bottom:14px;
+    font-size:14px;
+
+    background:rgba(255,255,255,.92);
+    transition:.3s ease;
+}
+
+textarea{
+    resize:none;
+    min-height:90px;
+}
+
+/* Focus */
+input:focus,
+textarea:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.25);
+    outline:none;
+}
+
+/* =====================================================
+   DARK MODE INPUT
+===================================================== */
+body.dark input,
+body.dark textarea{
+    background:rgba(10,18,36,.9);
+    border-color:rgba(90,169,255,.35);
+    color:#fff;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder{
+    color:#9ca3af;
+}
+
+/* =====================================================
+   BUTTON
+===================================================== */
+.btn-save,
+.detail-btn{
+    width:100%;
+    padding:15px;
+    border-radius:20px;
+
+    font-size:15px;
+    font-weight:900;
+    letter-spacing:.5px;
+
     border:none;
     cursor:pointer;
-    font-weight:bold
+    transition:.35s ease;
 }
-.btn-save{background:var(--hover-bg);width:100%}
-.detail-btn{background:#0075ff;color:#fff;margin-top:10px;width:100%}
-.edit-btn{background:#ffc107}
-.delete-btn{background:#dc3545;color:#fff}
 
-/* ===== MODAL ===== */
+.btn-save{
+    margin-top:10px;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+
+    border:3px solid #f59e0b;
+    box-shadow:
+        0 0 0 4px rgba(245,158,11,.35),
+        0 18px 30px rgba(37,99,235,.45);
+}
+
+.btn-save:hover{
+    transform:translateY(-2px);
+    box-shadow:
+        0 0 0 6px rgba(245,158,11,.55),
+        0 28px 45px rgba(37,99,235,.6);
+}
+
+.detail-btn{
+    margin-top:14px;
+    background:#0ea5e9;
+    color:#fff;
+}
+
+/* =====================================================
+   MODAL BACKGROUND
+===================================================== */
 .modal-bg{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.5);
+    background:rgba(0,0,0,.55);
     display:none;
     justify-content:center;
-    align-items:center;
+    align-items:flex-start;
+    padding-top:70px;
     z-index:99999;
 }
+
+/* =====================================================
+   MODAL BOX
+===================================================== */
 .modal-box{
-    background:var(--card-bg);
     width:95%;
     max-width:1100px;
     max-height:85vh;
-    overflow:auto;
-    padding:20px;
-    border-radius:16px;
+    overflow-y:auto;
+
+    padding:26px 28px;
+    border-radius:22px;
+
+    background:linear-gradient(
+        180deg,
+        rgba(255,255,255,.97),
+        rgba(255,255,255,.9)
+    );
+
+    box-shadow:0 28px 55px rgba(0,0,0,.25);
 }
 
-table{width:100%;border-collapse:collapse;margin-top:15px}
-th,td{border:1px solid #ccc;padding:8px;text-align:center}
-th{background:var(--hover-bg)}
-img{width:70px;border-radius:8px}
+/* DARK MODAL */
+body.dark .modal-box{
+    background:linear-gradient(
+        180deg,
+        rgba(12,22,40,.98),
+        rgba(8,16,32,.96)
+    );
+}
+
+/* =====================================================
+   MODAL TITLE
+===================================================== */
+.modal-box h3{
+    text-align:center;
+    font-size:22px;
+    font-weight:900;
+    margin-bottom:18px;
+
+    background:linear-gradient(90deg,#2563eb,#f59e0b);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+/* =====================================================
+   TABLE
+===================================================== */
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:16px;
+    font-size:13px;
+}
+
+th,td{
+    padding:10px 12px;
+    border-bottom:1px solid rgba(0,0,0,.1);
+    text-align:center;
+}
+
+th{
+    background:#f59e0b;
+    color:#000;
+    font-weight:800;
+}
+
+/* DARK TABLE */
+body.dark th{
+    background:#1d4ed8;
+    color:#fff;
+}
+body.dark td{
+    color:#e5e7eb;
+    border-color:rgba(255,255,255,.1);
+}
+
+/* =====================================================
+   IMAGE CRM
+===================================================== */
+img{
+    width:70px;
+    height:70px;
+    object-fit:cover;
+    border-radius:10px;
+    border:1px solid #cbd5e1;
+}
+
+/* =====================================================
+   ACTION BUTTON
+===================================================== */
+.edit-btn,
+.delete-btn{
+    padding:7px 12px;
+    border-radius:10px;
+    font-weight:800;
+    cursor:pointer;
+    border:none;
+}
+
+.edit-btn{background:#facc15;}
+.delete-btn{background:#ef4444;color:#fff;}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+@media(max-width:768px){
+    .page-container{
+        margin-left:0;
+        padding:32px 16px 140px;
+    }
+
+    .form-card{
+        padding:26px 22px;
+    }
+}
 </style>
 
 <div class="page-container">

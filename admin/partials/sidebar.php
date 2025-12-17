@@ -232,7 +232,7 @@ body.dark {
 </div>
 
 <div class="logo text-center">
-    <img src="../home/assets/logo.png">
+    <img src="../home/assets/Screenshot_2025-12-02_102409-removebg-preview (1).png">
     <h4>Dashboard</h4>
 </div>
 

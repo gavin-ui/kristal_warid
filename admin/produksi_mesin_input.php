@@ -48,93 +48,298 @@ include "partials/sidebar.php";
 ?>
 
 <style>
-/* ================= LAYOUT ================= */
-.page-container{margin-left:290px;padding:35px;background:var(--body-bg);min-height:100vh;transition:.3s}
-body.collapsed .page-container{margin-left:110px}
-.form-card{background:var(--card-bg);padding:25px;border-radius:15px;box-shadow:0 8px 15px rgba(0,0,0,.1);max-width:780px;margin:auto}
+/* =====================================================
+   GLOBAL
+===================================================== */
+body{
+    margin:0;
+    font-family:Inter, Arial, sans-serif;
+    background:var(--body-bg);
+    color:var(--text-color);
+}
 
-/* ================= FORM ================= */
-input,select,textarea{
+/* =====================================================
+   PAGE LAYOUT
+===================================================== */
+.page-container{
+    margin-left:290px;
+    padding:36px 24px 160px;
+    min-height:100vh;
+    transition:.3s ease;
+}
+body.collapsed .page-container{
+    margin-left:110px;
+}
+
+/* =====================================================
+   FORM CARD (COMPACT & MEWAH)
+===================================================== */
+.form-card{
+    max-width:640px;
+    margin:auto;
+    padding:22px 24px;
+
+    background:linear-gradient(
+        180deg,
+        rgba(255,255,255,.96),
+        rgba(255,255,255,.88)
+    );
+
+    border-radius:18px;
+    border:1.5px solid rgba(255,186,39,.45);
+
+    box-shadow:
+        0 20px 40px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.7);
+}
+
+/* DARK MODE CARD */
+body.dark .form-card{
+    background:linear-gradient(
+        180deg,
+        rgba(15,25,50,.95),
+        rgba(10,18,36,.92)
+    );
+    border:1.5px solid rgba(255,186,39,.35);
+}
+
+/* =====================================================
+   TITLE
+===================================================== */
+.form-card h2{
+    text-align:center;
+    margin-bottom:18px;
+    font-weight:900;
+    font-size:22px;
+    letter-spacing:.5px;
+
+    background:linear-gradient(90deg,#2563eb,#f59e0b);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+/* =====================================================
+   FORM INPUT (COMPACT)
+===================================================== */
+input,
+select,
+textarea{
     width:100%;
-    padding:10px 12px;
+    padding:9px 12px;
     border-radius:10px;
-    border:2px solid var(--title-color);
-    background:white;
-    color:black;
+    border:1.6px solid #cbd5e1;
+    font-size:13px;
     margin-bottom:10px;
     box-sizing:border-box;
-}
-body.dark input,body.dark textarea,body.dark select{
-    background:#0f1729!important;
-    color:white!important;
+
+    background:#fff;
+    color:#0f172a;
 }
 
-/* HILANGKAN TOMBOL NAIK TURUN NUMBER */
+/* DARK MODE INPUT */
+body.dark input,
+body.dark select,
+body.dark textarea{
+    background:#0f1729;
+    border-color:rgba(90,169,255,.35);
+    color:#fff;
+}
+
+textarea{
+    resize:none;
+    min-height:70px;
+}
+
+/* REMOVE NUMBER SPINNER */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button{
     -webkit-appearance:none;
-    margin:0;
 }
 input[type=number]{ -moz-appearance:textfield }
 
-/* ================= BUTTON ================= */
-.btn-save,.export-btn,.detail-btn{
-    padding:12px;
+/* =====================================================
+   BUTTONS
+===================================================== */
+.btn-save,
+.export-btn,
+.detail-btn{
+    padding:11px;
     width:100%;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:bold;
+    border-radius:12px;
+    font-weight:800;
+    font-size:14px;
     border:none;
-    transition:.3s;
+    cursor:pointer;
+    transition:.3s ease;
 }
-.btn-save{background:var(--hover-bg)}
-.export-btn{background:#1cbfff;margin-top:10px}
-.detail-btn{background:#0075ff;color:white;margin-top:10px}
-button:hover{transform:scale(1.05)}
 
-/* ================= MODAL ================= */
+.btn-save{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:white;
+    border:2px solid #f59e0b;
+}
+
+.export-btn{
+    background:#0ea5e9;
+    color:white;
+    margin-top:10px;
+}
+
+.detail-btn{
+    background:#334155;
+    color:white;
+    margin-top:10px;
+}
+
+button:hover{
+    transform:translateY(-2px);
+}
+
+/* =====================================================
+   MODAL BACKDROP
+===================================================== */
 .modal-bg{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.45);
+    background:rgba(0,0,0,.55);
     display:none;
     justify-content:center;
     align-items:center;
-    z-index:99999;
+    z-index:9999;
 }
+
+/* =====================================================
+   MODAL BOX (SCROLL AMAN)
+===================================================== */
 .modal-box{
     background:var(--card-bg);
-    padding:20px;
-    border-radius:16px;
-    width:95%;
+    padding:22px;
+    border-radius:18px;
+    width:94%;
     max-width:900px;
     max-height:85vh;
     overflow-y:auto;
-    box-shadow:0 15px 40px rgba(0,0,0,.3);
-    transform:scale(.9) translateY(20px);
-    opacity:0;
-    animation:modalIn .3s ease forwards;
-}
-@keyframes modalIn{
-    to{transform:scale(1) translateY(0);opacity:1}
+
+    box-shadow:0 25px 50px rgba(0,0,0,.45);
 }
 
-/* ================= TABLE ================= */
-table{width:100%;border-collapse:collapse;margin-top:15px}
-th,td{padding:10px;text-align:center;border:1px solid #ccc}
-th{background:var(--hover-bg)}
-.edit-btn{background:#ffc107;padding:6px 12px;border-radius:6px;cursor:pointer}
-.delete-btn{background:#dc3545;padding:6px 12px;border-radius:6px;color:white;cursor:pointer}
+/* =====================================================
+   TABLE (FIX MODE TERANG)
+===================================================== */
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:14px;
+}
 
-/* ================= EDIT GRID ================= */
+th,td{
+    padding:10px;
+    font-size:13px;
+    text-align:center;
+    border:1px solid #d1d5db;
+}
+
+/* HEADER TABLE */
+th{
+    background:#f59e0b;
+    color:#111827;
+    font-weight:800;
+}
+
+/* BODY TABLE */
+td{
+    color:#111827;
+    background:#f8fafc;
+}
+
+/* DARK MODE TABLE */
+body.dark th{
+    background:#1e3a8a;
+    color:white;
+}
+body.dark td{
+    background:#0f1729;
+    color:#e5e7eb;
+    border-color:#1e293b;
+}
+
+/* =====================================================
+   TABLE ACTION BUTTON
+===================================================== */
+.edit-btn{
+    background:#facc15;
+    padding:6px 10px;
+    border-radius:8px;
+    font-weight:700;
+    cursor:pointer;
+    border:none;
+}
+
+.delete-btn{
+    background:#ef4444;
+    padding:6px 10px;
+    border-radius:8px;
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    text-decoration:none;
+}
+
+/* =====================================================
+   EDIT MODAL FORM (RAPI & ADA LABEL)
+===================================================== */
 .edit-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:10px;
+    gap:12px;
 }
+
+.edit-grid label{
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:4px;
+    color:#0f172a;
+}
+
+body.dark .edit-grid label{
+    color:#e5e7eb;
+}
+
 .edit-grid textarea{
     grid-column:span 2;
-    min-height:90px;
+    min-height:80px;
+}
+
+/* =====================================================
+   MODAL TITLE
+===================================================== */
+.modal-box h3{
+    text-align:center;
+    margin-bottom:12px;
+    font-weight:900;
+    font-size:18px;
+
+    background:linear-gradient(90deg,#2563eb,#f59e0b);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+@media(max-width:768px){
+    .page-container{
+        margin-left:0;
+        padding:28px 14px 140px;
+    }
+
+    .form-card{
+        max-width:100%;
+    }
+
+    .edit-grid{
+        grid-template-columns:1fr;
+    }
 }
 </style>
 

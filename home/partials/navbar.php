@@ -138,7 +138,7 @@
 <div class="container">
 
     <a class="navbar-brand d-flex align-items-center" href="../home/index.php">
-        <img src="../home/assets/logo.png" width="44" class="me-2">
+        <img src="../home/assets/Screenshot_2025-12-02_102409-removebg-preview (1).png" width="44" class="me-2">
         <span class="nav-title">Es Kristal Warid</span>
     </a>
 

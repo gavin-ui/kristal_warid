@@ -258,7 +258,31 @@ button[type="submit"]:hover {
     }
 }
 
+/* =============================
+   PASSWORD EYE BUTTON
+============================= */
+.password-wrapper {
+    position: relative;
+}
 
+.password-wrapper input {
+    padding-right: 15px; /* kasih ruang untuk ikon mata */
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: -4px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 16px;
+    user-select: none;
+    opacity: 0.75;
+}
+
+.toggle-password:hover {
+    opacity: 1;
+}
 
 
 </style>

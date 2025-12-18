@@ -209,7 +209,7 @@ $q=mysqli_query($conn,"SELECT * FROM penggunaan_plastik ORDER BY id_plastik DESC
 while($r=mysqli_fetch_assoc($q)):
 ?>
 <tr>
-<td><?= $r['tanggal_input'] ?></td>
+<td><?= date('Y-m-d', strtotime($r['tanggal_input'])) ?></td>
 <td><?= $r['plastik_awal'] ?></td>
 <td><?= $r['sisa_plastik_kemarin'] ?></td>
 <td><?= $r['total_penggunaan_plastik'] ?></td>

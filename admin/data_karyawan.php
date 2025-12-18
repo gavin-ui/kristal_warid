@@ -14,12 +14,24 @@ if (isset($_POST['update_karyawan'])) {
     $alamat = $_POST['alamat'];
     $divisi = $_POST['divisi'];
 
-    /* ===== QR BARU WAJIB ADA NOMOR ===== */
-    $qrText = "Nama: $nama\nNomor: $nomor\nID: $id\nDivisi: $divisi";
-    $qrFile = "QR_" . $id . "_" . time() . ".png";
-    $qrPath = __DIR__ . "/../uploads/qrcode/" . $qrFile;
+/* ===============================
+   FORMAT QR SESUAI abs en.php
+================================ */
+$qrText =
+    trim($nama) . "|" .
+    trim($divisi) . "|" .
+    trim($alamat);
 
-    QRcode::png($qrText, $qrPath, QR_ECLEVEL_H, 4, 2);
+/* ===============================
+   GENERATE QR (LEBIH SENSITIF)
+================================ */
+QRcode::png(
+    $qrText,
+    $qrPath,
+    QR_ECLEVEL_H, // 🔥 error correction tertinggi
+    8,            // 🔥 lebih besar & tajam
+    2
+);
 
     /* ===== FOTO ===== */
     $fotoName = $_POST['old_foto'];

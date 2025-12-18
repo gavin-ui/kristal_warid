@@ -1,14 +1,14 @@
 <?php 
 include "../koneksi.php";
 
-// =====================
-// FILTER MESIN
-// =====================
+/* =====================
+   FILTER MESIN
+===================== */
 $filterMesin = $_GET['mesin'] ?? 'all';
 
-// =====================
-// INSERT DATA
-// =====================
+/* =====================
+   INSERT DATA
+===================== */
 if (isset($_POST['submit'])) {
     $stmt = $conn->prepare("
         INSERT INTO produksi_mesin 
@@ -28,18 +28,53 @@ if (isset($_POST['submit'])) {
         $_POST['keterangan']
     );
     $stmt->execute();
-    header("Location: produksi_mesin_input.php?success=1");
+    header("Location: produksi_mesin_input.php");
     exit;
 }
 
-// =====================
-// DELETE DATA
-// =====================
+/* =====================
+   UPDATE DATA (EDIT)
+===================== */
+if (isset($_POST['update'])) {
+    $stmt = $conn->prepare("
+        UPDATE produksi_mesin SET
+            mesin=?,
+            jam_mulai=?,
+            menit=?,
+            defroz=?,
+            pack=?,
+            qty=?,
+            kristal=?,
+            serut=?,
+            keterangan=?
+        WHERE id_produksi=?
+    ");
+    $stmt->bind_param(
+        "ssiiiiissi",
+        $_POST['mesin'],
+        $_POST['jam_mulai'],
+        $_POST['menit'],
+        $_POST['defroz'],
+        $_POST['pack'],
+        $_POST['qty'],
+        $_POST['kristal'],
+        $_POST['serut'],
+        $_POST['keterangan'],
+        $_POST['id_produksi']
+    );
+    $stmt->execute();
+    header("Location: produksi_mesin_input.php");
+    exit;
+}
+
+/* =====================
+   DELETE DATA
+===================== */
 if (isset($_GET['delete'])) {
     $stmt = $conn->prepare("DELETE FROM produksi_mesin WHERE id_produksi=?");
     $stmt->bind_param("i", $_GET['delete']);
     $stmt->execute();
-    header("Location: produksi_mesin_input.php?success=delete");
+    header("Location: produksi_mesin_input.php");
     exit;
 }
 
@@ -491,8 +526,9 @@ Tutup
 <h3 style="text-align:center;color:var(--title-color)">✏ Edit Data Produksi</h3>
 <hr style="opacity:.3">
 
-<form method="POST" action="update_mesin.php">
-<input type="hidden" id="edit_id" name="id">
+<form method="POST">
+<input type="hidden" name="id_produksi" id="edit_id">
+<input type="hidden" name="update" value="1">
 
 <div class="edit-grid">
 <input type="text" id="edit_mesin" name="mesin" placeholder="Kode mesin (A / B)">

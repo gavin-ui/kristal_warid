@@ -167,6 +167,23 @@ body.dark input,
 body.dark select{
     background:#0f1729;
 }
+
+/* ===== FIX TOMBOL MODAL EDIT ===== */
+#modalEdit .modal-footer{
+    display:flex;
+    gap:12px;
+}
+
+#modalEdit .modal-footer .btn{
+    flex:1;
+    height:52px;        /* tinggi disamakan */
+    padding:0;          /* buang efek beda padding */
+}
+
+#modalEdit .btn-save{
+    width:auto !important;   /* 🔥 MATIKAN width:100% */
+}
+
 </style>
 
 <!-- =====================================================
@@ -249,6 +266,54 @@ while($r=mysqli_fetch_assoc($q)):
 </table>
 </div>
 
+<!-- =====================================================
+     MODAL EDIT DISTRIBUSI
+===================================================== -->
+<div class="modal-bg" id="modalEdit">
+<div class="modal-box">
+
+<div class="modal-header">✏ Edit Distribusi Barkel</div>
+
+<div class="modal-body">
+<form id="formEdit">
+
+<input type="hidden" name="id_plastik" id="e_id">
+
+<div class="form-grid">
+<div>
+<label>Carry</label>
+<input type="number" name="distribusi_barkel_carry_h8516gk" id="e_d1">
+
+<label>Long</label>
+<input type="number" name="distribusi_barkel_long_hb017ov" id="e_d2">
+
+<label>Traga</label>
+<input type="number" name="distribusi_barkel_traga_h9876ag" id="e_d3">
+</div>
+
+<div>
+<label>Elf 8023</label>
+<input type="number" name="distribusi_barkel_elf_h8023ov" id="e_d4">
+
+<label>Elf 8019</label>
+<input type="number" name="distribusi_barkel_elf_h8019ov" id="e_d5">
+
+<label>Total Barkel</label>
+<input type="number" name="total_barel" id="e_total">
+</div>
+</div>
+
+</form>
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-save" onclick="submitEdit()">💾 Simpan</button>
+<button class="btn btn-detail" onclick="closeEdit()">Batal</button>
+</div>
+
+</div>
+</div>
+
 <div class="modal-footer">
 <button class="btn btn-save" onclick="closeDetail()">Tutup</button>
 </div>
@@ -258,13 +323,36 @@ while($r=mysqli_fetch_assoc($q)):
 
 <script>
 const modalDetail = document.getElementById('modalDetail');
+const modalEdit   = document.getElementById('modalEdit');
 
-function openDetail(){ modalDetail.style.display='flex'; }
-function closeDetail(){ modalDetail.style.display='none'; }
+function openDetail(){
+    modalDetail.style.display = 'flex';
+}
 
-function submitMain(e){
-    e.preventDefault();
-    const f=new FormData(document.getElementById('formMain'));
+function closeDetail(){
+    modalDetail.style.display = 'none';
+}
+
+function openEdit(data){
+    // ❗️JANGAN tutup modalDetail di sini
+    modalEdit.style.display = 'flex';
+
+    e_id.value    = data.id_plastik;
+    e_d1.value    = data.distribusi_barkel_carry_h8516gk ?? '';
+    e_d2.value    = data.distribusi_barkel_long_hb017ov ?? '';
+    e_d3.value    = data.distribusi_barkel_traga_h9876ag ?? '';
+    e_d4.value    = data.distribusi_barkel_elf_h8023ov ?? '';
+    e_d5.value    = data.distribusi_barkel_elf_h8019ov ?? '';
+    e_total.value = data.total_barel ?? '';
+}
+
+function closeEdit(){
+    // ❗️HANYA tutup modal edit
+    modalEdit.style.display = 'none';
+}
+
+function submitEdit(){
+    const f = new FormData(document.getElementById('formEdit'));
     f.append('submit_distribusi',1);
     fetch('',{method:'POST',body:f}).then(()=>location.reload());
 }

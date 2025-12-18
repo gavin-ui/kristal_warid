@@ -189,8 +189,8 @@ body.dark .card-form input {
 
 .password-wrap svg {
     position: absolute;
-    right: 14px;
-    top: 50%;
+    right: -1px;
+    top: 38%;
     transform: translateY(-50%);
     width: 24px;
     height: 24px;

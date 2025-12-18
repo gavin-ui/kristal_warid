@@ -259,127 +259,196 @@ $action = $_GET['action'] ?? 'login';
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-/* FULL BACKGROUND */
-body {
-    height: 100vh;
-    margin: 0;
+/* =====================================================
+   ❄ FULL BACKGROUND — ICE HERO STYLE
+===================================================== */
+body{
+    height:100vh;
+    margin:0;
     display:flex;
     justify-content:center;
     align-items:center;
+    font-family:'Segoe UI', Arial, sans-serif;
+
     background:
-        radial-gradient(circle at top left, rgba(255,255,255,0.6), transparent 40%),
-        radial-gradient(circle at bottom right, rgba(255,255,255,0.5), transparent 45%),
-        radial-gradient(circle at center,
-            rgba(255,255,255,0.85) 0%,
-            rgba(255,255,255,0.65) 35%,
-            rgba(0, 174, 239, 0.9) 100%);
-    background-color:#00AEEF;
-    font-family: 'Segoe UI', Arial, sans-serif;
+        linear-gradient(180deg, rgba(0,123,255,.45), rgba(0,45,110,.75)),
+        url('../home/assets/ChatGPT Image 18 Des 2025, 08.55.14.png') center/cover fixed;
+
+    overflow:hidden;
 }
 
-/* GLASS CARD */
-.card-glass {
-    width: 430px;
+/* Snow overlay */
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:url('../home/assets/ChatGPT Image 18 Des 2025, 09.00.23.png') repeat;
+    opacity:.18;
+    animation:snowDrift 26s linear infinite;
+    pointer-events:none;
+}
+
+/* Soft light glow */
+body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle at top left,
+        rgba(255,255,255,.35),
+        transparent 50%);
+    pointer-events:none;
+}
+
+/* =====================================================
+   ❄ GLASS CARD
+===================================================== */
+.card-glass{
+    width:430px;
     padding:38px;
-    border-radius:26px;
+    border-radius:28px;
+
     background: linear-gradient(
         180deg,
-        rgba(255,255,255,0.55),
-        rgba(255,255,255,0.35)
+        rgba(255,255,255,0.65),
+        rgba(255,255,255,0.45)
     );
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    border:1.8px solid rgba(255,255,255,.45);
+
     box-shadow:
-        0 20px 40px rgba(0,0,0,0.18),
-        inset 0 0 0 1px rgba(255,255,255,0.5);
-    animation: floatIn 0.8s ease;
-    position: relative;
+        0 18px 45px rgba(0,85,200,.30),
+        inset 0 0 18px rgba(255,255,255,.6);
+
+    animation: floatIn .9s ease forwards;
+    position:relative;
 }
 
-/* CARD GLOW */
-.card-glass::before {
+/* Glass shine */
+.card-glass::before{
     content:"";
     position:absolute;
     inset:0;
-    border-radius:26px;
-    background: linear-gradient(
+    border-radius:28px;
+    background:linear-gradient(
         120deg,
-        rgba(255,255,255,0.5),
-        transparent 40%,
-        rgba(255,255,255,0.4)
+        rgba(255,255,255,.6),
+        transparent 45%,
+        rgba(255,255,255,.4)
     );
     pointer-events:none;
 }
 
-/* ANIMATION */
-@keyframes floatIn {
-    from { opacity:0; transform:translateY(30px) scale(.96); }
-    to   { opacity:1; transform:translateY(0) scale(1); }
-}
-
-/* LOGO */
-.logo-circle {
+/* =====================================================
+   ❄ LOGO
+===================================================== */
+.logo-circle{
     width:90px;
     height:90px;
     border-radius:50%;
-    background: linear-gradient(135deg,#00AEEF,#008FC7);
+    margin:auto;
+
+    background:linear-gradient(135deg,#00c8ff,#007bff);
+    color:white;
+    font-size:42px;
+
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:42px;
-    color:white;
-    margin:auto;
-    box-shadow:0 12px 30px rgba(0,0,0,0.25);
+
+    box-shadow:0 10px 28px rgba(0,140,255,.45);
 }
 
-/* FORM LABEL */
-.form-label {
-    font-weight:600;
-    color:#004b66;
+/* =====================================================
+   ❄ FORM
+===================================================== */
+.form-label{
+    font-weight:700;
+    color:#003f82;
 }
 
-/* INPUT */
-.form-control {
+.form-control{
     border-radius:14px;
     padding:12px 14px;
-    border:1px solid rgba(0,0,0,0.15);
-}
-.form-control:focus {
-    box-shadow:0 0 0 3px rgba(0,174,239,.25);
-    border-color:#00AEEF;
+    border:1.6px solid rgba(0,123,255,.35);
 }
 
-/* BUTTON */
-.btn-primary {
-    background: linear-gradient(135deg,#00AEEF,#008FC7);
+.form-control:focus{
+    border-color:#00bfff;
+    box-shadow:0 0 0 3px rgba(0,180,255,.35);
+}
+
+/* =====================================================
+   ❄ BUTTON
+===================================================== */
+.btn-primary{
+    background:linear-gradient(90deg,#007bff,#00bfff);
     border:none;
-    border-radius:14px;
-    font-weight:bold;
+    border-radius:16px;
+
+    font-weight:800;
     letter-spacing:.4px;
-    box-shadow:0 8px 20px rgba(0,174,239,.45);
-}
-.btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow:0 12px 28px rgba(0,174,239,.55);
+    color:white;
+
+    box-shadow:0 10px 28px rgba(0,160,255,.45);
+    transition:.35s ease;
 }
 
-/* LINK */
-a {
-    text-decoration:none;
+.btn-primary:hover{
+    transform:translateY(-2px) scale(1.04);
+    box-shadow:0 14px 34px rgba(0,160,255,.6);
 }
-a:hover {
+
+/* =====================================================
+   ❄ LINK
+===================================================== */
+a{
+    text-decoration:none;
+    color:#0056b3;
+    font-weight:600;
+}
+
+a:hover{
     text-decoration:underline;
 }
 
-/* BACK BUTTON */
-.back-btn {
+/* =====================================================
+   ❄ BACK BUTTON
+===================================================== */
+.back-btn{
     position:absolute;
     top:25px;
     left:25px;
     transition:.3s ease;
 }
-.back-btn:hover {
-    transform: translateX(-5px);
+
+.back-btn:hover{
+    transform:translateX(-6px);
+}
+
+/* =====================================================
+   ❄ ANIMATION
+===================================================== */
+@keyframes floatIn{
+    from{ opacity:0; transform:translateY(30px) scale(.96); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+}
+
+@keyframes snowDrift{
+    from{ background-position:0 0 }
+    to{ background-position:0 1200px }
+}
+
+/* =====================================================
+   ❄ RESPONSIVE
+===================================================== */
+@media(max-width:576px){
+    .card-glass{
+        width:92%;
+        padding:28px 22px;
+    }
 }
 
 </style>

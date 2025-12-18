@@ -20,113 +20,206 @@ include "partials/navbar.php";
 ?>
 
 <style>
-html,body{
-    height:100%;
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
 }
-.page-root{
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
+
+/* ================= ROOT BACKGROUND ================= */
+.page-root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    background:
+        linear-gradient(180deg, rgba(3,12,30,.88), rgba(0,8,20,.96)),
+        url('../home/assets/ChatGPT Image 18 Des 2025, 09.34.26.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+
+    position: relative;
+    overflow: hidden;
 }
-.page-content{
-    flex:1;
+
+/* Snow overlay */
+.page-root::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url('../home/assets/ChatGPT Image 18 Des 2025, 09.00.23.png') repeat;
+    opacity: .22;
+    animation: snowDrift 30s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes snowDrift {
+    from { background-position: 0 0; }
+    to { background-position: 0 1200px; }
+}
+
+.page-content {
+    flex: 1;
+    position: relative;
+    z-index: 2;
 }
 
 /* ================= DASHBOARD ================= */
-.dashboard-wrap{
-    max-width:1100px;
-    margin:auto;
-    padding:160px 20px 40px;
+.dashboard-wrap {
+    max-width: 1100px;
+    margin: auto;
+    padding: 150px 20px 40px;
 }
 
-.dashboard-card{
-    background:linear-gradient(180deg,#fff,#f8f9fb);
-    border-radius:22px;
-    padding:40px;
-    box-shadow:0 20px 45px rgba(0,0,0,.12);
+/* GLASS CARD */
+.dashboard-card {
+    background: linear-gradient(
+        180deg,
+        rgba(20,40,80,.55),
+        rgba(10,20,45,.75)
+    );
+    border-radius: 26px;
+    padding: 42px;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border: 1px solid rgba(120,180,255,.25);
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.6),
+        inset 0 0 35px rgba(120,180,255,.08);
 }
 
 /* ================= HEADER ================= */
-.dashboard-title{
-    font-size:2.2rem;
-    font-weight:800;
+.dashboard-title {
+    font-size: 2.3rem;
+    font-weight: 900;
+    color: #eaf2ff;
 }
-.dashboard-title span{
-    background:linear-gradient(90deg,#2563eb,#f59e0b);
-    -webkit-background-clip:text;
-    color:transparent;
+
+.dashboard-title span {
+    background: linear-gradient(90deg,#60a5fa,#38bdf8);
+    -webkit-background-clip: text;
+    color: transparent;
 }
-.dashboard-sub{
-    color:#555;
-    margin-bottom:35px;
+
+.dashboard-sub {
+    color: #b9d6ff;
+    margin-bottom: 36px;
 }
 
 /* ================= INFO GRID ================= */
-.info-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:18px;
-    margin-bottom:35px;
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+    gap: 18px;
+    margin-bottom: 34px;
 }
-.info-box{
-    background:white;
-    padding:20px;
-    border-radius:16px;
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+.info-box {
+    background: linear-gradient(
+        180deg,
+        rgba(30,60,120,.55),
+        rgba(15,30,70,.75)
+    );
+    padding: 22px;
+    border-radius: 18px;
+    border: 1px solid rgba(120,180,255,.25);
+    box-shadow: inset 0 0 25px rgba(120,180,255,.08);
 }
-.info-box h4{
-    font-weight:800;
-    margin-bottom:6px;
+
+.info-box h4 {
+    font-weight: 700;
+    color: #dbeafe;
+    margin-bottom: 6px;
 }
-.info-box span{
-    font-size:1.8rem;
-    font-weight:900;
-    color:#2563eb;
+
+.info-box span {
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: #60a5fa;
 }
 
 /* ================= ACTION ================= */
-.action-box{
-    background:linear-gradient(90deg,#2563eb,#f59e0b);
-    border-radius:18px;
-    padding:28px;
-    color:white;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:20px;
+.action-box {
+    background: linear-gradient(
+        90deg,
+        rgba(37,99,235,.85),
+        rgba(30,58,138,.95)
+    );
+    border-radius: 20px;
+    padding: 30px;
+    color: #eaf2ff;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    box-shadow: 0 20px 50px rgba(0,0,0,.5);
 }
-.action-btn{
-    background:white;
-    color:#111;
-    padding:14px 28px;
-    border-radius:14px;
-    font-weight:800;
-    text-decoration:none;
+
+.action-box h4 {
+    font-weight: 800;
+}
+
+.action-box p {
+    opacity: .9;
+}
+
+.action-btn {
+    background: linear-gradient(135deg,#60a5fa,#3b82f6);
+    color: #021024;
+    padding: 14px 32px;
+    border-radius: 16px;
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(96,165,250,.45);
+    transition: .3s;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
 }
 
 /* ================= TASK ================= */
-.task-box{
-    margin-top:30px;
-    background:white;
-    padding:26px;
-    border-radius:18px;
-    box-shadow:0 10px 30px rgba(0,0,0,.1);
+.task-box {
+    margin-top: 32px;
+    background: linear-gradient(
+        180deg,
+        rgba(25,50,100,.55),
+        rgba(12,25,55,.75)
+    );
+    padding: 28px;
+    border-radius: 20px;
+    border: 1px solid rgba(120,180,255,.25);
 }
-.task-box ul{
-    padding-left:20px;
+
+.task-box h4 {
+    color: #eaf2ff;
+    margin-bottom: 14px;
 }
-.task-box li{
-    margin-bottom:10px;
+
+.task-box li {
+    color: #c7ddff;
+    margin-bottom: 10px;
 }
 
 /* ================= MOTIVATION ================= */
-.motivation{
-    margin-top:25px;
-    padding:22px;
-    background:rgba(37,99,235,.08);
-    border-left:6px solid #2563eb;
-    border-radius:14px;
-    font-weight:600;
+.motivation {
+    margin-top: 28px;
+    padding: 22px;
+    background: linear-gradient(
+        90deg,
+        rgba(37,99,235,.25),
+        rgba(15,30,70,.35)
+    );
+    border-left: 6px solid #60a5fa;
+    border-radius: 16px;
+    font-weight: 600;
+    color: #eaf2ff;
 }
 </style>
 
@@ -166,7 +259,7 @@ html,body{
         <h4>➕ Input Produksi Mesin</h4>
         <p>Catat hasil produksi dengan cepat dan akurat</p>
     </div>
-    <a href="produksi_mesin_input.php" class="action-btn">Mulai Input</a>
+    <a href="produksi_mesin.php" class="action-btn">Mulai Input</a>
 </div>
 
 <!-- TUGAS KAPTEN -->

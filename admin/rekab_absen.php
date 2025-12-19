@@ -270,7 +270,7 @@ body.collapsed .dashboard{margin-left:110px}
         placeholder="Cari nama, divisi, status...">
     </div>
 
-   <a href="export_excel.php?tanggal=<?= $dateToday ?>" class="btn-export">
+   <a href="rekab_absen_export.php?tanggal=<?= $dateToday ?>" class="btn-export">
     📥 Export Excel
 </a>
 </div>

@@ -237,6 +237,259 @@ body.collapsed .dashboard{margin-left:110px}
     transform:translateY(-3px) scale(1.04);
     box-shadow:0 22px 55px rgba(34,197,94,.6);
 }
+/* =============================
+   THEME AWARE (LIGHT & DARK)
+============================= */
+
+/* WARNA DASAR (LIGHT MODE DEFAULT) */
+.action-bar{
+    background:var(--card-bg);
+}
+
+.search-box input{
+    background:rgba(255,255,255,.75);
+    color:#111;
+}
+
+.search-box input::placeholder{
+    color:#555;
+}
+
+.btn-export{
+    background:linear-gradient(135deg,#16a34a,#22c55e);
+}
+
+/* =============================
+   DARK MODE OVERRIDE
+   (menyesuaikan sistem tema kamu)
+============================= */
+body.dark .action-bar{
+    background:rgba(30,41,59,.75);
+    backdrop-filter:blur(14px);
+}
+
+body.dark .search-box input{
+    background:rgba(15,23,42,.85);
+    color:#e5e7eb;
+    box-shadow:0 10px 25px rgba(0,0,0,.5);
+}
+
+body.dark .search-box input::placeholder{
+    color:#9ca3af;
+}
+
+body.dark .search-box::before{
+    opacity:.8;
+}
+
+body.dark .btn-export{
+    background:linear-gradient(135deg,#22c55e,#4ade80);
+    box-shadow:
+        0 16px 40px rgba(34,197,94,.55),
+        inset 0 0 0 1px rgba(255,255,255,.15);
+}
+
+/* HOVER DARK MODE */
+body.dark .btn-export:hover{
+    box-shadow:0 26px 60px rgba(34,197,94,.65);
+}
+/* =============================
+   FIX SEARCH TEXT HILANG
+============================= */
+
+/* MODE TERANG */
+body:not(.dark) .search-box input{
+    background:#ffffff;
+    color:#111827;              /* teks PASTI gelap */
+}
+
+body:not(.dark) .search-box input::placeholder{
+    color:#6b7280;              /* placeholder terlihat */
+}
+
+/* MODE GELAP */
+body.dark .search-box input{
+    background:#0f172a;
+    color:#e5e7eb;
+}
+
+body.dark .search-box input::placeholder{
+    color:#9ca3af;
+}
+
+/* ICON SEARCH */
+.search-box::before{
+    color:#6b7280;
+}
+body.dark .search-box::before{
+    color:#9ca3af;
+}
+/* =============================
+   FORCE SEARCH VISIBILITY (FINAL)
+============================= */
+
+/* MODE TERANG */
+body:not(.dark) .search-box input,
+body:not(.dark) .search-box input.form-control{
+    background:#ffffff !important;
+    color:#111827 !important;
+    caret-color:#111827 !important;
+    border:1px solid #d1d5db;
+}
+
+/* placeholder terang */
+body:not(.dark) .search-box input::placeholder{
+    color:#6b7280 !important;
+    opacity:1;
+}
+
+/* MODE GELAP */
+body.dark .search-box input,
+body.dark .search-box input.form-control{
+    background:#0f172a !important;
+    color:#e5e7eb !important;
+    caret-color:#e5e7eb !important;
+    border:1px solid rgba(255,255,255,.15);
+}
+
+/* placeholder gelap */
+body.dark .search-box input::placeholder{
+    color:#9ca3af !important;
+}
+
+/* ICON SEARCH */
+.search-box::before{
+    color:#6b7280;
+}
+body.dark .search-box::before{
+    color:#9ca3af;
+}
+/* =============================
+   FIX TEKS MODE TERANG (SCOPED)
+   TIDAK MENGGANGGU SIDEBAR
+============================= */
+
+/* MODE TERANG - HANYA DASHBOARD */
+body:not(.dark) .dashboard{
+    color:#111827;
+}
+
+body:not(.dark) .dashboard h1,
+body:not(.dark) .dashboard h2,
+body:not(.dark) .dashboard h3,
+body:not(.dark) .dashboard h4,
+body:not(.dark) .dashboard h5,
+body:not(.dark) .dashboard h6{
+    color:#0f172a;
+}
+
+body:not(.dark) .dashboard p,
+body:not(.dark) .dashboard span,
+body:not(.dark) .dashboard td,
+body:not(.dark) .dashboard th,
+body:not(.dark) .dashboard label{
+    color:#1f2937;
+}
+
+/* TABLE TEXT MODE TERANG */
+body:not(.dark) .dashboard .table tbody td{
+    color:#111827;
+    font-weight:600;
+}
+
+body:not(.dark) .dashboard .table thead th{
+    color:#ffffff;
+}
+
+/* STAT CARD */
+body:not(.dark) .dashboard .stat-item h4{
+    color:#1e293b;
+}
+body:not(.dark) .dashboard .stat-item span{
+    color:#2563eb;
+}
+
+/* GLASS CARD */
+body:not(.dark) .dashboard .glass-card{
+    color:#111827;
+}
+
+/* =============================
+   SEARCH FIX (SCOPED)
+============================= */
+body:not(.dark) .dashboard .search-box input{
+    background:#ffffff !important;
+    color:#111827 !important;
+    caret-color:#111827;
+    border:1px solid #d1d5db;
+}
+
+body:not(.dark) .dashboard .search-box input::placeholder{
+    color:#6b7280 !important;
+    opacity:1;
+}
+
+/* =============================
+   MODE GELAP (SCOPED)
+============================= */
+body.dark .dashboard{
+    color:#e5e7eb;
+}
+
+body.dark .dashboard .glass-card,
+body.dark .dashboard .stat-item,
+body.dark .dashboard .table tbody td{
+    color:#e5e7eb;
+}
+
+body.dark .dashboard .search-box input{
+    background:#0f172a !important;
+    color:#e5e7eb !important;
+    caret-color:#e5e7eb;
+    border:1px solid rgba(255,255,255,.15);
+}
+
+body.dark .dashboard .search-box input::placeholder{
+    color:#9ca3af !important;
+}
+
+/* ICON SEARCH */
+.dashboard .search-box::before{
+    color:#6b7280;
+}
+body.dark .dashboard .search-box::before{
+    color:#9ca3af;
+}
+/* =============================
+   FIX TABLE RESIZE ON THEME SWITCH
+============================= */
+
+/* 1. Prevent border from changing layout */
+.dashboard *,
+.dashboard *::before,
+.dashboard *::after{
+    box-sizing:border-box;
+}
+
+/* 2. Lock table row size */
+.dashboard .table tbody tr{
+    min-height:120px;
+    border:1px solid transparent;
+}
+
+/* 3. Border color only (no size change) */
+body:not(.dark) .dashboard .table tbody tr{
+    border-color:#e5e7eb;
+}
+
+body.dark .dashboard .table tbody tr{
+    border-color:rgba(255,255,255,.12);
+}
+
+/* 4. Lock font weight */
+.dashboard .table tbody td{
+    font-weight:600;
+}
 </style>
 
 <div class="dashboard">

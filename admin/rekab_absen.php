@@ -270,11 +270,9 @@ body.collapsed .dashboard{margin-left:110px}
         placeholder="Cari nama, divisi, status...">
     </div>
 
-    <button class="btn-export"
-        data-bs-toggle="modal"
-        data-bs-target="#modalExport">
-        📥 Export Excel
-    </button>
+   <a href="export_excel.php?tanggal=<?= $dateToday ?>" class="btn-export">
+    📥 Export Excel
+</a>
 </div>
 
 <!-- TABLE -->

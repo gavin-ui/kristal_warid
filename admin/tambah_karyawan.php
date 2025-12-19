@@ -76,7 +76,8 @@
     html, body {
         height: 100%;
         margin: 0;
-        overflow: hidden;
+        overflow-y: auto;   /* ✅ boleh scroll vertikal */
+        overflow-x: hidden;/* opsional: cegah geser samping */
     }
 
     .page-wrapper {

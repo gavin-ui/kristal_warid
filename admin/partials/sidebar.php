@@ -250,15 +250,15 @@ body.dark {
     <i>👤</i> <span class="menu-text">Register</span>
 </div>
 
+<div class="menu-item" onclick="location.href='../admin/tambah_karyawan.php'">
+    <i>👤</i> <span class="menu-text">Tambah Karyawan</span>
+</div>
+
 <!-- ===== MENU BARU: REGISTER KARYAWAN ===== -->
 <div class="menu-item" onclick="location.href='../admin/register_karyawan.php'">
     <i>📝</i> <span class="menu-text">Register Karyawan</span>
 </div>
 <!-- ======================================== -->
-
-<div class="menu-item" onclick="location.href='../admin/tambah_karyawan.php'">
-    <i>👤</i> <span class="menu-text">Tambah Karyawan</span>
-</div>
 
 <div class="menu-item" onclick="location.href='../admin/data_karyawan.php'">
     <i>📋</i> <span class="menu-text">Data Karyawan</span>

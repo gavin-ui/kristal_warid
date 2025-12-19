@@ -40,19 +40,19 @@ $data = mysqli_query($conn,
 .dashboard{margin-left:290px;padding:30px}
 body.collapsed .dashboard{margin-left:110px}
 
-/* CARD GLASS */
+/* GLASS CARD */
 .glass-card{
     background:var(--card-bg);
-    border-radius:26px;
-    padding:34px;
+    border-radius:30px;
+    padding:36px;
     box-shadow:
-        0 18px 40px rgba(0,0,0,.12),
+        0 25px 55px rgba(0,0,0,.14),
         inset 0 0 0 1px rgba(255,255,255,.4);
 }
 
 /* HEADER */
 .page-title{
-    font-size:28px;
+    font-size:30px;
     font-weight:900;
     background:linear-gradient(90deg,#2563eb,#0ea5e9);
     -webkit-background-clip:text;
@@ -63,64 +63,179 @@ body.collapsed .dashboard{margin-left:110px}
 .stat-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-    gap:24px;
+    gap:26px;
     margin:40px 0;
 }
 .stat-item{
-    padding:30px;
-    border-radius:24px;
+    padding:34px;
+    border-radius:26px;
     background:var(--card-bg);
     border-left:6px solid var(--accent);
-    box-shadow:0 10px 28px rgba(0,0,0,.08);
+    box-shadow:0 12px 30px rgba(0,0,0,.10);
 }
-.stat-item h4{font-weight:700;color:var(--title-color)}
 .stat-item span{
-    font-size:38px;
+    font-size:40px;
     font-weight:900;
-    color:var(--accent);
 }
 
 /* SEARCH */
-.search-box{
-    max-width:320px;
-    margin-bottom:20px;
-}
 .search-box input{
-    border-radius:14px;
-    padding:10px 14px;
+    border-radius:16px;
+    padding:12px 16px;
 }
 
-/* TABLE */
+/* =============================
+   TABLE FULL GLASS & BESAR
+============================= */
 .table{
-    border-radius:18px;
-    overflow:hidden;
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0 22px;
+    font-size:15px;
 }
+
 .table thead{
     background:linear-gradient(90deg,#0ea5e9,#2563eb);
-    color:white;
+    color:#fff;
 }
-.table tbody tr:hover{
-    background:rgba(59,130,246,.08);
+.table thead th{
+    padding:22px 18px;
+    border:none;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-size:13px;
 }
 
-/* BADGE */
+.table tbody tr{
+    background:var(--card-bg);
+    height:120px;
+    border-radius:26px;
+    box-shadow:0 18px 40px rgba(0,0,0,.12);
+    transition:.35s ease;
+}
+.table tbody tr:hover{
+    transform:translateY(-6px);
+    box-shadow:0 30px 60px rgba(37,99,235,.30);
+}
+
+.table tbody td{
+    border:none;
+    padding:26px 20px;
+    vertical-align:middle;
+}
+
+/* rounded row */
+.table tbody tr td:first-child{
+    border-radius:26px 0 0 26px;
+    font-weight:900;
+    font-size:16px;
+}
+.table tbody tr td:last-child{
+    border-radius:0 26px 26px 0;
+}
+
+/* STATUS */
+.badge-status{
+    padding:10px 22px;
+    font-size:13px;
+    font-weight:900;
+    border-radius:999px;
+}
 .badge-hadir{background:#22c55e}
 .badge-izin{background:#facc15;color:#000}
 .badge-sakit{background:#ef4444}
 
-/* BUTTON */
-.btn-detail{
-    background:linear-gradient(135deg,#2563eb,#0ea5e9);
-    color:white;
-    border:none;
-    border-radius:12px;
-    padding:6px 14px;
+/* =============================
+   FOTO SELFIE BESAR & JELAS
+============================= */
+.img-selfie{
+    width:80px;
+    height:80px;
+    object-fit:cover;
+    border-radius:20px;
+    border:3px solid rgba(255,255,255,.7);
+    box-shadow:0 12px 28px rgba(0,0,0,.35);
+    transition:.3s;
+}
+.img-selfie:hover{
+    transform:scale(1.2);
+    z-index:10;
 }
 
-/* MODAL */
-.modal-content{
-    border-radius:24px;
+/* JAM */
+.table td:nth-child(7),
+.table td:nth-child(8){
+    font-weight:900;
+    font-size:15px;
+    color:#2563eb;
+}
+
+/* =============================
+   SEARCH & ACTION BAR MEWAH
+============================= */
+.action-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
     background:var(--card-bg);
+    padding:22px 26px;
+    border-radius:26px;
+    box-shadow:
+        0 18px 40px rgba(0,0,0,.12),
+        inset 0 0 0 1px rgba(255,255,255,.45);
+}
+
+/* SEARCH */
+.search-box{
+    position:relative;
+    max-width:360px;
+    width:100%;
+}
+.search-box input{
+    width:100%;
+    padding:14px 18px 14px 48px;
+    border-radius:999px;
+    border:none;
+    background:rgba(255,255,255,.65);
+    backdrop-filter:blur(10px);
+    font-weight:600;
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+}
+.search-box input:focus{
+    outline:none;
+    box-shadow:0 0 0 3px rgba(37,99,235,.35);
+}
+.search-box::before{
+    content:"🔍";
+    position:absolute;
+    left:18px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:18px;
+    opacity:.6;
+}
+
+/* EXPORT BUTTON */
+.btn-export{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:14px 26px;
+    border:none;
+    border-radius:999px;
+    font-weight:900;
+    letter-spacing:.6px;
+    color:white;
+    background:linear-gradient(135deg,#16a34a,#22c55e);
+    box-shadow:
+        0 14px 35px rgba(34,197,94,.45),
+        inset 0 0 0 1px rgba(255,255,255,.4);
+    transition:.3s ease;
+}
+.btn-export:hover{
+    transform:translateY(-3px) scale(1.04);
+    box-shadow:0 22px 55px rgba(34,197,94,.6);
 }
 </style>
 
@@ -133,7 +248,7 @@ body.collapsed .dashboard{margin-left:110px}
     <p class="opacity-75"><?= date("d F Y") ?></p>
 </div>
 
-<!-- STAT -->
+<!-- STAT CARD (TETAP ADA) -->
 <div class="stat-grid">
     <div class="stat-item">
         <h4>✅ Hadir</h4>
@@ -149,14 +264,13 @@ body.collapsed .dashboard{margin-left:110px}
     </div>
 </div>
 
-<!-- ACTION -->
-<div class="d-flex justify-content-between align-items-center mb-3">
+<div class="action-bar mb-4">
     <div class="search-box">
         <input type="text" id="searchInput" class="form-control"
         placeholder="Cari nama, divisi, status...">
     </div>
 
-    <button class="btn btn-success fw-bold"
+    <button class="btn-export"
         data-bs-toggle="modal"
         data-bs-target="#modalExport">
         📥 Export Excel
@@ -166,18 +280,17 @@ body.collapsed .dashboard{margin-left:110px}
 <!-- TABLE -->
 <div class="glass-card">
 <div class="table-responsive">
-<table class="table table-hover align-middle text-center" id="absenTable">
+<table class="table text-center align-middle" id="absenTable">
 <thead>
 <tr>
-<th>No</th>
-<th>Nama</th>
-<th>Divisi</th>
-<th>Status</th>
-<th>Selfie Masuk</th>
-<th>Selfie Pulang</th>
-<th>Jam Masuk</th>
-<th>Jam Pulang</th>
-<th>Aksi</th>
+    <th>No</th>
+    <th>Nama</th>
+    <th>Divisi</th>
+    <th>Status</th>
+    <th>Selfie Masuk</th>
+    <th>Selfie Pulang</th>
+    <th>Jam Masuk</th>
+    <th>Jam Pulang</th>
 </tr>
 </thead>
 <tbody>
@@ -185,35 +298,29 @@ body.collapsed .dashboard{margin-left:110px}
 <?php $no=1; while($r=mysqli_fetch_assoc($data)): ?>
 <tr>
 <td><?= $no++ ?></td>
-<td><?= $r['nama_karyawan'] ?></td>
+<td class="fw-bold"><?= $r['nama_karyawan'] ?></td>
 <td><?= $r['divisi'] ?></td>
 <td>
 <?php
 $badge = $r['status_kehadiran']=="HADIR"?"badge-hadir":
         ($r['status_kehadiran']=="IZIN"?"badge-izin":"badge-sakit");
 ?>
-<span class="badge <?= $badge ?>">
+<span class="badge badge-status <?= $badge ?>">
 <?= $r['status_kehadiran'] ?>
 </span>
 </td>
 <td>
-<?php if($r['selfie_masuk']): ?>
-<img src="../uploads/<?= $r['selfie_masuk'] ?>" width="45" class="rounded">
+<?php if(!empty($r['selfie_masuk'])): ?>
+<img src="../uploads/selfie/<?= basename($r['selfie_masuk']) ?>" class="img-selfie">
 <?php else: ?>-<?php endif; ?>
 </td>
 <td>
-<?php if($r['selfie_pulang']): ?>
-<img src="../uploads/<?= $r['selfie_pulang'] ?>" width="45" class="rounded">
+<?php if(!empty($r['selfie_pulang'])): ?>
+<img src="../uploads/selfie/<?= basename($r['selfie_pulang']) ?>" class="img-selfie">
 <?php else: ?>-<?php endif; ?>
 </td>
 <td><?= $r['waktu_masuk']?date("H:i",strtotime($r['waktu_masuk'])):"-" ?></td>
 <td><?= $r['waktu_pulang']?date("H:i",strtotime($r['waktu_pulang'])):"-" ?></td>
-<td>
-<button class="btn-detail"
-onclick='showDetail(<?= json_encode($r) ?>)'>
-👁 Detail
-</button>
-</td>
 </tr>
 <?php endwhile; ?>
 
@@ -225,50 +332,13 @@ onclick='showDetail(<?= json_encode($r) ?>)'>
 </div>
 </div>
 
-<!-- MODAL EXPORT -->
-<div class="modal fade" id="modalExport">
-<div class="modal-dialog modal-dialog-centered">
-<div class="modal-content">
-<form method="GET" action="rekap_absen_export.php">
-<div class="modal-header bg-success text-white">
-<h5 class="modal-title">📥 Export Absensi</h5>
-<button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-</div>
-<div class="modal-body">
-<label class="form-label fw-bold">Pilih Data</label>
-<select name="filter" class="form-select">
-<option value="ALL">Semua</option>
-<option value="HADIR">Hadir</option>
-<option value="IZIN">Tidak Hadir</option>
-</select>
-</div>
-<div class="modal-footer">
-<button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-<button class="btn btn-success fw-bold">Export</button>
-</div>
-</form>
-</div>
-</div>
-</div>
-
 <script>
-/* SEARCH */
 document.getElementById("searchInput").addEventListener("keyup", function(){
 let v=this.value.toLowerCase();
 document.querySelectorAll("#absenTable tbody tr").forEach(tr=>{
 tr.style.display = tr.innerText.toLowerCase().includes(v) ? "" : "none";
 });
 });
-
-/* DETAIL */
-function showDetail(d){
-d_nama.innerText=d.nama_karyawan;
-d_status.innerText=d.status_kehadiran;
-d_masuk.innerText=d.waktu_masuk??"-";
-d_pulang.innerText=d.waktu_pulang??"-";
-d_alasan.innerText=d.alasan??"-";
-new bootstrap.Modal(modalDetail).show();
-}
 </script>
 
 <?php include "partials/footer.php"; ?>

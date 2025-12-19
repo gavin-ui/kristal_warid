@@ -268,6 +268,10 @@ body.dark {
     <i>📡</i> <span class="menu-text">Scan Absen</span>
 </div>
 
+<div class="menu-item" onclick="location.href='../admin/rekab_absen.php'">
+    <i>📝</i> <span class="menu-text">Rekab Absen</span>
+</div>
+
 <div class="menu-item" onclick="location.href='../admin/produksi_mesin_input.php'">
     <i>⭐</i> <span class="menu-text">Produksi Mesin A & B</span>
 </div>

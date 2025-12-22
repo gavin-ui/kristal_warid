@@ -22,6 +22,7 @@ $sheet = $spreadsheet->getActiveSheet();
 // Header kolom
 $headers = [
     "ID",
+    "Tanggal",
     "Mesin",
     "Jam Mulai",
     "Durasi (Menit)",
@@ -42,21 +43,28 @@ foreach ($headers as $header) {
 // Isi data
 $row = 2;
 while ($d = mysqli_fetch_assoc($query)) {
+
+    $tanggal = $d['tanggal_input']
+        ? date("d-m-Y H:i", strtotime($d['tanggal_input']))
+        : "-";
+
     $sheet->setCellValue("A$row", $d['id_produksi']);
-    $sheet->setCellValue("B$row", $d['mesin']);
-    $sheet->setCellValue("C$row", $d['jam_mulai']);
-    $sheet->setCellValue("D$row", $d['menit']);
-    $sheet->setCellValue("E$row", $d['defroz']);
-    $sheet->setCellValue("F$row", $d['pack']);
-    $sheet->setCellValue("G$row", $d['qty']);
-    $sheet->setCellValue("H$row", $d['kristal']);
-    $sheet->setCellValue("I$row", $d['serut']);
-    $sheet->setCellValue("J$row", $d['keterangan']);
+    $sheet->setCellValue("B$row", $tanggal);
+    $sheet->setCellValue("C$row", $d['mesin']);
+    $sheet->setCellValue("D$row", $d['jam_mulai']);
+    $sheet->setCellValue("E$row", $d['menit']);
+    $sheet->setCellValue("F$row", $d['defroz']);
+    $sheet->setCellValue("G$row", $d['pack']);
+    $sheet->setCellValue("H$row", $d['qty']);
+    $sheet->setCellValue("I$row", $d['kristal']);
+    $sheet->setCellValue("J$row", $d['serut']);
+    $sheet->setCellValue("K$row", $d['keterangan']);
+
     $row++;
 }
 
 // Auto width kolom
-foreach (range('A', 'J') as $col) {
+foreach (range('A', 'K') as $col) {
     $sheet->getColumnDimension($col)->setAutoSize(true);
 }
 

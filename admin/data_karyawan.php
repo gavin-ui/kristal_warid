@@ -4,36 +4,55 @@ include "../koneksi.php";
 require_once __DIR__ . "/../phpqrcode/qrlib.php";
 
 /* ======================================================
-   PROSES UPDATE KARYAWAN
+   PROSES UPDATE KARYAWAN (VERSI AMAN)
 ====================================================== */
 if (isset($_POST['update_karyawan'])) {
 
     $id     = $_POST['id_karyawan'];
-    $nama   = $_POST['nama_karyawan'];
-    $nomor  = $_POST['nomor_karyawan']; // FIX DITAMBAHKAN
-    $alamat = $_POST['alamat'];
-    $divisi = $_POST['divisi'];
+    $nama   = trim($_POST['nama_karyawan']);
+    $nomor  = trim($_POST['nomor_karyawan']);
+    $alamat = trim($_POST['alamat']);
+    $divisi = trim($_POST['divisi']);
 
-/* ===============================
-   FORMAT QR SESUAI abs en.php
-================================ */
-$qrText =
-    trim($nama) . "|" .
-    trim($divisi) . "|" .
-    trim($alamat);
+    /* ===============================
+       BATASI ALAMAT KHUSUS QR
+       (DATABASE TETAP LENGKAP)
+    ================================ */
+    $alamatQR = mb_substr($alamat, 0, 120);
 
-/* ===============================
-   GENERATE QR (LEBIH SENSITIF)
-================================ */
-QRcode::png(
-    $qrText,
-    $qrPath,
-    QR_ECLEVEL_H, // 🔥 error correction tertinggi
-    8,            // 🔥 lebih besar & tajam
-    2
-);
+    /* ===============================
+       FORMAT QR (SESUAI absen.php)
+    ================================ */
+    $qrText =
+        $nama . "|" .
+        $divisi . "|" .
+        $alamatQR;
 
-    /* ===== FOTO ===== */
+    /* ===============================
+       PATH & FILE QR (WAJIB)
+    ================================ */
+    $qrDir = __DIR__ . "/../uploads/qrcode/";
+    if (!is_dir($qrDir)) {
+        mkdir($qrDir, 0777, true);
+    }
+
+    $qrFile = $nomor . ".png";
+    $qrPath = $qrDir . $qrFile;
+
+    /* ===============================
+       GENERATE QR (STABIL & TAJAM)
+    ================================ */
+    QRcode::png(
+        $qrText,
+        $qrPath,
+        QR_ECLEVEL_H,
+        8,
+        2
+    );
+
+    /* ===============================
+       FOTO
+    ================================ */
     $fotoName = $_POST['old_foto'];
 
     if (!empty($_FILES['foto_karyawan']['name'])) {
@@ -47,21 +66,39 @@ QRcode::png(
         }
     }
 
-    /* ===== UPDATE DATABASE ===== */
-    $stmt = $conn->prepare("UPDATE karyawan SET 
-        nama_karyawan=?, nomor_karyawan=?, alamat=?, divisi=?, foto_karyawan=?, barcode=?, qrcode_file=? 
-        WHERE id_karyawan=?");
+    /* ===============================
+       UPDATE DATABASE
+    ================================ */
+    $stmt = $conn->prepare("
+        UPDATE karyawan SET 
+            nama_karyawan   = ?,
+            nomor_karyawan  = ?,
+            alamat          = ?,
+            divisi          = ?,
+            foto_karyawan   = ?,
+            barcode         = ?,
+            qrcode_file     = ?
+        WHERE id_karyawan = ?
+    ");
 
-    $stmt->bind_param("sssssssi", 
-        $nama, $nomor, $alamat, $divisi, $fotoName, $qrFile, $qrFile, $id
+    $stmt->bind_param(
+        "sssssssi",
+        $nama,
+        $nomor,
+        $alamat,      // alamat lengkap tetap disimpan
+        $divisi,
+        $fotoName,
+        $qrFile,
+        $qrFile,
+        $id
     );
+
     $stmt->execute();
     $stmt->close();
 
     header("Location: data_karyawan.php");
     exit;
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

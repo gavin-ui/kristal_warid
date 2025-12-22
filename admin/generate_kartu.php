@@ -12,7 +12,7 @@ if ($id <= 0) {
 }
 
 /* ===============================
-   AMBIL DATA KARYAWAN
+   AMBIL DATA
 ================================ */
 $q = $conn->prepare("SELECT * FROM karyawan WHERE id_karyawan=? LIMIT 1");
 $q->bind_param("i", $id);
@@ -34,8 +34,8 @@ $qr   = "../uploads/qrcode/" . $r['barcode'];
 /* ===============================
    KANVAS
 ================================ */
-$w = 520;
-$h = 300;
+$w = 560;
+$h = 320;
 $img = imagecreatetruecolor($w, $h);
 
 /* WARNA */
@@ -44,7 +44,7 @@ $blue  = imagecolorallocate($img, 31,78,140);
 $black = imagecolorallocate($img, 0,0,0);
 
 imagefilledrectangle($img, 0, 0, $w, $h, $white);
-imagefilledrectangle($img, 0, 0, $w, 32, $blue);
+imagefilledrectangle($img, 0, 0, $w, 36, $blue);
 
 /* ===============================
    FONT
@@ -56,13 +56,13 @@ $useTTF = file_exists($font) && function_exists('imagettftext');
    JUDUL
 ================================ */
 if ($useTTF) {
-    imagettftext($img, 14, 0, 160, 22, $white, $font, "KARTU KARYAWAN");
+    imagettftext($img, 15, 0, 180, 24, $white, $font, "KARTU KARYAWAN");
 } else {
-    imagestring($img, 5, 180, 10, "KARTU KARYAWAN", $white);
+    imagestring($img, 5, 200, 12, "KARTU KARYAWAN", $white);
 }
 
 /* ===============================
-   FOTO KARYAWAN
+   FOTO
 ================================ */
 if (file_exists($foto)) {
     $src = imagecreatefromstring(file_get_contents($foto));
@@ -76,14 +76,15 @@ if (file_exists($foto)) {
         imagesy($src)
     );
 
-    imagecopy($img, $dst, 10, 50, 0, 0, 95, 125);
+    imagecopy($img, $dst, 14, 60, 0, 0, 95, 125);
 }
 
 /* ===============================
-   TEKS DATA (PASTI MUNCUL)
+   TEKS (AREA KIRI)
 ================================ */
 $x = 120;
-$y = 60;
+$y = 70;
+$maxTextWidth = 260;
 
 function drawText($img, $text, $x, &$y, $color, $font, $useTTF, $size = 11) {
     if ($useTTF) {
@@ -98,33 +99,44 @@ drawText($img, "Nama   : $nama",   $x, $y, $black, $font, $useTTF);
 drawText($img, "Divisi : $divisi", $x, $y, $black, $font, $useTTF);
 drawText($img, "Alamat :",         $x, $y, $black, $font, $useTTF);
 
-/* ALAMAT MULTI BARIS */
-$lines = explode("\n", wordwrap($alamat, 22, "\n", true));
+/* ALAMAT WRAP (ANTI NIMPA QR) */
+$alamatWrap = wordwrap($alamat, 30, "\n", true);
+$lines = explode("\n", $alamatWrap);
+
 foreach ($lines as $l) {
     drawText($img, $l, $x, $y, $black, $font, $useTTF, 9);
 }
 
 /* ===============================
-   QR CODE (ASLI — NO RESIZE)
+   QR CODE (HD TAPI AMAN)
 ================================ */
 if (file_exists($qr)) {
     $qrSrc = imagecreatefrompng($qr);
-    $qrW = imagesx($qrSrc);
-    $qrH = imagesy($qrSrc);
+
+    $qrSize = 180; // HD tapi tidak menimpa teks
+    $qrDst  = imagecreatetruecolor($qrSize, $qrSize);
+
+    imagecopyresampled(
+        $qrDst, $qrSrc,
+        0,0,0,0,
+        $qrSize, $qrSize,
+        imagesx($qrSrc),
+        imagesy($qrSrc)
+    );
 
     imagecopy(
         $img,
-        $qrSrc,
-        $w - $qrW - 20,
-        80,
-        0, 0,
-        $qrW,
-        $qrH
+        $qrDst,
+        $w - $qrSize - 20,
+        90,
+        0,0,
+        $qrSize,
+        $qrSize
     );
 }
 
 /* ===============================
-   OUTPUT PNG (ANTI WORD)
+   OUTPUT
 ================================ */
 ob_clean();
 header("Content-Type: image/png");

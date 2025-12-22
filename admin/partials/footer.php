@@ -79,6 +79,17 @@ body.dark .admin-footer {
     filter: drop-shadow(0 0 6px rgba(0,153,255,.35));
 }
 
+/* =========================================
+   CEGAH KONTEN (MAP) KETIBAN FOOTER FIXED
+========================================= */
+.page-container{
+    padding-bottom: 140px; /* lebih tinggi dari footer */
+}
+
+.page-container{
+    padding-bottom: calc(80px + 40px);
+}
+
 </style>
 
 © <?= date("Y") ?> — Sistem Manajemen | <strong>Es Kristal Warid</strong> ❄️

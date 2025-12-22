@@ -24,6 +24,7 @@ header("Content-Disposition: attachment; filename=absensi_$tanggal.xls");
 echo "<table border='1'>
 <tr>
     <th>No</th>
+    <th>Tanggal</th>
     <th>Nama</th>
     <th>Divisi</th>
     <th>Status</th>
@@ -33,8 +34,11 @@ echo "<table border='1'>
 
 $no = 1;
 while($r = mysqli_fetch_assoc($q)){
+    $tgl = date("d-m-Y", strtotime($r['waktu_masuk']));
+
     echo "<tr>
         <td>{$no}</td>
+        <td>{$tgl}</td>
         <td>{$r['nama_karyawan']}</td>
         <td>{$r['divisi']}</td>
         <td>{$r['status_kehadiran']}</td>

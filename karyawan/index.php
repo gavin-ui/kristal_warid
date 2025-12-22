@@ -124,7 +124,7 @@ body.dark .card p{
 
 <body>
 
-<?php include "../admin/partials/header.php"; ?>
+<?php include "../admin/partials/header2.php"; ?>
 <?php include "../admin/partials/sidebar.php"; ?>
 
 <div class="page-wrapper">

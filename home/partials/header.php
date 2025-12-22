@@ -206,7 +206,7 @@
         </p>
 
         <a href="#about" class="hero-btn">
-            Pelajari Lebih Lanjut
+            Tentang Es Warid
         </a>
     </div>
 </div>

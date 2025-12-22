@@ -350,22 +350,199 @@ td.aksi {
     box-shadow:0 10px 24px rgba(0,0,0,.25);
 }
 
+/* =====================================================
+   FINAL FIX — MODAL EDIT KARYAWAN (LANDSCAPE & PREMIUM)
+===================================================== */
+
+/* paksa modal edit center & landscape */
+#modalEdit {
+    align-items: center;
+    padding-top: 0;
+}
+
+/* box modal edit diperlebar */
+#modalEdit .modal-content {
+    width: 92%;
+    max-width: 920px;
+    min-height: 460px;
+
+    padding: 28px 34px;
+    border-radius: 22px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* judul lebih tegas */
+#modalEdit .modal-content h3 {
+    font-size: 22px;
+    font-weight: 900;
+    margin-bottom: 26px;
+}
+
+/* =====================================================
+   FORM GRID — 2 KOLOM RAPI
+===================================================== */
+#modalEdit .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 28px;
+    align-items: start;
+}
+
+/* alamat full width */
+#modalEdit .form-grid .full {
+    grid-column: span 2;
+}
+
+/* =====================================================
+   INPUT, SELECT, TEXTAREA
+===================================================== */
+#modalEdit label {
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    display: block;
+    color: var(--table-text);
+}
+
+#modalEdit input,
+#modalEdit select,
+#modalEdit textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1.8px solid var(--border-soft);
+
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--table-text);
+
+    background: rgba(255,255,255,.88);
+    box-shadow:
+        inset 0 1px 2px rgba(0,0,0,.08),
+        0 6px 14px rgba(0,0,0,.10);
+
+    transition: .25s ease;
+}
+
+/* textarea biar rapi */
+#modalEdit textarea {
+    resize: none;
+    min-height: 54px;
+    line-height: 1.45;
+}
+
+/* dark mode */
+body.dark #modalEdit input,
+body.dark #modalEdit select,
+body.dark #modalEdit textarea {
+    background: rgba(15,23,42,.88);
+    color: #fff;
+}
+
+/* focus */
+#modalEdit input:focus,
+#modalEdit select:focus,
+#modalEdit textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow:
+        0 0 0 3px rgba(37,99,235,.28),
+        0 12px 26px rgba(0,0,0,.2);
+}
+
+/* file input dirapikan */
+#modalEdit input[type="file"] {
+    padding: 10px;
+    background: transparent;
+    box-shadow: none;
+}
+
 /* =============================
-   MOBILE
+   MODAL EDIT — FOOTER BUTTON FIX
 ============================= */
+#modalEdit .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 26px;
+}
+
+/* RESET + BASE BUTTON */
+#modalEdit .modal-footer button {
+    all: unset; /* hapus style bawaan browser */
+    cursor: pointer;
+
+    padding: 12px 22px;
+    border-radius: 14px;
+
+    font-size: 13.5px;
+    font-weight: 900;
+    letter-spacing: .3px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 110px;
+
+    transition: all .25s ease;
+}
+
+/* =============================
+   TOMBOL BATAL
+============================= */
+#modalEdit .modal-footer .btn-detail {
+    background: linear-gradient(135deg,#64748b,#334155);
+    color: #fff;
+
+    box-shadow:
+        0 12px 26px rgba(51,65,85,.45),
+        inset 0 1px 0 rgba(255,255,255,.25);
+}
+
+#modalEdit .modal-footer .btn-detail:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 34px rgba(51,65,85,.6);
+}
+
+#modalEdit .modal-footer .btn-detail:active {
+    transform: scale(.96);
+}
+
+/* =============================
+   TOMBOL SIMPAN
+============================= */
+#modalEdit .modal-footer .btn-save {
+    background: linear-gradient(135deg,#22c55e,#15803d);
+    color: #fff;
+
+    box-shadow:
+        0 14px 30px rgba(34,197,94,.55),
+        inset 0 1px 0 rgba(255,255,255,.3);
+}
+
+#modalEdit .modal-footer .btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 38px rgba(34,197,94,.65);
+}
+
+#modalEdit .modal-footer .btn-save:active {
+    transform: scale(.96);
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
 @media(max-width:768px){
-    .page-wrapper {
-        padding-left:16px;
-        padding-right:16px;
+    #modalEdit .modal-content {
+        max-width: 95%;
+        padding: 22px;
     }
 
-    table {
-        width:100%;
-        font-size:13px;
-    }
-
-    td.aksi {
-        flex-wrap:wrap;
+    #modalEdit .form-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -533,10 +710,19 @@ function closeDetail() {
             <label>Foto Baru (opsional)</label>
             <input type="file" name="foto_karyawan" accept="image/*">
 
-            <div style="text-align:right;margin-top:15px;">
-                <button type="button" onclick="closeEditModal()">Batal</button>
-                <button type="submit" name="update_karyawan">Simpan</button>
-            </div>
+            <div class="modal-footer">
+    <button type="button"
+            class="btn btn-detail"
+            onclick="closeEditModal()">
+        ✖ Batal
+    </button>
+
+    <button type="submit"
+            name="update_karyawan"
+            class="btn btn-save">
+        💾 Simpan
+    </button>
+</div>
         </form>
     </div>
 </div>

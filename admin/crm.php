@@ -770,7 +770,17 @@ while($r=mysqli_fetch_assoc($q)):
 </tbody>
 </table>
 
-<button onclick="closeModal()" class="btn-save">Tutup</button>
+<div style="display:flex; gap:12px; margin-top:18px;">
+    <a href="exportexcel_crm.php"
+       class="btn-save"
+       style="text-decoration:none;text-align:center;flex:1">
+       📤 Export Excel
+    </a>
+
+    <button onclick="closeModal()" class="detail-btn" style="flex:1">
+        Tutup
+    </button>
+</div>
 </div>
 </div>
 
